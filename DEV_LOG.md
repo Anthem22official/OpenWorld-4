@@ -5,3 +5,7 @@
 [2026-05-06 00:00] Version 1.0.0 — Completed character and location data schemas. Defined 5 character interfaces (Character, CharacterState, ScheduleBlock, Relation, Memory) and 1 location interface with grid coordinates and time-based access.
 
 [2026-05-06 19:03] Version 1.0.0 — Database setup complete. Created Prisma ORM schema matching exact TypeScript interfaces. Monorepo structure established with apps/server, apps/studio, apps/gameplay. SQLite database initialized with all 6 models (Character, CharacterState, ScheduleBlock, Relation, Memory, Location).
+
+## Version 1.1.0 — Development Rules & UI/UX Framework
+
+[2026-05-06 20:15] Version 1.1.0 — Established governance rules in CLAUDE.md with 6 core development practices: no fallback (fail directly), frontend first (mock-driven), UI/UX skill integration, file organization (modular .ts files), file creation permissions, and development logging. Migrated ui-ux-pro-max skill with design system generation capabilities to .claude/skills directory.

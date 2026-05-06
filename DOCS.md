@@ -1,5 +1,9 @@
 # Documentation
 
+## Development Rules
+
+- **CLAUDE.md** — Read first when starting work. Contains 6 core development rules: fail directly, frontend-first development, UI/UX skill usage, file organization, file creation permissions, and development logging requirements.
+
 ## Data Schema Files
 
 - **CHARACTER_DATA_SCHEMA.md** — Read when building character data structures (interfaces: Character, CharacterState, ScheduleBlock, Relation, Memory)
