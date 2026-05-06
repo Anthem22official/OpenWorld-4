@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:\\\\Users\\\\pao81\\\\Documents\\\\OpenWorld-4\\\\.claude\\\\skills\")",
+      "Bash(cp -r \"C:\\\\Users\\\\pao81\\\\.codex\\\\skills\\\\ui-ux-pro-max\" \"C:\\\\Users\\\\pao81\\\\Documents\\\\OpenWorld-4\\\\.claude\\\\skills\\\\ui-ux-pro-max\")",
+      "Bash(find \"C:\\\\\\\\Users\\\\\\\\pao81\\\\\\\\Documents\\\\\\\\OpenWorld\" -maxdepth 3 -type f -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.json\")",
+      "Bash(ls -la \"C:\\\\\\\\Users\\\\\\\\pao81\\\\\\\\Documents\\\\\\\\OpenWorld\\\\\\\\apps\\\\\\\\server\\\\\\\\\")",
+      "Bash(find \"C:\\\\\\\\Users\\\\\\\\pao81\\\\\\\\Documents\\\\\\\\OpenWorld\\\\\\\\apps\\\\\\\\server\\\\\\\\src\" -type f)"
+    ]
+  }
+}

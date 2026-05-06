@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Character: Core identity (who they are)
+model Character {
+  id                    String   @id @default(cuid())
+  name                  String
+  activated             Boolean
+  appearance_description String
+  personality           String   // JSON array: ["trait1", "trait2"]
+
+  // Relations to other entities
+  state                 CharacterState?
+  scheduleBlocks        ScheduleBlock[]
+  relationsAsSource     Relation[] @relation("fromCharacter")
+  relationsAsTarget     Relation[] @relation("toCharacter")
+  memories              Memory[]
+}
+
+// CharacterState: Current state (where they are now)
+model CharacterState {
+  id              String   @id @default(cuid())
+  character_id    String   @unique
+  location_id     String
+  activity        String
+  game_time_detail String
+
+  character       Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  location        Location  @relation(fields: [location_id], references: [id])
+}
+
+// ScheduleBlock: Daily schedule (what they'll do)
+model ScheduleBlock {
+  id              String   @id @default(cuid())
+  character_id    String
+  location_id     String
+  activity        String
+  start_time      Int      // 0-1440 minutes
+  duration        Int      // duration in minutes
+
+  character       Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  location        Location  @relation(fields: [location_id], references: [id])
+}
+
+// Relation: Directional relationships (feelings toward others)
+model Relation {
+  id                  String  @id @default(cuid())
+  character_id        String
+  target_character_id String
+  affinity_score      Int     // -100 to 100
+
+  fromCharacter       Character @relation("fromCharacter", fields: [character_id], references: [id], onDelete: Cascade)
+  toCharacter         Character @relation("toCharacter", fields: [target_character_id], references: [id], onDelete: Cascade)
+}
+
+// Memory: What they remember (knowledge)
+model Memory {
+  id              String   @id @default(cuid())
+  character_id    String
+  summary         String   // 50-150 words: what, who, feeling
+  game_date       String   // ISO format: "2040-08-05"
+
+  character       Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+}
+
+// Location: Map location with coordinates and access times
+model Location {
+  id                    String   @id @default(cuid())
+  name                  String
+  appearance_description String
+  x                     Float    // X coordinate on world map
+  y                     Float    // Y coordinate on world map
+  level                 Int      // Floor number
+  accessible_start      Int      // 0-1440 minutes (when opens)
+  accessible_end        Int      // 0-1440 minutes (when closes)
+
+  // Relations
+  characterStates       CharacterState[]
+  scheduleBlocks        ScheduleBlock[]
+}
