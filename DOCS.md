@@ -1,6 +1,12 @@
 # Documentation
 
-## Files
+## Data Schema Files
 
 - **CHARACTER_DATA_SCHEMA.md** — Read when building character data structures (interfaces: Character, CharacterState, ScheduleBlock, Relation, Memory)
 - **LOCATION_DATA_SCHEMA.md** — Read when working with location/map systems (interface: Location)
+
+## Database Files
+
+- **apps/server/prisma/schema.prisma** — Read when modifying database models or understanding Prisma schema
+- **apps/server/src/db/init.ts** — Read when initializing database connection or adding database setup logic
+- **apps/server/prisma/dev.db** — SQLite database file (created on first `prisma db push`)
