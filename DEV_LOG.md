@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.4.0 - Atlas Image API
+
+[2026-05-07 23:02] Version 1.4.0 - Added Express server startup and Atlas Cloud text-to-image API. Implemented fail-fast environment validation, normalized image generation submit/poll endpoints, strict request validation, and structured error responses.
+
 ## Version 1.4.0 — Map Navigation Page
 
 [2026-05-07 21:15] Version 1.4.0 — Built map navigation page with interactive location markers. Added Location and MapState interfaces to game schema. Created 4 focused components: map-canvas (background container), location-points (clickable markers with hover effects), status-bar (current location display), map-nav-button (return to dialogue). Integrated map page with routing logic; dialogue ↔ map navigation with location selection updating game state (visited tracking).
