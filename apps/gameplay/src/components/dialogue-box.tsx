@@ -11,7 +11,7 @@ export default function DialogueBox({ speaker, text }: DialogueBoxProps) {
         border: '2px solid var(--color-lavender)',
         borderRadius: '6px',
         padding: '16px 20px',
-        minHeight: '100px',
+        height: '140px',
         overflow: 'auto',
         backdropFilter: 'blur(10px)',
       }}

@@ -74,10 +74,10 @@ export default function DialoguePage({ gameState }: DialoguePageProps) {
           padding: '40px',
         }}
       >
-        <CharacterArea character={currentDialogue.speaker} />
+        <CharacterArea speaker={currentDialogue.speaker} />
       </div>
 
-      {/* Bottom UI Panel */}
+      {/* Bottom UI Panel - Fixed Height */}
       <div
         style={{
           backgroundColor: 'rgba(15, 52, 96, 0.95)',
@@ -88,32 +88,35 @@ export default function DialoguePage({ gameState }: DialoguePageProps) {
           flexDirection: 'column',
           gap: '12px',
           position: 'relative',
+          height: '220px',
+          flexShrink: 0,
+          boxSizing: 'border-box',
         }}
       >
         {/* Dialogue Box */}
         <DialogueBox speaker={currentDialogue.speaker} text={currentDialogue.text} />
 
-        {/* Continue Indicator - When there's a next paragraph and no choices */}
-        {!hasChoices && currentDialogue.nextDialogueId && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              fontSize: '12px',
-              color: 'rgba(159, 122, 234, 0.6)',
-              fontFamily: 'var(--font-sans)',
-              animation: 'pulse 1.5s ease-in-out infinite',
-            }}
-          >
-            <style>{`
-              @keyframes pulse {
-                0%, 100% { opacity: 0.6; }
-                50% { opacity: 1; }
-              }
-            `}</style>
-            Click or press SPACE to continue ▼
-          </div>
-        )}
+        {/* Continue Indicator - Always reserves space, only visible when applicable */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            fontSize: '12px',
+            color: 'rgba(159, 122, 234, 0.6)',
+            fontFamily: 'var(--font-sans)',
+            height: '20px',
+            visibility: !hasChoices && currentDialogue.nextDialogueId ? 'visible' : 'hidden',
+            animation: 'pulse 1.5s ease-in-out infinite',
+          }}
+        >
+          <style>{`
+            @keyframes pulse {
+              0%, 100% { opacity: 0.6; }
+              50% { opacity: 1; }
+            }
+          `}</style>
+          Click or press SPACE to continue ▼
+        </div>
       </div>
 
       {/* Choices Modal - Center Pop-up */}

@@ -13,100 +13,38 @@ const dialogueNodes: Record<string, DialogueNode> = {
     text: 'Haven\'t seen you here before. Mind if I sit down?',
     choices: [
       {
-        id: 'choice-2a',
+        id: 'choice-yes',
         text: 'Sure, I\'d like the company.',
         nextDialogueId: 'response-warm-1',
       },
       {
-        id: 'choice-2b',
+        id: 'choice-no',
         text: 'I\'m waiting for someone, sorry.',
         nextDialogueId: 'response-cold-1',
-      },
-      {
-        id: 'choice-2c',
-        text: 'Why do you ask?',
-        nextDialogueId: 'response-curious-1',
       },
     ],
   },
   'response-warm-1': {
     id: 'response-warm-1',
     speaker: undefined,
-    text: 'Alex smiled and sat down across from me. There was something genuine about their interest, and it put me at ease.',
-    nextDialogueId: 'response-warm-2',
-  },
-  'response-warm-2': {
-    id: 'response-warm-2',
-    speaker: 'Alex',
-    text: 'I\'m Alex, by the way. I come here most days. What\'s your name?',
-    choices: [
-      {
-        id: 'choice-4a',
-        text: 'Introduce yourself warmly',
-        nextDialogueId: 'end-warm-1',
-      },
-      {
-        id: 'choice-4b',
-        text: 'Keep it mysterious',
-        nextDialogueId: 'end-mystery-1',
-      },
-    ],
+    text: 'Alex smiled and sat down. There was something genuine about them that put me at ease.',
+    nextDialogueId: 'end-good',
   },
   'response-cold-1': {
     id: 'response-cold-1',
     speaker: 'Alex',
-    text: 'Oh, no problem. I\'ll grab a seat elsewhere.',
-    nextDialogueId: 'response-cold-2',
+    text: 'Oh, no problem. Maybe another time.',
+    nextDialogueId: 'end-missed',
   },
-  'response-cold-2': {
-    id: 'response-cold-2',
+  'end-good': {
+    id: 'end-good',
     speaker: undefined,
-    text: 'Alex nodded and headed to the counter. I felt a slight pang of regret watching them go.',
-    choices: [
-      {
-        id: 'choice-6a',
-        text: 'Try to catch their attention',
-        nextDialogueId: 'end-second-chance-1',
-      },
-      {
-        id: 'choice-6b',
-        text: 'Let them go',
-        nextDialogueId: 'end-alone-1',
-      },
-    ],
+    text: 'We talked for hours. As the sun set, I realized this moment would stay with me forever.',
   },
-  'response-curious-1': {
-    id: 'response-curious-1',
-    speaker: 'Alex',
-    text: 'Fair enough. I like someone who asks questions.',
-    nextDialogueId: 'response-curious-2',
-  },
-  'response-curious-2': {
-    id: 'response-curious-2',
+  'end-missed': {
+    id: 'end-missed',
     speaker: undefined,
-    text: 'There was something intriguing in their gaze. I gestured to the empty seat across from me.',
-    nextDialogueId: 'end-warm-1',
-  },
-  'end-warm-1': {
-    id: 'end-warm-1',
-    speaker: undefined,
-    text: 'We talked for hours. The afternoon light faded into evening, and neither of us wanted to leave.',
-  },
-  'end-mystery-1': {
-    id: 'end-mystery-1',
-    speaker: 'Alex',
-    text: 'A mystery... I like that even more.',
-  },
-  'end-second-chance-1': {
-    id: 'end-second-chance-1',
-    speaker: 'Alex',
-    text: 'Changed your mind?',
-    nextDialogueId: 'end-warm-1',
-  },
-  'end-alone-1': {
-    id: 'end-alone-1',
-    speaker: undefined,
-    text: 'I sat alone with my thoughts, watching the coffee shop fill with patrons. The moment with Alex had been fleeting, but it lingered.',
+    text: 'I watched them walk to the counter. The coffee shop felt a little emptier without their presence.',
   },
 }
 
