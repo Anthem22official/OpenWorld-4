@@ -21,7 +21,7 @@ type Condition = LocationCondition | TimeBlockCondition | CharacterLocationCondi
 
 interface LocationCondition {
   type: "location";                    // Indicates this is a location condition
-  location_id: string;                 // Where the event happens (optional field, most events should have)
+  location_id: string;                 // Where the event happens (required)
 }
 
 interface TimeBlockCondition {

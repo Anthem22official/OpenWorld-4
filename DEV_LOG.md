@@ -17,3 +17,7 @@
 ## Version 1.2.0 — Event Database Implementation
 
 [2026-05-07 14:45] Version 1.2.0 — Implemented Event database model in Prisma with type classification (character_conversation, player_activity). Added CharacterLocationCondition for location-based event triggers. Created apps/server/src/types/event.ts with TypeScript interfaces and Zod schemas for runtime validation of Priority and Condition structures. Installed zod dependency.
+
+## Version 1.3.0 — Dialogue Display & Gameplay UI
+
+[2026-05-07 20:30] Version 1.3.0 — Implemented dialogue display page with galgame-style UI. Created design system (DESIGN_SYSTEM.md) with color palette, typography, spacing, and component patterns. Built Vite + React setup in apps/gameplay. Designed dialogue interaction model: paragraphs auto-advance via click/space, choices pop up as centered modal. Simplified speaker to string type (removed heavy Character class). Created DIALOGUE_DATA_SCHEMA.md defining implicit graph structure for chapters, DialogueNode with paragraph/decision/end node types. Updated DOCS.md index with dialogue schema reference.

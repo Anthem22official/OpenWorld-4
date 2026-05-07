@@ -1,7 +1,4 @@
-# OpenWorld V2 Rebuild
-
-**OpenWorld**: Visual novel with Studio (editor), Gameplay (player), Server (backend).
-**Stack**: TypeScript, Vite, Node.js, monorepo.
+# RULES
 
 ---
 
