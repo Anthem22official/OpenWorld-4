@@ -87,3 +87,13 @@ model Location {
   characterStates       CharacterState[]
   scheduleBlocks        ScheduleBlock[]
 }
+
+// Event: World events with conditions and priority
+model Event {
+  id                    String   @id @default(cuid())
+  description           String
+  type                  String   // "character_conversation" | "player_activity"
+  priority              String   // JSON string: {value: "mandatory" | "optional", index: 0-9999}
+  conditions            String   // JSON string array: [{type, ...}] - AND logic: all must pass
+}
+
