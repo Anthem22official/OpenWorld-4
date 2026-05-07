@@ -1,4 +1,4 @@
-import { GameState, DialogueNode } from '../types/game'
+import { GameState, DialogueNode, Location } from '../types/game'
 
 const dialogueNodes: Record<string, DialogueNode> = {
   start: {
@@ -48,9 +48,49 @@ const dialogueNodes: Record<string, DialogueNode> = {
   },
 }
 
+const mockLocations: Location[] = [
+  {
+    id: 'coffee-shop',
+    name: 'Coffee Shop',
+    x: 50,
+    y: 30,
+    visited: true,
+    description: 'A cozy corner café where stories begin.',
+  },
+  {
+    id: 'park',
+    name: 'City Park',
+    x: 75,
+    y: 55,
+    visited: false,
+    description: 'Green spaces and quiet moments.',
+  },
+  {
+    id: 'library',
+    name: 'Public Library',
+    x: 25,
+    y: 70,
+    visited: false,
+    description: 'Shelves of untold worlds.',
+  },
+  {
+    id: 'river-walk',
+    name: 'River Walk',
+    x: 60,
+    y: 80,
+    visited: false,
+    description: 'Where the city meets the water.',
+  },
+]
+
 export const mockGameState: GameState = {
   currentDialogueId: 'start',
   currentLocation: 'Coffee Shop',
+  mapState: {
+    locations: mockLocations,
+    currentLocationId: 'coffee-shop',
+    visitedLocationIds: ['coffee-shop'],
+  },
 }
 
 export { dialogueNodes }

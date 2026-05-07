@@ -4,7 +4,7 @@ interface ControlBarProps {
   onBack?: () => void
 }
 
-export default function ControlBar({ onSave, onContinue, onBack }: ControlBarProps) {
+export default function ControlBar({ onSave, onBack }: ControlBarProps) {
   const buttonStyle = {
     fontSize: '12px',
     fontFamily: 'var(--font-sans)',

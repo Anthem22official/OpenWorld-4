@@ -7,9 +7,10 @@ import ChoicePanel from '../components/choice-panel'
 
 interface DialoguePageProps {
   gameState: GameState
+  onShowMap?: () => void
 }
 
-export default function DialoguePage({ gameState }: DialoguePageProps) {
+export default function DialoguePage({ gameState, onShowMap }: DialoguePageProps) {
   const [currentDialogueId, setCurrentDialogueId] = useState(gameState.currentDialogueId)
 
   const currentDialogue = dialogueNodes[currentDialogueId]
@@ -96,26 +97,70 @@ export default function DialoguePage({ gameState }: DialoguePageProps) {
         {/* Dialogue Box */}
         <DialogueBox speaker={currentDialogue.speaker} text={currentDialogue.text} />
 
-        {/* Continue Indicator - Always reserves space, only visible when applicable */}
+        {/* Control Row - Continue Indicator + Map Button */}
         <div
           style={{
             display: 'flex',
-            justifyContent: 'flex-end',
-            fontSize: '12px',
-            color: 'rgba(159, 122, 234, 0.6)',
-            fontFamily: 'var(--font-sans)',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             height: '20px',
-            visibility: !hasChoices && currentDialogue.nextDialogueId ? 'visible' : 'hidden',
-            animation: 'pulse 1.5s ease-in-out infinite',
           }}
         >
-          <style>{`
-            @keyframes pulse {
-              0%, 100% { opacity: 0.6; }
-              50% { opacity: 1; }
-            }
-          `}</style>
-          Click or press SPACE to continue ▼
+          {/* Continue Indicator */}
+          <div
+            style={{
+              fontSize: '12px',
+              color: 'rgba(159, 122, 234, 0.6)',
+              fontFamily: 'var(--font-sans)',
+              visibility: !hasChoices && currentDialogue.nextDialogueId ? 'visible' : 'hidden',
+              animation: 'pulse 1.5s ease-in-out infinite',
+            }}
+          >
+            <style>{`
+              @keyframes pulse {
+                0%, 100% { opacity: 0.6; }
+                50% { opacity: 1; }
+              }
+            `}</style>
+            Click or press SPACE to continue ▼
+          </div>
+
+          {/* Map Button */}
+          {onShowMap && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onShowMap()
+              }}
+              style={{
+                padding: '6px 12px',
+                backgroundColor: 'transparent',
+                border: '1px solid rgba(159, 122, 234, 0.5)',
+                borderRadius: '4px',
+                color: 'rgba(159, 122, 234, 0.8)',
+                fontSize: '12px',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 500,
+                cursor: 'pointer',
+                transition: 'all 150ms ease-in-out',
+                outline: 'none',
+              }}
+              onMouseEnter={(e) => {
+                const target = e.currentTarget as HTMLButtonElement
+                target.style.backgroundColor = 'rgba(159, 122, 234, 0.1)'
+                target.style.borderColor = 'rgba(159, 122, 234, 1)'
+                target.style.color = '#9F7AEA'
+              }}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget as HTMLButtonElement
+                target.style.backgroundColor = 'transparent'
+                target.style.borderColor = 'rgba(159, 122, 234, 0.5)'
+                target.style.color = 'rgba(159, 122, 234, 0.8)'
+              }}
+            >
+              Map
+            </button>
+          )}
         </div>
       </div>
 
@@ -162,7 +207,7 @@ export default function DialoguePage({ gameState }: DialoguePageProps) {
             >
               What will you do?
             </h3>
-            <ChoicePanel choices={currentDialogue.choices} onChoose={handleChoice} />
+            <ChoicePanel choices={currentDialogue.choices || []} onChoose={handleChoice} />
           </div>
         </div>
       )}
