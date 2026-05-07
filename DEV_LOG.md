@@ -13,3 +13,7 @@
 ## Version 1.1.2 — Event Data Schema
 
 [2026-05-07 14:32] Version 1.1.2 — Created EVENT_DATA_SCHEMA.md with core event interfaces (Event, Priority, Condition types). Events support AND-logic conditions with LocationCondition and TimeBlockCondition for flexible event scheduling. Priority system handles mandatory/optional with index-based conflict resolution.
+
+## Version 1.2.0 — Event Database Implementation
+
+[2026-05-07 14:45] Version 1.2.0 — Implemented Event database model in Prisma with type classification (character_conversation, player_activity). Added CharacterLocationCondition for location-based event triggers. Created apps/server/src/types/event.ts with TypeScript interfaces and Zod schemas for runtime validation of Priority and Condition structures. Installed zod dependency.
