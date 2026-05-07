@@ -9,3 +9,7 @@
 ## Version 1.1.0 — Development Rules & UI/UX Framework
 
 [2026-05-06 20:15] Version 1.1.0 — Established governance rules in CLAUDE.md with 6 core development practices: no fallback (fail directly), frontend first (mock-driven), UI/UX skill integration, file organization (modular .ts files), file creation permissions, and development logging. Migrated ui-ux-pro-max skill with design system generation capabilities to .claude/skills directory.
+
+## Version 1.1.2 — Event Data Schema
+
+[2026-05-07 14:32] Version 1.1.2 — Created EVENT_DATA_SCHEMA.md with core event interfaces (Event, Priority, Condition types). Events support AND-logic conditions with LocationCondition and TimeBlockCondition for flexible event scheduling. Priority system handles mandatory/optional with index-based conflict resolution.
