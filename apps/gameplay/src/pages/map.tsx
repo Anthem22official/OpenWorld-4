@@ -3,6 +3,7 @@ import StatusBar from '../components/status-bar'
 import MapCanvas from '../components/map-canvas'
 import LocationPoints from '../components/location-points'
 import MapNavButton from '../components/map-nav-button'
+import { useEffect } from 'react'
 
 interface MapPageProps {
   gameState: GameState
@@ -23,8 +24,20 @@ export default function MapPage({
   )
   if (!currentLocation) throw new Error(`Location ${mapState.currentLocationId} not found`)
 
+  // Keyboard handler for escape to return to dialogue
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') {
+        onBackToDialogue()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onBackToDialogue])
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
       <StatusBar currentLocationName={currentLocation.name} />
       <MapCanvas>
         <LocationPoints
