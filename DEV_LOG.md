@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.4.0 — Map Navigation Page
+
+[2026-05-07 21:15] Version 1.4.0 — Built map navigation page with interactive location markers. Added Location and MapState interfaces to game schema. Created 4 focused components: map-canvas (background container), location-points (clickable markers with hover effects), status-bar (current location display), map-nav-button (return to dialogue). Integrated map page with routing logic; dialogue ↔ map navigation with location selection updating game state (visited tracking).
+
 ## Version 1.0.0 — Initial Data Schemas & Database
 
 [2026-05-06 00:00] Version 1.0.0 — Completed character and location data schemas. Defined 5 character interfaces (Character, CharacterState, ScheduleBlock, Relation, Memory) and 1 location interface with grid coordinates and time-based access.
