@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.4.2 - Debug Panel API Integration
+
+[2026-05-08 16:45] Version 1.4.2 - Connected debug image generation panel to real Atlas Cloud API. Replaced mock implementation with production fetch + polling logic. Frontend now POSTs to /api/images/generations with prompt + settings (quality, size, format), then polls /api/images/generations/:id every 1s until generation completes. Extracts image URL from outputs[0]. Full error handling for network failures and invalid responses.
+
 ## Version 1.4.1 - Server Environment Loading
 
 [2026-05-08 16:15] Version 1.4.1 - Added explicit apps/server/.env loading with dotenv. Server startup now validates ATLASCLOUD_API_KEY, PORT, and DATABASE_URL before database initialization and refuses to start on missing or invalid required environment values.
