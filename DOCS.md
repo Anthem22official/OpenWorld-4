@@ -12,12 +12,14 @@
 
 - **docs/GAMEPLAY_INTERFACE_REQUIREMENTS.md** — Read when building gameplay UI. Contains architecture, large UI elements, and page flow for Dialogue Display and Map pages.
 - **docs/DESIGN_SYSTEM.md** — Read when styling gameplay UI, including dialogue and map surfaces. Contains core colors, typography, spacing, interactions, and accessibility rules.
-- **docs/DEBUG_PANEL_DESIGN_SYSTEM.md** — Read when building image generation debug panel. Contains design system (colors, typography, spacing, components, accessibility) for third page with horizontal layout (input left, preview right).
+- **docs/DEBUG_PANEL_DESIGN_SYSTEM.md** — Read when building image generation debug panel. Contains design system (colors, typography, spacing, components, accessibility) for third page with horizontal layout (input left, preview right). Debug panel fully integrated with Atlas Cloud API: POST to /api/images/generations, poll /api/images/generations/:id until status "completed", extract image URL from outputs[0].
 
 ## Data Schema Files
 
 - **docs/CHARACTER_DATA_SCHEMA.md** — Read when building character data structures (interfaces: Character, CharacterState, ScheduleBlock, Relation, Memory)
 - **docs/LOCATION_DATA_SCHEMA.md** — Read when working with location/map systems (interface: Location)
+- **docs/map-sources/shibuya-crossing-overpass-query.txt** — Read when validating the Shibuya Crossing map source query.
+- **docs/map-sources/shibuya-crossing-overpass.json** — Cached raw OSM/Overpass source data for the Shibuya Crossing local SVG map.
 - **docs/EVENT_DATA_SCHEMA.md** — Read when building event data structures. Note: location_id in LocationCondition is required (not optional)
 - **docs/DIALOGUE_DATA_SCHEMA.md** — Read when building dialogue scripts. Defines DialogueNode structure, chapters as implicit graphs, paragraph vs choice nodes
 

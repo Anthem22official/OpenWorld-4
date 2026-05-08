@@ -1,5 +1,13 @@
 # Development Log
 
+## Version 1.5.1 - Debug Panel API Bug Fixes
+
+[2026-05-08 17:50] Version 1.5.1 - Fixed three critical bugs preventing end-to-end image generation: (1) Backend's readStringArray/readBooleanArray didn't handle null values from Atlas—now treats null as undefined; (2) Frontend polling loop checked for wrong status—Atlas returns "completed" not "succeeded"; (3) Frontend lacked Vite proxy for /api routes to backend. Verified end-to-end: POST returns prediction ID, polling returns completed status with image URL from outputs[0].
+
+## Version 1.5.2 - Cached OSM Local Map Source
+
+[2026-05-08 18:05] Version 1.5.2 - Replaced curated placeholder map geometry with cached OpenStreetMap/Overpass source data for the Shibuya Crossing bbox. Added local source cache, exact query, and generated render data containing all fetched building, highway, and railway ways.
+
 ## Version 1.5.0 - Hierarchical Local SVG Map
 
 [2026-05-08 17:35] Version 1.5.0 - Added generic hierarchical map architecture with area and area-map data. Moved old percentage-marker map to legacy-map, replaced primary map with a local inline SVG Shibuya Crossing prototype, and made selected building footprints keyboard-accessible navigation targets with visible OpenStreetMap/OpenMapTiles attribution.
