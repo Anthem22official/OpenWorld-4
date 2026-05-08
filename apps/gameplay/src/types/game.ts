@@ -19,6 +19,10 @@ export interface Location {
   y: number // Percentage (0-100)
   visited: boolean
   description?: string
+  areaId?: string
+  areaMapId?: string
+  buildingId?: string
+  mapKind?: 'legacy-point' | 'building-shape'
 }
 
 export interface MapState {

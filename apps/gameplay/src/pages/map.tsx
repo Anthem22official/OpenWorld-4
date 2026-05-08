@@ -1,15 +1,14 @@
-import { GameState } from '../types/game'
-import StatusBar from '../components/status-bar'
-import MapCanvas from '../components/map-canvas'
-import LocationPoints from '../components/location-points'
-import MapNavButton from '../components/map-nav-button'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { GameState, Location } from '../types/game'
+import MapShell from '../components/map-shell'
+import { getArea, getAreaMap } from '../components/map-area-data'
 
 interface MapPageProps {
   gameState: GameState
   onLocationSelect: (locationId: string) => void
   onBackToDialogue: () => void
   onShowDebugPanel?: () => void
+  onShowLegacyMap?: () => void
 }
 
 export default function MapPage({
@@ -17,21 +16,24 @@ export default function MapPage({
   onLocationSelect,
   onBackToDialogue,
   onShowDebugPanel,
+  onShowLegacyMap,
 }: MapPageProps) {
   const mapState = gameState.mapState
   if (!mapState) throw new Error('mapState is required')
 
   const currentLocation = mapState.locations.find(
-    (l) => l.id === mapState.currentLocationId,
+    (location) => location.id === mapState.currentLocationId,
   )
   if (!currentLocation) throw new Error(`Location ${mapState.currentLocationId} not found`)
 
-  // Keyboard handler for escape to return to dialogue
+  const areaMapId = currentLocation.areaMapId ?? 'shibuya-crossing'
+  const areaMap = useMemo(() => getAreaMap(areaMapId), [areaMapId])
+  const area = useMemo(() => getArea(areaMap.areaId), [areaMap.areaId])
+  const [focusedLocation, setFocusedLocation] = useState<Location | null>(null)
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Escape') {
-        onBackToDialogue()
-      }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Escape') onBackToDialogue()
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -39,19 +41,17 @@ export default function MapPage({
   }, [onBackToDialogue])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
-      <StatusBar currentLocationName={currentLocation.name} />
-      <MapCanvas>
-        <LocationPoints
-          locations={mapState.locations}
-          currentLocationId={mapState.currentLocationId}
-          onLocationClick={onLocationSelect}
-        />
-        <MapNavButton
-          onBackToDialogue={onBackToDialogue}
-          onShowDebugPanel={onShowDebugPanel}
-        />
-      </MapCanvas>
-    </div>
+    <MapShell
+      area={area}
+      areaMap={areaMap}
+      locations={mapState.locations}
+      currentLocation={currentLocation}
+      focusedLocation={focusedLocation}
+      onLocationSelect={onLocationSelect}
+      onBuildingFocus={setFocusedLocation}
+      onBackToDialogue={onBackToDialogue}
+      onShowDebugPanel={onShowDebugPanel}
+      onShowLegacyMap={onShowLegacyMap}
+    />
   )
 }

@@ -162,7 +162,7 @@ function unwrapAtlasPayload(body: unknown): unknown {
 }
 
 function readStringArray(value: unknown): string[] {
-  if (value === undefined) {
+  if (value === undefined || value === null) {
     return [];
   }
 
@@ -174,7 +174,7 @@ function readStringArray(value: unknown): string[] {
 }
 
 function readBooleanArray(value: unknown): boolean[] | undefined {
-  if (value === undefined) {
+  if (value === undefined || value === null) {
     return undefined;
   }
 

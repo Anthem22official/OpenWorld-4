@@ -52,7 +52,7 @@ export default function DebugImageGenPage({
       const predictionId = prediction.id
 
       let result = prediction
-      while (result.status !== 'succeeded' && result.status !== 'failed') {
+      while (result.status === 'processing' || result.status === 'pending' || result.status === 'queued') {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         const pollResponse = await fetch(`/api/images/generations/${predictionId}`)
 
@@ -63,8 +63,8 @@ export default function DebugImageGenPage({
         result = await pollResponse.json()
       }
 
-      if (result.status === 'failed') {
-        throw new Error('Image generation failed')
+      if (result.status !== 'completed' && result.status !== 'succeeded') {
+        throw new Error(`Image generation failed (status: ${result.status})`)
       }
 
       if (!result.outputs || result.outputs.length === 0) {

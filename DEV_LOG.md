@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.5.0 - Hierarchical Local SVG Map
+
+[2026-05-08 17:35] Version 1.5.0 - Added generic hierarchical map architecture with area and area-map data. Moved old percentage-marker map to legacy-map, replaced primary map with a local inline SVG Shibuya Crossing prototype, and made selected building footprints keyboard-accessible navigation targets with visible OpenStreetMap/OpenMapTiles attribution.
+
 ## Version 1.4.2 - Debug Panel API Integration
 
 [2026-05-08 16:45] Version 1.4.2 - Connected debug image generation panel to real Atlas Cloud API. Replaced mock implementation with production fetch + polling logic. Frontend now POSTs to /api/images/generations with prompt + settings (quality, size, format), then polls /api/images/generations/:id every 1s until generation completes. Extracts image URL from outputs[0]. Full error handling for network failures and invalid responses.
