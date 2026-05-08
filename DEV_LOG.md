@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.4.1 - Server Environment Loading
+
+[2026-05-08 16:15] Version 1.4.1 - Added explicit apps/server/.env loading with dotenv. Server startup now validates ATLASCLOUD_API_KEY, PORT, and DATABASE_URL before database initialization and refuses to start on missing or invalid required environment values.
+
 ## Version 1.4.0 - Atlas Image API
 
 [2026-05-07 23:02] Version 1.4.0 - Added Express server startup and Atlas Cloud text-to-image API. Implemented fail-fast environment validation, normalized image generation submit/poll endpoints, strict request validation, and structured error responses.
