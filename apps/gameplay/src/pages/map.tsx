@@ -9,12 +9,14 @@ interface MapPageProps {
   gameState: GameState
   onLocationSelect: (locationId: string) => void
   onBackToDialogue: () => void
+  onShowDebugPanel?: () => void
 }
 
 export default function MapPage({
   gameState,
   onLocationSelect,
   onBackToDialogue,
+  onShowDebugPanel,
 }: MapPageProps) {
   const mapState = gameState.mapState
   if (!mapState) throw new Error('mapState is required')
@@ -45,7 +47,10 @@ export default function MapPage({
           currentLocationId={mapState.currentLocationId}
           onLocationClick={onLocationSelect}
         />
-        <MapNavButton onBackToDialogue={onBackToDialogue} />
+        <MapNavButton
+          onBackToDialogue={onBackToDialogue}
+          onShowDebugPanel={onShowDebugPanel}
+        />
       </MapCanvas>
     </div>
   )

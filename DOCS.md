@@ -11,6 +11,7 @@
 ## Gameplay Interface
 
 - **docs/GAMEPLAY_INTERFACE_REQUIREMENTS.md** — Read when building gameplay UI. Contains architecture, large UI elements, and page flow for Dialogue Display and Map pages.
+- **docs/DEBUG_PANEL_DESIGN_SYSTEM.md** — Read when building image generation debug panel. Contains design system (colors, typography, spacing, components, accessibility) for third page with horizontal layout (input left, preview right).
 
 ## Data Schema Files
 

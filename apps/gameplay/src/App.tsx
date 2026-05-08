@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import DialoguePage from './pages/dialogue'
 import MapPage from './pages/map'
+import DebugImageGenPage from './pages/debug-image-gen'
 import { mockGameState } from './mocks/game-state'
 
-type PageType = 'dialogue' | 'map'
+type PageType = 'dialogue' | 'map' | 'debug-image-gen'
 
 export default function App() {
   const [gameState, setGameState] = useState(mockGameState)
@@ -15,6 +16,10 @@ export default function App() {
 
   const handleBackToDialogue = () => {
     setCurrentPage('dialogue')
+  }
+
+  const handleShowDebugPanel = () => {
+    setCurrentPage('debug-image-gen')
   }
 
   const handleLocationSelect = (locationId: string) => {
@@ -40,13 +45,20 @@ export default function App() {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {currentPage === 'dialogue' ? (
-        <DialoguePage gameState={gameState} onShowMap={handleShowMap} />
-      ) : (
+        <DialoguePage
+          gameState={gameState}
+          onShowMap={handleShowMap}
+          onShowDebugPanel={handleShowDebugPanel}
+        />
+      ) : currentPage === 'map' ? (
         <MapPage
           gameState={gameState}
           onLocationSelect={handleLocationSelect}
           onBackToDialogue={handleBackToDialogue}
+          onShowDebugPanel={handleShowDebugPanel}
         />
+      ) : (
+        <DebugImageGenPage onBackToDialogue={handleBackToDialogue} />
       )}
     </div>
   )
