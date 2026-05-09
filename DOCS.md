@@ -3,6 +3,7 @@
 ## Development Rules
 
 - **CLAUDE.md** - Read first when starting work. Contains 6 core development rules: fail directly, frontend-first development, UI/UX skill usage, file organization, file creation permissions, and development logging requirements.
+- **docs/CLEANUP_AND_REORG_PLAN.md** - Read when cleaning repository structure, separating backend providers, or reorganizing gameplay components.
 
 ## World Design
 
