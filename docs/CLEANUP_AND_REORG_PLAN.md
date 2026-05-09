@@ -10,8 +10,6 @@ This document records what is currently messy in the repository and the plan to 
 
 Several docs and reference artifacts describe older implementation states or transient work instead of current structure.
 
-- `openworld_layout_grid.jpg` is a reference artifact, not a canonical design input.
-
 ### 2. Backend concerns are mixed together
 
 The server currently contains several kinds of work in one area:

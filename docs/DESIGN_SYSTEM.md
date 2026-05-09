@@ -2,8 +2,6 @@
 
 OpenWorld uses a premium visual novel interface built from three materials: black coated paper, Liquid Glass, and laser holographic foil.
 
-Reference layout image with coordinate grid: [openworld_layout_grid.jpg](../openworld_layout_grid.jpg)
-
 ---
 
 ## Design Direction
