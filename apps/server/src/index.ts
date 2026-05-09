@@ -10,18 +10,16 @@ async function main() {
     const env = loadServerEnv();
     await initializeDatabase();
 
-    const atlasImageClient = new AtlasImageClient({
-      apiKey: env.atlasCloudApiKey,
-    });
-    const localBackgroundRemovalService = new LocalBackgroundRemovalService();
-    const falBackgroundClient = new FalBackgroundClient({
-      apiKey: env.faiApiKey,
-    });
-    const app = createApp({
-      atlasImageClient,
-      localBackgroundRemovalService,
-      falBackgroundClient,
-    });
+    const serverServices = {
+      atlasImageClient: new AtlasImageClient({
+        apiKey: env.atlasCloudApiKey,
+      }),
+      localBackgroundRemovalService: new LocalBackgroundRemovalService(),
+      falBackgroundClient: new FalBackgroundClient({
+        apiKey: env.faiApiKey,
+      }),
+    };
+    const app = createApp(serverServices);
 
     app.listen(env.port, () => {
       console.log(`Server listening on port ${env.port}`);

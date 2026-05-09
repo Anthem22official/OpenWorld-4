@@ -6,7 +6,7 @@ import { AtlasImageClient } from '../features/image-generation/providers/atlas-i
 import { createImageGenerationRouter } from '../features/image-generation/routes/image-generation-route';
 import { createLocalBackgroundRemovalRouter } from '../features/background-removal/routes/local-background-removal-route';
 
-interface CreateAppOptions {
+interface ServerServices {
   atlasImageClient: AtlasImageClient;
   localBackgroundRemovalService: LocalBackgroundRemovalService;
   falBackgroundClient: FalBackgroundClient;
@@ -16,7 +16,7 @@ export function createApp({
   atlasImageClient,
   localBackgroundRemovalService,
   falBackgroundClient,
-}: CreateAppOptions) {
+}: ServerServices) {
   const app = express();
 
   app.use(express.json());
