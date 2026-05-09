@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import LiquidGlass from 'liquid-glass-react'
-import { Choice } from '../types/game'
+import { Choice } from '../../../types/game'
 
 interface ChoicePanelProps {
   choices: Choice[]

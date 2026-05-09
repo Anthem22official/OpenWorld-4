@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { GameState } from '../types/game'
-import { dialogueNodes } from '../mocks/game-state'
-import CharacterArea from '../components/character-area'
-import DialogueBox from '../components/dialogue-box'
-import ChoicePanel from '../components/choice-panel'
+import { GameState } from '../../types/game'
+import { dialogueNodes } from '../../mocks/game-state'
+import CharacterArea from './components/character-area'
+import DialogueBox from './components/dialogue-box'
+import ChoicePanel from './components/choice-panel'
 
 interface DialoguePageProps {
   gameState: GameState

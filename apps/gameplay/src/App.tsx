@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import DialoguePage from './pages/dialogue'
+import DialoguePage from './scenes/dialogue/dialogue-page'
 import MapPage from './pages/map'
 import LegacyMapPage from './pages/legacy-map'
 import DebugImageGenPage from './pages/debug-image-gen'

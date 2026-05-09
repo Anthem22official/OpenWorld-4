@@ -12,10 +12,10 @@
 ## Gameplay Interface
 
 - **docs/DESIGN_SYSTEM.md** - Read when styling gameplay UI or the style gallery. Defines the black coated paper, Liquid Glass, and laser holographic foil redesign, including layout coordinates, color tokens, component patterns, and accessibility rules.
-- **apps/gameplay/src/pages/dialogue.tsx** - Read when changing dialogue flow, typewriter gating, or option selection timing.
-- **apps/gameplay/src/components/dialogue-box.tsx** - Read when changing typed dialogue rendering or speaker display.
-- **apps/gameplay/src/components/choice-panel.tsx** - Read when changing option hover, choosing, disappearance, or reset behavior.
-- **apps/gameplay/src/components/character-area.tsx** - Read when changing dialogue sprite framing or the Alex cutout presentation.
+- **apps/gameplay/src/scenes/dialogue/dialogue-page.tsx** - Read when changing dialogue flow, typewriter gating, or option selection timing.
+- **apps/gameplay/src/scenes/dialogue/components/dialogue-box.tsx** - Read when changing typed dialogue rendering or speaker display.
+- **apps/gameplay/src/scenes/dialogue/components/choice-panel.tsx** - Read when changing option hover, choosing, disappearance, or reset behavior.
+- **apps/gameplay/src/scenes/dialogue/components/character-area.tsx** - Read when changing dialogue sprite framing or the Alex cutout presentation.
 - **apps/gameplay/public/assets/alex/** - Runtime Alex sprite assets used by the dialogue scene. Read when replacing or adding Alex placeholder images.
 
 ## Data Schema Files
