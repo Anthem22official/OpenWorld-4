@@ -1,7 +1,7 @@
 import { initializeDatabase } from './db/init';
 import { AtlasImageClient } from './atlas/atlas-image-client';
 import { LocalBackgroundRemovalService } from './background-removal/local-background-removal-service';
-import { ModelslabBackgroundClient } from './modelslab/modelslab-background-client';
+import { FalBackgroundClient } from './fal/fal-background-client';
 import { loadServerEnv } from './config/env';
 import { createApp } from './http/create-app';
 
@@ -14,13 +14,13 @@ async function main() {
       apiKey: env.atlasCloudApiKey,
     });
     const localBackgroundRemovalService = new LocalBackgroundRemovalService();
-    const modelslabBackgroundClient = new ModelslabBackgroundClient({
-      apiKey: env.modelslabApiKey,
+    const falBackgroundClient = new FalBackgroundClient({
+      apiKey: env.faiApiKey,
     });
     const app = createApp({
       atlasImageClient,
       localBackgroundRemovalService,
-      modelslabBackgroundClient,
+      falBackgroundClient,
     });
 
     app.listen(env.port, () => {
