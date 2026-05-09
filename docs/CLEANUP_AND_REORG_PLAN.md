@@ -104,7 +104,8 @@ Suggested shape:
 - `components/shared`
 - `components/dialogue`
 - `components/map`
-- `components/debug`
+- `tools/debug-image-gen`
+- `tools/style-gallery`
 - `pages`
 
 Rules:
