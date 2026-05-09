@@ -1,9 +1,9 @@
 import express, { type ErrorRequestHandler } from 'express';
-import { AtlasImageClient } from '../atlas/atlas-image-client';
 import { LocalBackgroundRemovalService } from '../features/background-removal/providers/local-python-background-removal-service';
 import { FalBackgroundClient } from '../features/background-removal/providers/fal-background-client';
 import { createBackgroundRemovalRouter } from '../features/background-removal/routes/fal-background-removal-route';
-import { createImageGenerationRouter } from '../routes/image-generation';
+import { AtlasImageClient } from '../features/image-generation/providers/atlas-image-client';
+import { createImageGenerationRouter } from '../features/image-generation/routes/image-generation-route';
 import { createLocalBackgroundRemovalRouter } from '../features/background-removal/routes/local-background-removal-route';
 
 interface CreateAppOptions {

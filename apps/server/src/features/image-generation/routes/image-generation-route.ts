@@ -6,7 +6,7 @@ import {
   IMAGE_OUTPUT_FORMATS,
   IMAGE_QUALITIES,
   IMAGE_SIZES,
-} from '../atlas/atlas-image-client';
+} from '../providers/atlas-image-client';
 
 const createImageGenerationSchema = z
   .object({
