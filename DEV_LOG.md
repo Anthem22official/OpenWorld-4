@@ -1,5 +1,21 @@
 # Development Log
 
+## Version 1.6.2.a - Dialogue, Gallery, Assets, and Modelslab Integration
+
+[2026-05-09 14:11] Version 1.6.2.a - Rebuilt the dialogue scene around a typewriter dialogue box, delayed option selection, and a transparent half-body Alex sprite frame. Also expanded the gallery demos to cover hover-hold, choosing, disappearance, reset, and replay behavior so the interaction lifecycle is visible before it is reused elsewhere.
+
+[2026-05-09 14:11] Version 1.6.2.a - Generated Alex placeholder sprite variants, consolidated all Alex assets under `apps/gameplay/public/assets/alex/`, and added a Modelslab background-removal client and Express route in `apps/server` with fail-fast `MODELSLAB_API_KEY` loading.
+
+[2026-05-09 14:11] Version 1.6.2.a - Python `rembg` background-removal path is present in the server but has not been tested yet.
+
+## Version 1.6.1 - Local Python Background Removal
+
+[2026-05-09 14:07] Version 1.6.1 - Added a new local background-removal route in `apps/server` that accepts multipart image uploads, runs a Python `rembg` pipeline, and returns a transparent PNG. The existing Modelslab background-removal route remains intact as a separate option.
+
+## Version 1.6.0.a - UI/UX Redesign Gallery Prototype
+
+[2026-05-08 19:13] Version 1.6.0.a — Rebuilt the gameplay design system around black coated paper, Liquid Glass, and laser holographic foil, then added a React 19 style gallery prototype using `liquid-glass-react`. The UI/UX redesign is still in process; this version demonstrates the material direction and interaction language but is not the final gameplay UI.
+
 ## Version 1.5.1 - Debug Panel API Bug Fixes
 
 [2026-05-08 17:50] Version 1.5.1 - Fixed three critical bugs preventing end-to-end image generation: (1) Backend's readStringArray/readBooleanArray didn't handle null values from Atlas—now treats null as undefined; (2) Frontend polling loop checked for wrong status—Atlas returns "completed" not "succeeded"; (3) Frontend lacked Vite proxy for /api routes to backend. Verified end-to-end: POST returns prediction ID, polling returns completed status with image URL from outputs[0].

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 export interface ServerEnv {
   atlasCloudApiKey: string;
+  modelslabApiKey: string;
   port: number;
   databaseUrl: string;
 }
@@ -36,6 +37,7 @@ function parsePort(value: string): number {
 export function loadServerEnv(): ServerEnv {
   return {
     atlasCloudApiKey: requireEnv('ATLASCLOUD_API_KEY'),
+    modelslabApiKey: requireEnv('MODELSLAB_API_KEY'),
     port: parsePort(requireEnv('PORT')),
     databaseUrl: requireEnv('DATABASE_URL'),
   };

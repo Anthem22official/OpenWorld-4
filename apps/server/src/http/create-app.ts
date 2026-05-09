@@ -1,16 +1,34 @@
 import express, { type ErrorRequestHandler } from 'express';
 import { AtlasImageClient } from '../atlas/atlas-image-client';
+import { LocalBackgroundRemovalService } from '../background-removal/local-background-removal-service';
+import { ModelslabBackgroundClient } from '../modelslab/modelslab-background-client';
+import { createBackgroundRemovalRouter } from '../routes/background-removal';
 import { createImageGenerationRouter } from '../routes/image-generation';
+import { createLocalBackgroundRemovalRouter } from '../routes/local-background-removal';
 
 interface CreateAppOptions {
   atlasImageClient: AtlasImageClient;
+  localBackgroundRemovalService: LocalBackgroundRemovalService;
+  modelslabBackgroundClient: ModelslabBackgroundClient;
 }
 
-export function createApp({ atlasImageClient }: CreateAppOptions) {
+export function createApp({
+  atlasImageClient,
+  localBackgroundRemovalService,
+  modelslabBackgroundClient,
+}: CreateAppOptions) {
   const app = express();
 
   app.use(express.json());
   app.use('/api/images', createImageGenerationRouter({ atlasImageClient }));
+  app.use(
+    '/api/images/background-removals',
+    createBackgroundRemovalRouter({ modelslabBackgroundClient }),
+  );
+  app.use(
+    '/api/images/background-removals/local',
+    createLocalBackgroundRemovalRouter({ localBackgroundRemovalService }),
+  );
 
   app.use((request, response) => {
     response.status(404).json({

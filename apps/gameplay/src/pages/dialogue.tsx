@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { GameState } from '../types/game'
 import { dialogueNodes } from '../mocks/game-state'
 import CharacterArea from '../components/character-area'
@@ -9,254 +9,131 @@ interface DialoguePageProps {
   gameState: GameState
   onShowMap?: () => void
   onShowDebugPanel?: () => void
+  onShowStyleGallery?: () => void
 }
 
 export default function DialoguePage({
   gameState,
   onShowMap,
   onShowDebugPanel,
+  onShowStyleGallery,
 }: DialoguePageProps) {
   const [currentDialogueId, setCurrentDialogueId] = useState(gameState.currentDialogueId)
+  const [isDialogueTyping, setIsDialogueTyping] = useState(false)
+  const handleTypingChange = useCallback((isTyping: boolean) => {
+    setIsDialogueTyping(isTyping)
+  }, [])
 
   const currentDialogue = dialogueNodes[currentDialogueId]
-  const hasChoices = currentDialogue.choices && currentDialogue.choices.length > 0
+  if (!currentDialogue) throw new Error(`Dialogue node not found: ${currentDialogueId}`)
+
+  const hasChoices = !!currentDialogue.choices?.length
 
   const handleContinue = () => {
-    if (currentDialogue.nextDialogueId) {
-      setCurrentDialogueId(currentDialogue.nextDialogueId)
-    }
+    if (isDialogueTyping) return
+    if (!currentDialogue.nextDialogueId) throw new Error('nextDialogueId is required to continue')
+    setCurrentDialogueId(currentDialogue.nextDialogueId)
   }
 
   const handleChoice = (choiceId: string) => {
-    if (!currentDialogue.choices) return
-    const choice = currentDialogue.choices.find((c) => c.id === choiceId)
-    if (choice) {
-      setCurrentDialogueId(choice.nextDialogueId)
-    }
+    if (!currentDialogue.choices) throw new Error('choices are required to choose')
+
+    const choice = currentDialogue.choices.find((item) => item.id === choiceId)
+    if (!choice) throw new Error(`Choice not found: ${choiceId}`)
+
+    setCurrentDialogueId(choice.nextDialogueId)
   }
 
-  // Keyboard listener for space/enter to continue
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'Enter') {
-        e.preventDefault()
-        if (hasChoices) return
-        // Only continue if there's a next dialogue
-        if (currentDialogue.nextDialogueId) {
-          handleContinue()
-        }
-      }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' && event.code !== 'Enter') return
+
+      event.preventDefault()
+      if (hasChoices || isDialogueTyping || !currentDialogue.nextDialogueId) return
+
+      handleContinue()
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentDialogueId])
+  }, [currentDialogueId, hasChoices, isDialogueTyping, currentDialogue.nextDialogueId])
 
   return (
     <div
+      className="dialogue-stage"
+      data-can-continue={!hasChoices && !isDialogueTyping && !!currentDialogue.nextDialogueId}
       onClick={() => {
-        if (!hasChoices && currentDialogue.nextDialogueId) {
-          handleContinue()
-        }
-      }}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        backgroundColor: '#1a1a2e',
-        backgroundImage: 'linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-        cursor: !hasChoices && currentDialogue.nextDialogueId ? 'pointer' : 'default',
+        if (!hasChoices && !isDialogueTyping && currentDialogue.nextDialogueId) handleContinue()
       }}
     >
-      {/* Character Sprite - Full Screen Center */}
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '40px',
-        }}
-      >
+      <header className="dialogue-status black-coated-paper" onClick={(event) => event.stopPropagation()}>
+        <div>
+          <span className="dialogue-status__label">Chapter 01</span>
+          <strong>Sharp Evening</strong>
+        </div>
+        <div className="dialogue-status__center">
+          <span>18:42</span>
+          <span>{gameState.currentLocation}</span>
+        </div>
+        <div className="dialogue-hud-actions">
+          {onShowMap && (
+            <button className="dialogue-hud-button" type="button" onClick={onShowMap}>
+              Map
+            </button>
+          )}
+          {onShowDebugPanel && (
+            <button className="dialogue-hud-button" type="button" onClick={onShowDebugPanel}>
+              Debug
+            </button>
+          )}
+          {onShowStyleGallery && (
+            <button className="dialogue-hud-button dialogue-hud-button--active" type="button" onClick={onShowStyleGallery}>
+              Gallery
+            </button>
+          )}
+          <div className="dialogue-menu-corner" aria-label="Menu">
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+      </header>
+
+      <div className="dialogue-scene">
+        <aside className="dialogue-chapter-card black-coated-paper" onClick={(event) => event.stopPropagation()}>
+          <p className="dialogue-eyebrow">Current Scene</p>
+          <h2>Shibuya Crossing</h2>
+          <p>The city lights fold into the crowd while the conversation narrows to one decision.</p>
+          <div className="dialogue-progress" aria-hidden="true">
+            <span />
+          </div>
+        </aside>
+
         <CharacterArea speaker={currentDialogue.speaker} />
+
+        {hasChoices && (
+          <aside className="dialogue-choice-dock" onClick={(event) => event.stopPropagation()}>
+            <ChoicePanel choices={currentDialogue.choices || []} onChoose={handleChoice} />
+          </aside>
+        )}
       </div>
 
-      {/* Bottom UI Panel - Fixed Height */}
-      <div
-        style={{
-          backgroundColor: 'rgba(15, 52, 96, 0.95)',
-          borderTop: '3px solid var(--color-lavender)',
-          backdropFilter: 'blur(10px)',
-          padding: '24px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          position: 'relative',
-          height: '220px',
-          flexShrink: 0,
-          boxSizing: 'border-box',
+      <footer
+        className="dialogue-footer"
+        onClick={() => {
+          if (!hasChoices && !isDialogueTyping && currentDialogue.nextDialogueId) handleContinue()
         }}
       >
-        {/* Dialogue Box */}
-        <DialogueBox speaker={currentDialogue.speaker} text={currentDialogue.text} />
+        <DialogueBox speaker={currentDialogue.speaker} text={currentDialogue.text} onTypingChange={handleTypingChange} />
 
-        {/* Control Row - Continue Indicator + Buttons */}
         <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            height: '20px',
-            gap: '8px',
-          }}
+          className="dialogue-continue"
+          data-visible={!hasChoices && !isDialogueTyping && !!currentDialogue.nextDialogueId}
+          aria-hidden={hasChoices || isDialogueTyping || !currentDialogue.nextDialogueId}
         >
-          {/* Continue Indicator */}
-          <div
-            style={{
-              fontSize: '12px',
-              color: 'rgba(159, 122, 234, 0.6)',
-              fontFamily: 'var(--font-sans)',
-              visibility: !hasChoices && currentDialogue.nextDialogueId ? 'visible' : 'hidden',
-              animation: 'pulse 1.5s ease-in-out infinite',
-            }}
-          >
-            <style>{`
-              @keyframes pulse {
-                0%, 100% { opacity: 0.6; }
-                50% { opacity: 1; }
-              }
-            `}</style>
-            Click or press SPACE to continue ▼
-          </div>
-
-          {/* Button Group */}
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {/* Map Button */}
-            {onShowMap && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onShowMap()
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: 'transparent',
-                  border: '1px solid rgba(159, 122, 234, 0.5)',
-                  borderRadius: '4px',
-                  color: 'rgba(159, 122, 234, 0.8)',
-                  fontSize: '12px',
-                  fontFamily: 'var(--font-sans)',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 150ms ease-in-out',
-                  outline: 'none',
-                }}
-                onMouseEnter={(e) => {
-                  const target = e.currentTarget as HTMLButtonElement
-                  target.style.backgroundColor = 'rgba(159, 122, 234, 0.1)'
-                  target.style.borderColor = 'rgba(159, 122, 234, 1)'
-                  target.style.color = '#9F7AEA'
-                }}
-                onMouseLeave={(e) => {
-                  const target = e.currentTarget as HTMLButtonElement
-                  target.style.backgroundColor = 'transparent'
-                  target.style.borderColor = 'rgba(159, 122, 234, 0.5)'
-                  target.style.color = 'rgba(159, 122, 234, 0.8)'
-                }}
-              >
-                Map
-              </button>
-            )}
-
-            {/* Debug Panel Button */}
-            {onShowDebugPanel && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onShowDebugPanel()
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: 'transparent',
-                  border: '1px solid rgba(139, 92, 246, 0.5)',
-                  borderRadius: '4px',
-                  color: 'rgba(139, 92, 246, 0.8)',
-                  fontSize: '12px',
-                  fontFamily: 'var(--font-sans)',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 150ms ease-in-out',
-                  outline: 'none',
-                }}
-                onMouseEnter={(e) => {
-                  const target = e.currentTarget as HTMLButtonElement
-                  target.style.backgroundColor = 'rgba(139, 92, 246, 0.1)'
-                  target.style.borderColor = 'rgba(139, 92, 246, 1)'
-                  target.style.color = '#8B5CF6'
-                }}
-                onMouseLeave={(e) => {
-                  const target = e.currentTarget as HTMLButtonElement
-                  target.style.backgroundColor = 'transparent'
-                  target.style.borderColor = 'rgba(139, 92, 246, 0.5)'
-                  target.style.color = 'rgba(139, 92, 246, 0.8)'
-                }}
-              >
-                Debug
-              </button>
-            )}
-          </div>
+          Click or press Space to continue
         </div>
-      </div>
-
-      {/* Choices Modal - Center Pop-up */}
-      {hasChoices && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 100,
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div
-            style={{
-              backgroundColor: 'rgba(15, 52, 96, 0.95)',
-              border: '2px solid var(--color-lavender)',
-              borderRadius: '8px',
-              padding: '32px',
-              maxWidth: '500px',
-              width: '90%',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0 0 40px rgba(159, 122, 234, 0.4)',
-            }}
-          >
-            <h3
-              style={{
-                fontSize: '14px',
-                color: 'var(--color-lavender)',
-                marginBottom: '20px',
-                fontFamily: 'var(--font-sans)',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              What will you do?
-            </h3>
-            <ChoicePanel choices={currentDialogue.choices || []} onChoose={handleChoice} />
-          </div>
-        </div>
-      )}
+      </footer>
     </div>
   )
 }

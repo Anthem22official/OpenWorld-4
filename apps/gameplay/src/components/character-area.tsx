@@ -1,39 +1,17 @@
 interface CharacterAreaProps {
-  speaker?: string // Speaker name or character ID
+  speaker?: string
 }
 
 export default function CharacterArea({ speaker }: CharacterAreaProps) {
   return (
-    <div
-      style={{
-        maxWidth: '500px',
-        maxHeight: '600px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        filter: 'drop-shadow(0 0 20px rgba(159, 122, 234, 0.3))',
-      }}
-    >
-      <div
-        style={{
-          width: '300px',
-          height: '500px',
-          backgroundColor: 'rgba(159, 122, 234, 0.1)',
-          borderRadius: '12px',
-          border: '2px dashed var(--color-lavender)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--color-lavender)',
-          fontSize: '16px',
-          textAlign: 'center',
-          padding: '20px',
-          flexDirection: 'column',
-          gap: '12px',
-        }}
-      >
-        <div>Character sprite placeholder</div>
-        {speaker && <div style={{ fontSize: '14px', opacity: 0.7 }}>({speaker})</div>}
+    <div className="dialogue-character-area" aria-label={speaker ? `${speaker} character area` : 'Scene area'}>
+      <div className="dialogue-scene-light" aria-hidden="true" />
+      <div className="dialogue-character-sprite" aria-hidden="true">
+        <img
+          className="dialogue-character-sprite__image"
+          src="/assets/alex/alex-placeholder-darkgrey-cutout.png"
+          alt=""
+        />
       </div>
     </div>
   )
