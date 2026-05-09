@@ -35,11 +35,11 @@
 
 ## Server Services
 
-- **apps/server/src/routes/local-background-removal.ts** - Read when changing the local image upload endpoint that returns a transparent PNG.
-- **apps/server/src/background-removal/local-background-removal-service.ts** - Read when changing how the server launches and validates the local Python background-removal script.
-- **apps/server/src/background-removal/multipart.ts** - Read when changing upload parsing, file validation, or request size limits for local background removal.
+- **apps/server/src/features/background-removal/routes/local-background-removal-route.ts** - Read when changing the local image upload endpoint that returns a transparent PNG.
+- **apps/server/src/features/background-removal/providers/local-python-background-removal-service.ts** - Read when changing how the server launches and validates the local Python background-removal script.
+- **apps/server/src/features/background-removal/utils/multipart.ts** - Read when changing upload parsing, file validation, or request size limits for local background removal.
 - **apps/server/python/remove_background.py** - Read when changing the Python `rembg` pipeline, edge cleanup, or PNG output behavior.
 - **apps/server/python/requirements.txt** - Read when changing the Python runtime dependencies for local background removal.
-- **apps/server/src/routes/background-removal.ts** - Read when changing the fal background-removal endpoint.
-- **apps/server/src/fal/fal-background-client.ts** - Read when changing the fal request payload, polling, error handling, or response normalization.
+- **apps/server/src/features/background-removal/routes/fal-background-removal-route.ts** - Read when changing the fal background-removal endpoint.
+- **apps/server/src/features/background-removal/providers/fal-background-client.ts** - Read when changing the fal request payload, polling, error handling, or response normalization.
 - **apps/server/src/config/env.ts** - Read when changing required server environment variables, including `FAI_API_KEY`.

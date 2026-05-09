@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders, IncomingMessage } from 'node:http';
-import { BackgroundRemovalError } from './errors';
+import { BackgroundRemovalError } from '../errors';
 
 const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
@@ -24,15 +24,12 @@ export async function parseMultipartFormData(request: IncomingMessage): Promise<
     );
   }
 
-  const fetchRequest = new Request(
-    'http://localhost/background-removal/local',
-    {
+  const fetchRequest = new Request('http://localhost/background-removal/local', {
     method: request.method ?? 'POST',
     headers: toHeaders(request.headers),
     body: body as unknown as BodyInit,
     duplex: 'half',
-    } as RequestInit & { duplex: 'half' },
-  );
+  } as RequestInit & { duplex: 'half' });
 
   try {
     return await fetchRequest.formData();

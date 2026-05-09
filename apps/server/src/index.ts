@@ -1,7 +1,7 @@
 import { initializeDatabase } from './db/init';
 import { AtlasImageClient } from './atlas/atlas-image-client';
-import { LocalBackgroundRemovalService } from './background-removal/local-background-removal-service';
-import { FalBackgroundClient } from './fal/fal-background-client';
+import { LocalBackgroundRemovalService } from './features/background-removal/providers/local-python-background-removal-service';
+import { FalBackgroundClient } from './features/background-removal/providers/fal-background-client';
 import { loadServerEnv } from './config/env';
 import { createApp } from './http/create-app';
 

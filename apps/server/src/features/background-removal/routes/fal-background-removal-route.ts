@@ -1,6 +1,6 @@
 import { type Response, Router } from 'express';
 import { z } from 'zod';
-import { FalApiError, FalBackgroundClient } from '../fal/fal-background-client';
+import { FalApiError, FalBackgroundClient } from '../providers/fal-background-client';
 
 const removeBackgroundSchema = z
   .object({

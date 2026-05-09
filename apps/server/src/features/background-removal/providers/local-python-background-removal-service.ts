@@ -4,12 +4,12 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BackgroundRemovalError } from './errors';
+import { BackgroundRemovalError } from '../errors';
 
 const PYTHON_EXECUTABLE = 'python';
 const SCRIPT_PATH = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  '../../python/remove_background.py',
+  '../../../python/remove_background.py',
 );
 
 export class LocalBackgroundRemovalService {
@@ -63,13 +63,9 @@ export class LocalBackgroundRemovalService {
       throw this.runtimeValidationError;
     }
 
-    const dependencyCheck = spawnSync(
-      PYTHON_EXECUTABLE,
-      ['-c', 'import PIL, cv2, numpy, rembg'],
-      {
-        encoding: 'utf8',
-      },
-    );
+    const dependencyCheck = spawnSync(PYTHON_EXECUTABLE, ['-c', 'import PIL, cv2, numpy, rembg'], {
+      encoding: 'utf8',
+    });
 
     if (dependencyCheck.error) {
       this.runtimeValidationError = new BackgroundRemovalError(
@@ -112,7 +108,7 @@ export class LocalBackgroundRemovalService {
           ...(cleanup ? ['--cleanup'] : []),
         ],
         {
-        stdio: ['ignore', 'pipe', 'pipe'],
+          stdio: ['ignore', 'pipe', 'pipe'],
         },
       );
 

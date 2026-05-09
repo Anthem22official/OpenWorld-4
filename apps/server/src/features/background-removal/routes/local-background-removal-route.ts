@@ -1,10 +1,10 @@
 import { type Response, Router } from 'express';
-import { BackgroundRemovalError } from '../background-removal/errors';
+import { BackgroundRemovalError } from '../errors';
 import {
   extractSingleUploadedFile,
   parseMultipartFormData,
-} from '../background-removal/multipart';
-import { LocalBackgroundRemovalService } from '../background-removal/local-background-removal-service';
+} from '../utils/multipart';
+import { LocalBackgroundRemovalService } from '../providers/local-python-background-removal-service';
 
 interface LocalBackgroundRemovalRouterOptions {
   localBackgroundRemovalService: LocalBackgroundRemovalService;
