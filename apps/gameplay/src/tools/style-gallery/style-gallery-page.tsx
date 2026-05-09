@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import ControlDemo from '../components/style-gallery/control-demo'
-import FoilChoiceDemo from '../components/style-gallery/foil-choice-demo'
-import GlassDemoCard from '../components/style-gallery/glass-demo-card'
-import MaterialSwatch from '../components/style-gallery/material-swatch'
-import { materialMetrics, materialSwatches } from '../components/style-gallery/style-gallery-data'
+import ControlDemo from './components/control-demo'
+import FoilChoiceDemo from './components/foil-choice-demo'
+import GlassDemoCard from './components/glass-demo-card'
+import MaterialSwatch from './components/material-swatch'
+import { materialMetrics, materialSwatches } from './components/style-gallery-data'
 
 interface StyleGalleryPageProps {
   onBackToDialogue: () => void

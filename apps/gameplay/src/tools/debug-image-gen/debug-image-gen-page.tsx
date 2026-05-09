@@ -1,7 +1,7 @@
 import { useState, CSSProperties } from 'react'
-import PromptInput from '../components/debug/prompt-input'
-import ImagePreview from '../components/debug/image-preview'
-import ErrorDisplay from '../components/debug/error-display'
+import PromptInput from './components/prompt-input'
+import ImagePreview from './components/image-preview'
+import ErrorDisplay from './components/error-display'
 
 interface DebugImageGenPageProps {
   onBackToDialogue: () => void
