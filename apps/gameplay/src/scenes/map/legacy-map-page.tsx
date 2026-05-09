@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { GameState } from '../types/game'
-import StatusBar from '../components/status-bar'
-import MapCanvas from '../components/map-canvas'
-import LocationPoints from '../components/location-points'
-import MapNavButton from '../components/map-nav-button'
+import { GameState } from '../../types/game'
+import StatusBar from './components/status-bar'
+import MapCanvas from './components/map-canvas'
+import LocationPoints from './components/location-points'
+import MapNavButton from './components/map-nav-button'
 
 interface LegacyMapPageProps {
   gameState: GameState

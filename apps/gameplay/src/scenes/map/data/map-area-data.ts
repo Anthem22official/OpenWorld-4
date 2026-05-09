@@ -1,4 +1,4 @@
-import { Location } from '../types/game'
+import { Location } from '../../../types/game'
 import {
   OsmRenderLine,
   OsmRenderPolygon,

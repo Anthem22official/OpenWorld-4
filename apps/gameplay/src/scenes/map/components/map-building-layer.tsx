@@ -1,6 +1,6 @@
 import { KeyboardEvent, useState } from 'react'
-import { Location } from '../types/game'
-import { MapAreaMap, getLocationForBuilding } from './map-area-data'
+import { Location } from '../../../types/game'
+import { MapAreaMap, getLocationForBuilding } from '../data/map-area-data'
 
 interface MapBuildingLayerProps {
   areaMap: MapAreaMap

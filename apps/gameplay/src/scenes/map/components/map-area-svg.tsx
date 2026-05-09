@@ -1,6 +1,6 @@
-import { Location } from '../types/game'
+import { Location } from '../../../types/game'
 import MapBuildingLayer from './map-building-layer'
-import { MapAreaMap } from './map-area-data'
+import { MapAreaMap } from '../data/map-area-data'
 
 interface MapAreaSvgProps {
   areaMap: MapAreaMap

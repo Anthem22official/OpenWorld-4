@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { GameState, Location } from '../types/game'
-import MapShell from '../components/map-shell'
-import { getArea, getAreaMap } from '../components/map-area-data'
+import { GameState, Location } from '../../types/game'
+import MapShell from './components/map-shell'
+import { getArea, getAreaMap } from './data/map-area-data'
 
 interface MapPageProps {
   gameState: GameState

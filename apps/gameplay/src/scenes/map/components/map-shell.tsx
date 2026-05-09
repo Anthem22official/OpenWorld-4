@@ -1,7 +1,7 @@
-import { Location } from '../types/game'
+import { Location } from '../../../types/game'
 import { CSSProperties } from 'react'
 import MapAreaSvg from './map-area-svg'
-import { MapArea, MapAreaMap, mapAttribution } from './map-area-data'
+import { MapArea, MapAreaMap, mapAttribution } from '../data/map-area-data'
 
 interface MapShellProps {
   area: MapArea
