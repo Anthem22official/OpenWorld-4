@@ -11,14 +11,12 @@
 
 ## Gameplay Interface
 
-- **docs/GAMEPLAY_INTERFACE_REQUIREMENTS.md** - Read when building gameplay UI. Contains architecture, large UI elements, and page flow for Dialogue Display and Map pages.
 - **docs/DESIGN_SYSTEM.md** - Read when styling gameplay UI or the style gallery. Defines the black coated paper, Liquid Glass, and laser holographic foil redesign, including layout coordinates, color tokens, component patterns, and accessibility rules.
 - **apps/gameplay/src/pages/dialogue.tsx** - Read when changing dialogue flow, typewriter gating, or option selection timing.
 - **apps/gameplay/src/components/dialogue-box.tsx** - Read when changing typed dialogue rendering or speaker display.
 - **apps/gameplay/src/components/choice-panel.tsx** - Read when changing option hover, choosing, disappearance, or reset behavior.
 - **apps/gameplay/src/components/character-area.tsx** - Read when changing dialogue sprite framing or the Alex cutout presentation.
 - **apps/gameplay/public/assets/alex/** - Runtime Alex sprite assets used by the dialogue scene. Read when replacing or adding Alex placeholder images.
-- **docs/DEBUG_PANEL_DESIGN_SYSTEM.md** - Read when building image generation debug panel. Contains design system (colors, typography, spacing, components, accessibility) for third page with horizontal layout (input left, preview right). Debug panel fully integrated with Atlas Cloud API: POST to /api/images/generations, poll /api/images/generations/:id until status "completed", extract image URL from outputs[0].
 
 ## Data Schema Files
 

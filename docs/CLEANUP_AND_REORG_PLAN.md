@@ -8,12 +8,9 @@ This document records what is currently messy in the repository and the plan to 
 
 ### 1. Documentation drift
 
-Several docs describe older implementation states or transient work instead of current structure.
+Several docs and reference artifacts describe older implementation states or transient work instead of current structure.
 
-- `PHASE_4_TODO.md` reads like an old task list rather than a living plan.
-- `docs/DEBUG_PANEL_DESIGN_SYSTEM.md` still describes the Atlas debug panel in a way that overlaps with broader gameplay styling decisions.
-- `docs/GAMEPLAY_INTERFACE_REQUIREMENTS.md` is still useful as a requirements reference, but it is aging and needs to be treated as a baseline, not the source of truth for implementation details.
-- `openworld_layout_grid.jpg` and `mock_image/background.png` are reference artifacts, not canonical design inputs.
+- `openworld_layout_grid.jpg` is a reference artifact, not a canonical design input.
 
 ### 2. Backend concerns are mixed together
 
