@@ -8,6 +8,7 @@ export interface DialogueNode {
   id: string
   speaker?: string // Speaker name (undefined = narration) or character ID
   text: string
+  voiceAssetKey?: string // Optional database asset key for a WAV voice line
   nextDialogueId?: string // Auto-advance to next paragraph (fixed script)
   choices?: Choice[] // OR show player choice (branching decision)
 }
@@ -19,6 +20,7 @@ export interface Location {
   y: number // Percentage (0-100)
   visited: boolean
   description?: string
+  backgroundAssetKey?: string // Optional database asset key for a location background image
   areaId?: string
   areaMapId?: string
   buildingId?: string

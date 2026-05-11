@@ -5,6 +5,8 @@ import { createBackgroundRemovalRouter } from '../features/background-removal/ro
 import { AtlasImageClient } from '../features/image-generation/providers/atlas-image-client';
 import { createImageGenerationRouter } from '../features/image-generation/routes/image-generation-route';
 import { createLocalBackgroundRemovalRouter } from '../features/background-removal/routes/local-background-removal-route';
+import { createGameBootstrapRouter } from '../features/game/routes/game-bootstrap-route';
+import { prisma } from '../db/init';
 
 interface ServerServices {
   atlasImageClient: AtlasImageClient;
@@ -20,6 +22,7 @@ export function createApp({
   const app = express();
 
   app.use(express.json());
+  app.use('/api/game', createGameBootstrapRouter({ prisma }));
   app.use('/api/images', createImageGenerationRouter({ atlasImageClient }));
   app.use(
     '/api/images/background-removals/local',

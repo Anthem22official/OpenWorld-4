@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useState } from 'react'
-import { GameState } from '../../types/game'
-import { dialogueNodes } from '../../mocks/game-state'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { DialogueNode, GameState } from '../../types/game'
 import CharacterArea from './components/character-area'
 import DialogueBox from './components/dialogue-box'
 import ChoicePanel from './components/choice-panel'
+import { CONVERSATION_MUSIC_TITLE, MUSIC_STATE_EVENT, MusicStateDetail } from '../../audio/music-handler'
+import { createDialogueVoicePlayer, DialogueVoicePlayer } from './dialogue-voice-player'
 
 interface DialoguePageProps {
   gameState: GameState
+  dialogueNodes: Record<string, DialogueNode>
   currentDialogueId: string
   onDialogueChange: (dialogueId: string) => void
   onShowMap?: () => void
@@ -17,6 +19,7 @@ interface DialoguePageProps {
 
 export default function DialoguePage({
   gameState,
+  dialogueNodes,
   currentDialogueId,
   onDialogueChange,
   onShowMap,
@@ -25,6 +28,8 @@ export default function DialoguePage({
   onShowStyleGallery,
 }: DialoguePageProps) {
   const [isDialogueTyping, setIsDialogueTyping] = useState(false)
+  const [musicState, setMusicState] = useState<MusicStateDetail | null>(null)
+  const voicePlayerRef = useRef<DialogueVoicePlayer | null>(null)
   const handleTypingChange = useCallback((isTyping: boolean) => {
     setIsDialogueTyping(isTyping)
   }, [])
@@ -37,6 +42,7 @@ export default function DialoguePage({
   const handleContinue = () => {
     if (isDialogueTyping) return
     if (!currentDialogue.nextDialogueId) throw new Error('nextDialogueId is required to continue')
+    voicePlayerRef.current?.stop()
     onDialogueChange(currentDialogue.nextDialogueId)
   }
 
@@ -46,8 +52,23 @@ export default function DialoguePage({
     const choice = currentDialogue.choices.find((item) => item.id === choiceId)
     if (!choice) throw new Error(`Choice not found: ${choiceId}`)
 
+    voicePlayerRef.current?.stop()
     onDialogueChange(choice.nextDialogueId)
   }
+
+  useEffect(() => {
+    const voicePlayer = createDialogueVoicePlayer()
+    voicePlayerRef.current = voicePlayer
+
+    return () => {
+      voicePlayer.dispose()
+      voicePlayerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    voicePlayerRef.current?.play(currentDialogue.voiceAssetKey)
+  }, [currentDialogueId, currentDialogue.voiceAssetKey])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -63,6 +84,20 @@ export default function DialoguePage({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [currentDialogueId, hasChoices, isDialogueTyping, currentDialogue.nextDialogueId])
 
+  useEffect(() => {
+    const handleMusicState = (event: Event) => {
+      const musicEvent = event as CustomEvent<MusicStateDetail>
+      setMusicState(musicEvent.detail)
+    }
+
+    window.addEventListener(MUSIC_STATE_EVENT, handleMusicState)
+    return () => window.removeEventListener(MUSIC_STATE_EVENT, handleMusicState)
+  }, [])
+
+  const musicTitle = musicState?.title ?? CONVERSATION_MUSIC_TITLE
+  const musicProgress = musicState?.duration ? `${Math.min(100, (musicState.currentTime / musicState.duration) * 100)}%` : '0%'
+  const musicLength = musicState?.duration ? `${formatMusicTime(musicState.currentTime)} / ${formatMusicTime(musicState.duration)}` : 'loading'
+
   return (
     <div
       className="dialogue-stage"
@@ -72,9 +107,20 @@ export default function DialoguePage({
       }}
     >
       <header className="dialogue-status black-coated-paper" onClick={(event) => event.stopPropagation()}>
-        <div>
+        <div className="dialogue-status__scene">
           <span className="dialogue-status__label">Chapter 01</span>
-          <strong>Sharp Evening</strong>
+          <div className="dialogue-status__title-row">
+            <strong>Sharp Evening</strong>
+            <div className="dialogue-now-playing" aria-label={`Now playing ${musicTitle}, ${musicLength}`}>
+              <span className="dialogue-now-playing__pulse" aria-hidden="true" />
+              <span className="dialogue-now-playing__label">Playing</span>
+              <span className="dialogue-now-playing__title">{musicTitle}</span>
+              <span className="dialogue-now-playing__length">{musicLength}</span>
+              <span className="dialogue-now-playing__meter" aria-hidden="true">
+                <span style={{ width: musicProgress }} />
+              </span>
+            </div>
+          </div>
         </div>
         <div className="dialogue-status__center">
           <span>18:42</span>
@@ -146,4 +192,13 @@ export default function DialoguePage({
       </footer>
     </div>
   )
+}
+
+function formatMusicTime(seconds: number) {
+  if (!Number.isFinite(seconds)) throw new Error(`Invalid music time: ${seconds}`)
+
+  const roundedSeconds = Math.floor(seconds)
+  const minutes = Math.floor(roundedSeconds / 60)
+  const remainingSeconds = roundedSeconds % 60
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }

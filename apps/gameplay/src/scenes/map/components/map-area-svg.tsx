@@ -28,7 +28,8 @@ interface MapAreaSvgProps {
   areaMap: MapAreaMap
   locations: Location[]
   currentLocationId: string
-  onLocationSelect: (locationId: string) => void
+  onLocationPick: (locationId: string) => void
+  onMapDismiss: () => void
   onBuildingFocus: (location: Location | null) => void
 }
 
@@ -36,7 +37,8 @@ export default function MapAreaSvg({
   areaMap,
   locations,
   currentLocationId,
-  onLocationSelect,
+  onLocationPick,
+  onMapDismiss,
   onBuildingFocus,
 }: MapAreaSvgProps) {
   const baseViewBox = useMemo(() => parseMapViewBox(areaMap.viewBox), [areaMap.viewBox])
@@ -151,6 +153,7 @@ export default function MapAreaSvg({
       onPointerCancel={finishDrag}
       onPointerLeave={cancelPendingDrag}
       onClickCapture={handleClickCapture}
+      onClick={onMapDismiss}
       style={{
         width: '100%',
         height: '100%',
@@ -203,7 +206,7 @@ export default function MapAreaSvg({
         areaMap={areaMap}
         locations={locations}
         currentLocationId={currentLocationId}
-        onLocationSelect={onLocationSelect}
+        onLocationPick={onLocationPick}
         onBuildingFocus={onBuildingFocus}
       />
 

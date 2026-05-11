@@ -1,6 +1,9 @@
+import LiquidGlass from 'liquid-glass-react'
 import { Location } from '../../../types/game'
 import MapAreaSvg from './map-area-svg'
 import { MapArea, MapAreaMap, mapAttribution } from '../data/map-area-data'
+
+const DATABASE_ASSET_PUBLIC_PREFIX = '/assets/database/'
 
 interface MapShellProps {
   area: MapArea
@@ -8,7 +11,10 @@ interface MapShellProps {
   locations: Location[]
   currentLocation: Location
   focusedLocation: Location | null
-  onLocationSelect: (locationId: string) => void
+  selectedLocation: Location | null
+  onLocationPick: (locationId: string) => void
+  onLocationGo: (locationId: string) => void
+  onMapDismiss: () => void
   onBuildingFocus: (location: Location | null) => void
   onBackToDialogue: () => void
   onShowDebugPanel?: () => void
@@ -21,16 +27,18 @@ export default function MapShell({
   locations,
   currentLocation,
   focusedLocation,
-  onLocationSelect,
+  selectedLocation,
+  onLocationPick,
+  onLocationGo,
+  onMapDismiss,
   onBuildingFocus,
   onBackToDialogue,
   onShowDebugPanel,
   onShowLegacyMap,
 }: MapShellProps) {
-  const previewLocation = focusedLocation ?? currentLocation
-  const previewStatus = previewLocation.id === currentLocation.id
+  const panelStatus = selectedLocation?.id === currentLocation.id
     ? 'Current location'
-    : previewLocation.visited
+    : selectedLocation?.visited
       ? 'Visited'
       : 'Undiscovered'
 
@@ -71,27 +79,57 @@ export default function MapShell({
             areaMap={areaMap}
             locations={locations}
             currentLocationId={currentLocation.id}
-            onLocationSelect={onLocationSelect}
+            onLocationPick={onLocationPick}
+            onMapDismiss={onMapDismiss}
             onBuildingFocus={onBuildingFocus}
           />
         </div>
 
-        <section
-          className="map-location-card"
-          aria-live="polite"
-        >
-          <div className="map-location-card__meta">
-            <span>{focusedLocation ? 'Building' : 'Selected'}</span>
-            <span>{previewStatus}</span>
-          </div>
-          <h1>{previewLocation.name}</h1>
-          {previewLocation.description && (
-            <p>{previewLocation.description}</p>
-          )}
-          {previewLocation.id !== currentLocation.id && (
-            <div className="map-location-card__hint">Enter location</div>
-          )}
-        </section>
+        {selectedLocation && (
+          <section
+            className="map-location-card black-coated-paper"
+            aria-live="polite"
+          >
+            <div className="map-location-card__meta">
+              <span>{focusedLocation?.id === selectedLocation.id ? 'Building' : 'Location'}</span>
+              <span>{panelStatus}</span>
+            </div>
+            <div className="map-location-card__image" aria-label={`${selectedLocation.name} image preview`}>
+              {selectedLocation.backgroundAssetKey && (
+                <img
+                  src={resolveLocationBackgroundUrl(selectedLocation.backgroundAssetKey)}
+                  alt=""
+                  aria-hidden="true"
+                />
+              )}
+              <span>{selectedLocation.name}</span>
+            </div>
+            <h1>{selectedLocation.name}</h1>
+            {selectedLocation.description && (
+              <p>{selectedLocation.description}</p>
+            )}
+            <div className="map-location-card__go-glass">
+              <LiquidGlass
+                displacementScale={58}
+                blurAmount={0.06}
+                saturation={136}
+                aberrationIntensity={1.8}
+                elasticity={0.04}
+                cornerRadius={999}
+                padding="0"
+                style={{ position: 'absolute', top: '50%', left: '50%' }}
+              >
+                <button
+                  className="map-location-card__go-button"
+                  type="button"
+                  onClick={() => onLocationGo(selectedLocation.id)}
+                >
+                  Go
+                </button>
+              </LiquidGlass>
+            </div>
+          </section>
+        )}
 
         <div className="map-attribution">
           {mapAttribution}
@@ -99,4 +137,16 @@ export default function MapShell({
       </main>
     </div>
   )
+}
+
+function resolveLocationBackgroundUrl(backgroundAssetKey: string): string {
+  const trimmedKey = backgroundAssetKey.trim()
+  if (trimmedKey.length === 0) throw new Error('Location background asset key cannot be empty')
+  if (trimmedKey.startsWith('/')) throw new Error('Location background asset key must be a storage key, not a public URL')
+  if (trimmedKey.includes('..')) throw new Error('Location background asset key cannot contain parent directory segments')
+  if (!trimmedKey.endsWith('.jpg') && !trimmedKey.endsWith('.jpeg') && !trimmedKey.endsWith('.png')) {
+    throw new Error('Location background asset key must reference an image file')
+  }
+
+  return `${DATABASE_ASSET_PUBLIC_PREFIX}${trimmedKey}`
 }

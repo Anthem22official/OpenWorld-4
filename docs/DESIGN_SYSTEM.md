@@ -197,6 +197,8 @@ Reference image size: `2560 x 1440`.
 
 ### Layout Principles
 
+- Use a fixed screen layout for gameplay and tool pages: the page itself must not scroll. If overflow is unavoidable, constrain scrolling to an internal container and keep that exception rare.
+- Design for the desktop gameplay ratio first. Phone adaptation is not required unless a task explicitly asks for it.
 - Keep the character art dominant and mostly unobstructed.
 - Place choices on the right side where they do not cover the face.
 - Anchor dialogue at the bottom with a wide black coated-paper body and glass rim.

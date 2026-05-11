@@ -1,12 +1,12 @@
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, MouseEvent, useState } from 'react'
 import { Location } from '../../../types/game'
-import { MapAreaMap, getLocationForBuilding } from '../data/map-area-data'
+import { MapAreaMap, getLocationForMapBuilding } from '../data/map-area-data'
 
 interface MapBuildingLayerProps {
   areaMap: MapAreaMap
   locations: Location[]
   currentLocationId: string
-  onLocationSelect: (locationId: string) => void
+  onLocationPick: (locationId: string) => void
   onBuildingFocus: (location: Location | null) => void
 }
 
@@ -14,14 +14,22 @@ export default function MapBuildingLayer({
   areaMap,
   locations,
   currentLocationId,
-  onLocationSelect,
+  onLocationPick,
   onBuildingFocus,
 }: MapBuildingLayerProps) {
   const [activeBuildingId, setActiveBuildingId] = useState<string | null>(null)
 
   const selectBuilding = (buildingId: string) => {
-    const location = getLocationForBuilding(locations, areaMap.id, buildingId)
-    onLocationSelect(location.id)
+    const building = areaMap.buildings.find((candidate) => candidate.id === buildingId)
+    if (!building) throw new Error(`Building ${buildingId} not found`)
+
+    const location = getLocationForMapBuilding(locations, building)
+    onLocationPick(location.id)
+  }
+
+  const handleClick = (event: MouseEvent<SVGGElement>, buildingId: string) => {
+    event.stopPropagation()
+    selectBuilding(buildingId)
   }
 
   const handleKeyDown = (event: KeyboardEvent<SVGGElement>, buildingId: string) => {
@@ -33,7 +41,7 @@ export default function MapBuildingLayer({
   return (
     <g>
       {areaMap.buildings.map((building) => {
-        const location = getLocationForBuilding(locations, areaMap.id, building.id)
+        const location = getLocationForMapBuilding(locations, building)
         const isCurrent = location.id === currentLocationId
         const isActive = activeBuildingId === building.id
         const isVisited = location.visited
@@ -52,7 +60,7 @@ export default function MapBuildingLayer({
             role="button"
             tabIndex={0}
             aria-label={`${location.name}${isCurrent ? ' current location' : ''}`}
-            onClick={() => selectBuilding(building.id)}
+            onClick={(event) => handleClick(event, building.id)}
             onKeyDown={(event) => handleKeyDown(event, building.id)}
             onMouseEnter={() => {
               setActiveBuildingId(building.id)

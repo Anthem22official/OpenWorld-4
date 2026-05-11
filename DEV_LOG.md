@@ -1,8 +1,60 @@
 # Development Log
 
+## Version 1.6.21 - Character Creator and Audio Shell
+
+[2026-05-11 18:51] Version 1.6.21 - Added the mocked character creator flow, database-backed character gallery empty states, page-aware background music with track assets, the AGENTS Playwright permission rule, and ignore rules for transient Playwright/tmp artifacts.
+
+## Version 1.6.20 - Location Background Assets
+
+[2026-05-11 18:49] Version 1.6.20 - Generated four low-quality 4K Atlas location backgrounds, stored them under the database locations asset hierarchy, and linked locations through background asset keys.
+
+## Version 1.6.19 - Dialogue Layout Event Screen
+
+[2026-05-11 18:45] Version 1.6.19 - Revised the location event screen to reuse the dialogue page layout, replacing the character sprite with a location image mock and using the existing choice panel for optional event and map-return options.
+
+## Version 1.6.18 - Location Event Handler
+
+[2026-05-11 18:30] Version 1.6.18 - Added frontend location event resolution so map travel starts mandatory dialogue directly, shows optional events in an event panel, and displays a Japanese no-event return state when nothing matches.
+
+## Version 1.6.17 - Alex Dialogue Voice WAVs
+
+[2026-05-11 18:02] Version 1.6.17 - Generated canonical OpenRouter TTS WAV files for Alex dialogue lines and linked mock, bootstrap, and SQLite dialogue voice asset keys.
+
+## Version 1.6.16 - Dialogue Voice Asset Keys
+
+[2026-05-11 17:47] Version 1.6.16 - Added optional dialogue voice asset keys, bootstrap mapping, and one-shot WAV playback that stops on dialogue navigation.
+
+## Version 1.6.15 - Database Asset Hierarchy
+
+[2026-05-11 17:36] Version 1.6.15 - Added a database-linked character asset folder hierarchy with git placeholders and documented the local URL to future storage-key mapping.
+
+## Version 1.6.14 - Japanese Alex Event Dialogue
+
+[2026-05-11 17:32] Version 1.6.14 - Replaced the MVP Alex Shibuya event dialogue with natural Japanese VN prose and updated the reproducible bootstrap SQL.
+
+## Version 1.6.13 - One-Click Dev Startup
+
+[2026-05-11 17:31] Version 1.6.13 - Added a root Windows launcher that clears the backend and gameplay dev ports, starts both services in visible terminals, and opens the gameplay URL.
+
+## Version 1.6.12 - Bootstrap Error Detail
+
+[2026-05-11 17:28] Version 1.6.12 - Expanded frontend bootstrap failures to include the backend or Vite proxy response body, making database startup errors actionable instead of only reporting HTTP status.
+
+## Version 1.6.11 - Database Bootstrap Integration
+
+[2026-05-11 16:11] Version 1.6.11 - Linked gameplay startup to the backend SQLite database through a read-only bootstrap API. Added relational dialogue storage, map-rendering location fields, frontend bootstrap loading, and manual SQL documentation for MVP data.
+
+## Version 1.6.10 - Map Location Data Link
+
+[2026-05-11 13:46] Version 1.6.10 - Linked interactive map buildings directly to mock location records via explicit `locationId`, so building selection and labels resolve from `src/mocks/locations.ts` instead of inferred building matching.
+
 ## Version 1.6.9 - Click Particle Effect
 
 [2026-05-11 13:41] Version 1.6.9 - Added a global click particle overlay with restrained laser-foil bursts across gameplay screens, preserving existing click behavior and reduced-motion handling.
+
+## Version 1.6.8 - Left Location Panel
+
+[2026-05-11 13:27] Version 1.6.8 - Changed map location clicks to open a left-side pop-out panel with location details, a styled image placeholder, and a Liquid Glass Go button. Empty map clicks now dismiss the panel, while Go performs the existing location navigation.
 
 ## Version 1.6.7 - Map Scan UI Polish
 

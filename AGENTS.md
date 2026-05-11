@@ -17,13 +17,17 @@ MUST refer to "\docs\DESIGN_SYSTEM.md".
 ### 4. File Organization
 Split UI and UX into sub `.ts` files. Never use monolithic `main.ts` — keep files small and focused.
 
-### 5. File Creation Permission
+### 5. Playwright Permission
+Always ask for permission BEFORE using Playwright.
+Do not take browser screenshots or run browser verification unless the user explicitly asks for it or gives permission first.
+
+### 6. File Creation Permission
 Always ask for permission BEFORE creating new files. Show filename and purpose first.
 
-### 6. Documentation in /docs
+### 7. Documentation in /docs
 Keep all documentation in `/docs` folder. Don't scatter docs across root.
 
-### 7. Development Log
+### 8. Development Log
 Two files, must commit to git when version is done:
 
 **a) `DEV_LOG.md`** — Timeline with timestamps

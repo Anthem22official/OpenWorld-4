@@ -39,6 +39,7 @@ export interface Event {
   type: EventType;
   priority: Priority;
   conditions: Condition[];
+  dialogue_id?: string;
 }
 
 // Zod Schemas
@@ -82,4 +83,5 @@ export const EventSchema = z.object({
   type: EventTypeSchema,
   priority: PrioritySchema,
   conditions: z.array(ConditionSchema),
+  dialogue_id: z.string().min(1).optional(),
 });

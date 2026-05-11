@@ -15,6 +15,7 @@ interface DialogueNode {
   id: string                // Unique identifier for this node
   speaker?: string          // Speaker name or character ID (undefined = narration)
   text: string              // Single paragraph of dialogue/narration
+  voiceAssetKey?: string    // Optional WAV storage key for one-shot voice playback
   nextDialogueId?: string   // Auto-advance to next paragraph (fixed script)
   choices?: Choice[]        // OR show player decision (2+ options only)
 }
@@ -24,7 +25,28 @@ interface DialogueNode {
 - Must have either `nextDialogueId` OR `choices` (not both, not neither for story progression)
 - `text` should be 1-3 sentences (one paragraph max)
 - `speaker` is optional (undefined means narration/narrator voice)
+- `voiceAssetKey` is optional and must be a `.wav` storage key, not a public URL
 - If neither `nextDialogueId` nor `choices` exist, node is an **end state** (story concludes)
+
+### Voice Assets
+
+Use `voiceAssetKey` when a dialogue node should play a one-shot WAV voice line.
+
+```typescript
+{
+  id: 'alex-shibuya-greeting',
+  speaker: 'Alex',
+  text: '静かに話す場所としては、東京でいちばん騒がしい場所を選んだね。',
+  voiceAssetKey: 'characters/alex-kiriya/voice/alex-shibuya-greeting.wav',
+  nextDialogueId: 'alex-shibuya-choice',
+}
+```
+
+Rules:
+- Store storage keys such as `characters/alex-kiriya/voice/line.wav`.
+- Do not store public URLs such as `/assets/database/...`.
+- Do not use empty keys, parent directory segments, or non-WAV files.
+- Voice playback stops when the player advances, chooses an option, or leaves the dialogue page.
 
 ### Choice
 

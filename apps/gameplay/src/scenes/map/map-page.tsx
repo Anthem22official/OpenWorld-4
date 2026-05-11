@@ -30,6 +30,14 @@ export default function MapPage({
   const areaMap = useMemo(() => getAreaMap(areaMapId), [areaMapId])
   const area = useMemo(() => getArea(areaMap.areaId), [areaMap.areaId])
   const [focusedLocation, setFocusedLocation] = useState<Location | null>(null)
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+
+  const handleLocationPick = (locationId: string) => {
+    const location = mapState.locations.find((candidate) => candidate.id === locationId)
+    if (!location) throw new Error(`Location ${locationId} not found`)
+
+    setSelectedLocation(location)
+  }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -47,7 +55,10 @@ export default function MapPage({
       locations={mapState.locations}
       currentLocation={currentLocation}
       focusedLocation={focusedLocation}
-      onLocationSelect={onLocationSelect}
+      selectedLocation={selectedLocation}
+      onLocationPick={handleLocationPick}
+      onLocationGo={onLocationSelect}
+      onMapDismiss={() => setSelectedLocation(null)}
       onBuildingFocus={setFocusedLocation}
       onBackToDialogue={onBackToDialogue}
       onShowDebugPanel={onShowDebugPanel}

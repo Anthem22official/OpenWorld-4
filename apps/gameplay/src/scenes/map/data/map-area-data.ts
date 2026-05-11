@@ -18,6 +18,7 @@ export interface MapArea {
 
 export interface MapBuilding extends OsmRenderPolygon {
   id: string
+  locationId: string
 }
 
 export interface MapAreaMap {
@@ -57,6 +58,7 @@ const shibuyaCrossingClickableBuildings: MapBuilding[] =
     return {
       ...sourceBuilding,
       id: interactiveBuilding.buildingId,
+      locationId: interactiveBuilding.locationId,
       name: interactiveBuilding.label,
     }
   })
@@ -100,17 +102,19 @@ export function getArea(areaId: string): MapArea {
   return area
 }
 
-export function getLocationForBuilding(
+export function getLocationForMapBuilding(
   locations: Location[],
-  areaMapId: string,
-  buildingId: string,
+  building: MapBuilding,
 ): Location {
-  const location = locations.find(
-    (candidate) =>
-      candidate.mapKind === 'building-shape' &&
-      candidate.areaMapId === areaMapId &&
-      candidate.buildingId === buildingId,
-  )
-  if (!location) throw new Error(`Location for building ${buildingId} not found`)
+  const location = locations.find((candidate) => candidate.id === building.locationId)
+  if (!location) throw new Error(`Location ${building.locationId} not found`)
+
+  if (
+    location.mapKind !== 'building-shape' ||
+    location.buildingId !== building.id
+  ) {
+    throw new Error(`Location ${building.locationId} is not linked to building ${building.id}`)
+  }
+
   return location
 }

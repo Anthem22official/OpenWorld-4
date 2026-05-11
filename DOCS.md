@@ -12,6 +12,8 @@
 ## Gameplay Interface
 
 - **docs/DESIGN_SYSTEM.md** - Read when styling gameplay UI or the style gallery. Defines the black coated paper, Liquid Glass, and laser holographic foil redesign, including layout coordinates, color tokens, component patterns, and accessibility rules.
+- **apps/gameplay/src/events/location-event-handler.ts** - Read when changing location-entry event resolution, condition matching, event priority selection, or dialogue starts from events.
+- **apps/gameplay/src/scenes/event/event-panel.tsx** - Read when changing optional event selection or no-event map return behavior.
 - **apps/gameplay/src/scenes/dialogue/dialogue-page.tsx** - Read when changing dialogue flow, typewriter gating, or option selection timing.
 - **apps/gameplay/src/scenes/dialogue/components/dialogue-box.tsx** - Read when changing typed dialogue rendering or speaker display.
 - **apps/gameplay/src/scenes/dialogue/components/choice-panel.tsx** - Read when changing option hover, choosing, disappearance, or reset behavior.
@@ -30,6 +32,9 @@
 ## Database Files
 
 - **apps/server/prisma/schema.prisma** - Read when modifying database models or understanding Prisma schema
+- **docs/DATABASE_BOOTSTRAP_SQL.md** - Read when manually populating the local SQLite database with MVP Shibuya, Alex, event, and dialogue content.
+- **docs/ASSET_HIERARCHY.md** - Read when adding database-linked runtime assets such as character full-body images, voice WAV files, portraits, or future storage object keys.
+- **docs/LOCATION_BACKGROUND_ASSET_STYLE_PROMPT.md** - Read when generating or promoting canonical location background images. Contains shared visual style, Atlas defaults, and prompts for the current Shibuya map locations.
 - **apps/server/src/db/init.ts** - Read when initializing database connection or adding database setup logic
 - **apps/server/prisma/dev.db** - SQLite database file (created on first `prisma db push`)
 

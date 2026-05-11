@@ -82,10 +82,44 @@ model Location {
   level                 Int      // Floor number
   accessible_start      Int      // 0-1440 minutes (when opens)
   accessible_end        Int      // 0-1440 minutes (when closes)
+  background_asset_key  String?
+  area_id               String
+  area_map_id           String
+  building_id           String
+  map_kind              String
 
   // Relations
   characterStates       CharacterState[]
   scheduleBlocks        ScheduleBlock[]
+}
+
+// DialogueNode: Single paragraph or decision point in a dialogue graph
+model DialogueNode {
+  id                    String   @id
+  speaker               String?
+  text                  String
+  voice_asset_key       String?
+  next_dialogue_id      String?
+
+  nextDialogue          DialogueNode? @relation("DialogueNodeNext", fields: [next_dialogue_id], references: [id])
+  previousDialogueNodes DialogueNode[] @relation("DialogueNodeNext")
+  choices               DialogueChoice[] @relation("DialogueChoiceNode")
+  incomingChoices       DialogueChoice[] @relation("DialogueChoiceNext")
+  events                Event[]
+}
+
+// DialogueChoice: Player choice attached to a dialogue node
+model DialogueChoice {
+  id                    String   @id
+  dialogue_node_id      String
+  text                  String
+  next_dialogue_id      String
+  sort_order            Int
+
+  dialogueNode          DialogueNode @relation("DialogueChoiceNode", fields: [dialogue_node_id], references: [id], onDelete: Cascade)
+  nextDialogue          DialogueNode @relation("DialogueChoiceNext", fields: [next_dialogue_id], references: [id])
+
+  @@index([dialogue_node_id, sort_order])
 }
 
 // Event: World events with conditions and priority
@@ -95,5 +129,8 @@ model Event {
   type                  String   // "character_conversation" | "player_activity"
   priority              String   // JSON string: {value: "mandatory" | "optional", index: 0-9999}
   conditions            String   // JSON string array: [{type, ...}] - AND logic: all must pass
+  dialogue_id           String?  // Required when type is "character_conversation"
+
+  dialogue              DialogueNode? @relation(fields: [dialogue_id], references: [id])
 }
 
