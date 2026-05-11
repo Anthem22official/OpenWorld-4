@@ -211,7 +211,7 @@ export default function CharacterCreatorPage({ onBackToGallery }: CharacterCreat
             <div className="character-creator-preview" data-ready={imageReady}>
               {imageReady ? (
                 <img
-                  src="/assets/alex/alex-placeholder-darkgrey-cutout.png"
+                  src="/assets/database/characters/ren-takahashi/full-body/full-body-transparent.png"
                   alt="Mock generated cutout"
                 />
               ) : (

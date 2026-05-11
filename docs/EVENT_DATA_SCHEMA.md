@@ -61,9 +61,9 @@ Player enters location
 ## Example
 
 ```typescript
-const meetAlexAtShibuya109: Event = {
-  id: "meet-alex-at-shibuya-109",
-  description: "Alex starts a conversation at Shibuya 109.",
+const meetRenAtShibuya109: Event = {
+  id: "meet-ren-at-shibuya-109",
+  description: "レンが渋谷109の入口で主人公の背伸びを見抜く。",
   type: "character_conversation",
   priority: {
     value: "mandatory",
@@ -76,10 +76,10 @@ const meetAlexAtShibuya109: Event = {
     },
     {
       type: "characterLocation",
-      character_id: "alex-kiriya",
+      character_id: "ren-takahashi",
       location_id: "shibuya-109",
     },
   ],
-  dialogue_id: "alex-shibuya-109-intro",
+  dialogue_id: "ren-shibuya-109-start",
 }
 ```

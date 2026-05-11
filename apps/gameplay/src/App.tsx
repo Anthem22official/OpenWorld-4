@@ -1,6 +1,7 @@
 import { type CSSProperties, useEffect, useState } from 'react'
 import DialoguePage from './scenes/dialogue/dialogue-page'
 import MapPage from './scenes/map/map-page'
+import MapSelectionPage from './scenes/map/map-selection-page'
 import EventPanel from './scenes/event/event-panel'
 import LegacyMapPage from './scenes/map/legacy-map-page'
 import DebugImageGenPage from './tools/debug-image-gen/debug-image-gen-page'
@@ -11,6 +12,7 @@ import ClickParticles from './components/click-particles'
 import { fetchGameBootstrap, type GameBootstrapData } from './api/game-bootstrap-client'
 import { resolveLocationEvents, type LocationEventMatch } from './events/location-event-handler'
 import type { GameState } from './types/game'
+import { getAreaMap } from './scenes/map/data/map-area-data'
 
 type PageType = MusicPage
 
@@ -28,6 +30,7 @@ export default function App() {
   const [bootstrapError, setBootstrapError] = useState<Error | null>(null)
   const [currentPage, setCurrentPage] = useState<PageType>('dialogue')
   const [eventPanelState, setEventPanelState] = useState<EventPanelState | null>(null)
+  const [activeAreaMapId, setActiveAreaMapId] = useState('shibuya-crossing')
 
   useEffect(() => {
     let isActive = true
@@ -48,7 +51,18 @@ export default function App() {
     }
   }, [])
 
-  const handleShowMap = () => {
+  const handleReturnToMap = () => {
+    getAreaMap(activeAreaMapId)
+    setCurrentPage('map')
+  }
+
+  const handleShowMapSelection = () => {
+    setCurrentPage('map-select')
+  }
+
+  const handleSelectAreaMap = (areaMapId: string) => {
+    getAreaMap(areaMapId)
+    setActiveAreaMapId(areaMapId)
     setCurrentPage('map')
   }
 
@@ -96,7 +110,7 @@ export default function App() {
       dialogueNodes: bootstrapData.dialogueNodes,
       characterStates: bootstrapData.characterStates,
       locationId,
-      gameTimeDetail: getActiveGameTimeDetail(bootstrapData),
+      gameTimeDetail: gameState.gameTimeDetail,
     })
 
     setGameState({
@@ -144,7 +158,7 @@ export default function App() {
 
   const handleEventBackToMap = () => {
     setEventPanelState(null)
-    setCurrentPage('map')
+    handleReturnToMap()
   }
 
   if (bootstrapError) {
@@ -173,9 +187,11 @@ export default function App() {
         <DialoguePage
           gameState={gameState}
           dialogueNodes={bootstrapData.dialogueNodes}
+          characters={bootstrapData.characters}
           currentDialogueId={gameState.currentDialogueId}
           onDialogueChange={handleDialogueChange}
-          onShowMap={handleShowMap}
+          onShowMap={handleReturnToMap}
+          onShowMapSelection={handleShowMapSelection}
           onShowDebugPanel={handleShowDebugPanel}
           onShowCharacterPage={handleShowCharacterPage}
           onShowStyleGallery={handleShowStyleGallery}
@@ -183,10 +199,21 @@ export default function App() {
       ) : currentPage === 'map' ? (
         <MapPage
           gameState={gameState}
+          characters={bootstrapData.characters}
+          characterStates={bootstrapData.characterStates}
+          areaMapId={activeAreaMapId}
           onLocationSelect={handleLocationSelect}
           onBackToDialogue={handleBackToDialogue}
+          onShowMapSelection={handleShowMapSelection}
           onShowDebugPanel={handleShowDebugPanel}
           onShowLegacyMap={handleShowLegacyMap}
+        />
+      ) : currentPage === 'map-select' ? (
+        <MapSelectionPage
+          gameState={gameState}
+          activeAreaMapId={activeAreaMapId}
+          onSelectAreaMap={handleSelectAreaMap}
+          onBackToDialogue={handleBackToDialogue}
         />
       ) : currentPage === 'event' ? (
         renderEventPanel(eventPanelState, handleStartOptionalEvent, handleEventBackToMap)
@@ -213,23 +240,6 @@ export default function App() {
       )}
     </div>
   )
-}
-
-function getActiveGameTimeDetail(bootstrapData: GameBootstrapData): string {
-  const activatedCharacters = bootstrapData.characters.filter((character) => character.activated)
-  if (activatedCharacters.length !== 1) {
-    throw new Error(`Expected exactly one activated character, found ${activatedCharacters.length}`)
-  }
-
-  const activeCharacter = activatedCharacters[0]
-  const activeCharacterState = bootstrapData.characterStates.find(
-    (state) => state.character_id === activeCharacter.id,
-  )
-  if (!activeCharacterState) {
-    throw new Error(`Character state not found for activated character: ${activeCharacter.id}`)
-  }
-
-  return activeCharacterState.game_time_detail
 }
 
 function renderEventPanel(

@@ -2,228 +2,139 @@
 
 ## Overview
 
-A **dialogue** is a directed graph of connected narrative nodes. A **chapter** is simply a starting dialogue node ID. The story flows through the graph via `nextDialogueId` (fixed narrative) or `choices` (player decisions).
-
----
+A dialogue is a directed graph of narrative nodes. Events choose the starting node through `dialogue_id`; the graph then advances through `nextDialogueId` or player `choices`.
 
 ## Data Types
 
-### DialogueNode
-
 ```typescript
 interface DialogueNode {
-  id: string                // Unique identifier for this node
-  speaker?: string          // Speaker name or character ID (undefined = narration)
-  text: string              // Single paragraph of dialogue/narration
-  voiceAssetKey?: string    // Optional WAV storage key for one-shot voice playback
-  nextDialogueId?: string   // Auto-advance to next paragraph (fixed script)
-  choices?: Choice[]        // OR show player decision (2+ options only)
-}
-```
-
-**Rules:**
-- Must have either `nextDialogueId` OR `choices` (not both, not neither for story progression)
-- `text` should be 1-3 sentences (one paragraph max)
-- `speaker` is optional (undefined means narration/narrator voice)
-- `voiceAssetKey` is optional and must be a `.wav` storage key, not a public URL
-- If neither `nextDialogueId` nor `choices` exist, node is an **end state** (story concludes)
-
-### Voice Assets
-
-Use `voiceAssetKey` when a dialogue node should play a one-shot WAV voice line.
-
-```typescript
-{
-  id: 'alex-shibuya-greeting',
-  speaker: 'Alex',
-  text: '静かに話す場所としては、東京でいちばん騒がしい場所を選んだね。',
-  voiceAssetKey: 'characters/alex-kiriya/voice/alex-shibuya-greeting.wav',
-  nextDialogueId: 'alex-shibuya-choice',
-}
-```
-
-Rules:
-- Store storage keys such as `characters/alex-kiriya/voice/line.wav`.
-- Do not store public URLs such as `/assets/database/...`.
-- Do not use empty keys, parent directory segments, or non-WAV files.
-- Voice playback stops when the player advances, chooses an option, or leaves the dialogue page.
-
-### Choice
-
-```typescript
-interface Choice {
-  id: string                // Unique identifier for this choice
-  text: string              // What the player sees (1-2 sentences)
-  nextDialogueId: string    // Which dialogue node to go to when selected
-}
-```
-
-**Rules:**
-- `choices` array on a DialogueNode must have 2+ items (never 1)
-- All `nextDialogueId` values must point to existing nodes
-- Choice text should be concise and reflect player intent
-
----
-
-## Node Types
-
-### Paragraph Node (Fixed Script)
-
-Auto-advances dialogue. Player clicks/presses space to move forward.
-
-```typescript
-{
-  id: 'intro-1',
-  speaker: undefined,           // Narration
-  text: 'The door slowly opens. Inside, soft light spills across worn wooden floors.',
-  nextDialogueId: 'intro-2'     // Automatically flow to next
-}
-```
-
-### Decision Node (Choice Point)
-
-Waits for player input. Shows choice modal.
-
-```typescript
-{
-  id: 'coffee-greeting',
-  speaker: 'Alex',              // Character dialogue
-  text: 'Haven\'t seen you here before. Mind if I sit down?',
-  choices: [
-    { id: 'c1', text: 'Sure, I\'d like the company.', nextDialogueId: 'warm-path' },
-    { id: 'c2', text: 'I\'m waiting for someone.', nextDialogueId: 'cold-path' },
-    { id: 'c3', text: 'Why do you ask?', nextDialogueId: 'curious-path' }
-  ]
-}
-```
-
-### End Node (Story Conclusion)
-
-No next action. Story pauses.
-
-```typescript
-{
-  id: 'ending-good',
-  speaker: undefined,
-  text: 'We talked for hours. As the sun set, I realized this moment would stay with me forever.'
-  // No nextDialogueId, no choices → End
-}
-```
-
----
-
-## Chapter Structure
-
-A **chapter** is represented by its **root dialogue node ID**. 
-
-```typescript
-// Chapter 1: "First Meeting"
-const chapter1Start = 'intro-1'
-
-// Chapter 2: "The Coffee Shop"
-const chapter2Start = 'coffee-greeting'
-```
-
-### Traversal Rules
-
-1. Start at root node (chapter start)
-2. Display node text and speaker
-3. If `nextDialogueId` exists → User clicks/presses space → Auto-advance
-4. If `choices` exist → Show choice modal → User selects → Jump to choice's `nextDialogueId`
-5. If neither → End of chapter/story
-
----
-
-## Valid Dialogue Graph Example
-
-```
-intro-1 (narrator)
-  ↓ nextDialogueId
-intro-2 (narrator)
-  ↓ nextDialogueId
-coffee-greeting (Alex, with 3 choices)
-  ├→ choice-1 → warm-path-1 (narrator) → warm-path-2 (Alex) → ending-good
-  ├→ choice-2 → cold-path-1 (Alex) → cold-path-2 (narrator, 2 choices) → [ending-cold OR ending-regret]
-  └→ choice-3 → curious-path-1 (Alex) → curious-path-2 (narrator) → ending-good
-```
-
----
-
-## Validation Rules
-
-### Must Have
-- ✅ All nodes referenced by `nextDialogueId` must exist
-- ✅ All nodes referenced in `choice.nextDialogueId` must exist
-- ✅ No circular loops (unless intentional)
-- ✅ `choices` array has 2+ options
-
-### Must NOT Have
-- ❌ A node with both `nextDialogueId` AND `choices`
-- ❌ A single-option `choices` array (use `nextDialogueId` instead)
-- ❌ Broken references (pointing to non-existent nodes)
-- ❌ Empty text or undefined speaker for story progression
-
----
-
-## Data Organization
-
-**File Structure:**
-```
-apps/gameplay/src/mocks/
-  └── game-state.ts          // All dialogue nodes in one file (for now)
-                             // dialogueNodes: Record<string, DialogueNode>
-```
-
-**Example:**
-```typescript
-const dialogueNodes: Record<string, DialogueNode> = {
-  'intro-1': { ... },
-  'intro-2': { ... },
-  'coffee-greeting': { ... },
-  'warm-path-1': { ... },
-  // ... all nodes
+  id: string
+  speaker?: string
+  text: string
+  scene: DialogueScene
+  voiceAssetKey?: string
+  nextDialogueId?: string
+  choices?: Choice[]
 }
 
-export const mockGameState: GameState = {
-  currentDialogueId: 'intro-1',  // Chapter start
-  currentLocation: 'Coffee Shop',
+interface DialogueScene {
+  mode: "dialogue" | "cg"
+  backgroundAssetKey?: string
+  cgAssetKey?: string
+  characterIds: string[]
 }
-```
 
----
-
-## Extension Points (Future)
-
-### Conditionals on Choices
-```typescript
 interface Choice {
   id: string
   text: string
   nextDialogueId: string
-  condition?: {                  // Optional: show choice only if condition met
-    requireRelationScore?: number
-    requireMemory?: string
-    requireLocation?: string
-  }
 }
 ```
 
-### Node Metadata
+Rules:
+
+- `speaker` is optional. Undefined means narration.
+- When present, `speaker` must be a database character ID such as `ren-takahashi`.
+- `scene` is required and controls visual-novel staging for the node.
+- `scene.mode = "dialogue"` requires `backgroundAssetKey` and renders `characterIds`.
+- `scene.mode = "cg"` requires `cgAssetKey` and replaces the regular character sprite layer.
+- `characterIds` supports 0-4 database character IDs.
+- When `speaker` is present in dialogue mode, it must also appear in `scene.characterIds`.
+- When `speaker` is present in CG mode with a reference character, it must also appear in `scene.characterIds`.
+- Scene image keys must be storage keys such as `locations/shibuya-109/background/main.jpg`, not public URLs.
+- A node may have `nextDialogueId` or `choices`, but not both.
+- A node with neither `nextDialogueId` nor `choices` is an end state.
+- `choices` must have 2 or more items.
+- Every `nextDialogueId` must point to an existing `DialogueNode`.
+- `voiceAssetKey`, when present, must be a storage key for a `.wav` file, not a public URL.
+
+## Current Runtime Storage
+
+Dialogue nodes and choices are stored in the database:
+
+```text
+DialogueNode
+DialogueChoice
+```
+
+The gameplay app receives dialogue data from:
+
+```text
+GET /api/game/bootstrap
+```
+
+Runtime dialogue no longer comes from `apps/gameplay/src/mocks`.
+
+## Voice Generation
+
+The server exposes OpenRouter text-to-speech at:
+
+```text
+POST /api/text-to-speech/speech
+POST /api/text-to-speech/events/{eventId}/voices
+```
+
+Request body:
+
+```json
+{
+  "input": "Dialogue text",
+  "model": "google/gemini-3.1-flash-tts-preview",
+  "voice": "Charon"
+}
+```
+
+`POST /api/text-to-speech/speech` returns `audio/wav`.
+
+`POST /api/text-to-speech/events/{eventId}/voices` takes a `model` and `voice`, traverses all character-spoken dialogue nodes reachable from the event start, writes missing WAV files to `apps/gameplay/public/assets/database/dialogue/{dialogueStartId}/voices/`, and updates `voiceAssetKey` through the database `voice_asset_key` column. Existing voice keys are skipped only when they match the dialogue-scoped storage key and the referenced local WAV file exists.
+
+## Current Event Graphs
+
+```text
+ren-shibuya-109-start
+  -> ren-shibuya-109-line
+    -> ren-shibuya-109-warm -> ren-shibuya-109-warm-end
+    -> ren-shibuya-109-cool -> ren-shibuya-109-cool-end
+
+kaito-qfront-start
+  -> kaito-qfront-line
+    -> kaito-qfront-warm -> kaito-qfront-warm-end
+    -> kaito-qfront-cool -> kaito-qfront-cool-end
+
+daiki-magnet-start
+  -> daiki-magnet-line
+    -> daiki-magnet-warm -> daiki-magnet-warm-end
+    -> daiki-magnet-cool -> daiki-magnet-cool-end
+
+haruto-hachiko-start
+  -> haruto-hachiko-line
+    -> haruto-hachiko-warm -> haruto-hachiko-warm-end
+    -> haruto-hachiko-cool -> haruto-hachiko-cool-end
+```
+
+## Example
+
 ```typescript
-interface DialogueNode {
-  // ... existing fields
-  tags?: string[]            // For searching/organizing (e.g., 'romance', 'action')
-  affectRelations?: { [characterId: string]: number }  // Change affinity on this node
-  setMemory?: string         // Create a memory when this node plays
+const renLine: DialogueNode = {
+  id: 'ren-shibuya-109-line',
+  speaker: 'ren-takahashi',
+  text: 'その顔、まだこの街に慣れていないね。でも逃げる顔でもない。どちらを見せたい？',
+  scene: {
+    mode: 'cg',
+    cgAssetKey: 'cg/ren-overlay-test.png',
+    characterIds: ['ren-takahashi'],
+  },
+  choices: [
+    {
+      id: 'ren-shibuya-109-choice-warm',
+      text: '慣れていない。でも、この街に似合うようになりたい。',
+      nextDialogueId: 'ren-shibuya-109-warm',
+    },
+    {
+      id: 'ren-shibuya-109-choice-cool',
+      text: '逃げるつもりはない。ただ、簡単に読まれたくない。',
+      nextDialogueId: 'ren-shibuya-109-cool',
+    },
+  ],
 }
 ```
-
----
-
-## Summary
-
-- **Paragraph** = fixed script, auto-advance via `nextDialogueId`
-- **Choice** = player decision, show modal with 2+ options
-- **Chapter** = root dialogue node ID
-- **Graph** = nodes connected through dialogue flow
-- No fake "Continue" choices — clean separation of narrative vs decisions

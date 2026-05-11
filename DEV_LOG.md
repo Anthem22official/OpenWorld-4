@@ -1,5 +1,50 @@
 # Development Log
 
+## Version 1.7.11 - Two-Level Map Selection
+
+[2026-05-11 20:56] Version 1.7.11 - Added a two-level area and area-map selector, wired a building-only Ebisu OSM map alongside Shibuya, and documented the repeatable map source workflow.
+[2026-05-11 21:05] Version 1.7.11 - Regenerated the Ebisu map at Shibuya's map scale and added an initial cropped viewBox so Ebisu no longer fits the entire district into one zoomed-out screen.
+
+## Version 1.7.10 - Map Character Icons
+
+[2026-05-11 20:34] Version 1.7.10 - Added active character position icons to the SVG map using runtime character states and existing database header icon assets.
+
+## Version 1.7.9 - CG Replaces Sprite Layer
+
+[2026-05-11 20:22] Version 1.7.9 - Updated CG mode rendering so dedicated CG art replaces the regular transparent character sprite layer instead of being covered by it.
+
+## Version 1.7.8 - Dialogue Voice Asset Path
+
+[2026-05-11 20:18] Version 1.7.8 - Changed generated dialogue voice storage from character folders to dialogue-scoped `dialogue/{dialogueStartId}/voices` folders and made mismatched voice asset keys fail loudly.
+
+## Version 1.7.7 - Dedicated CG Placeholder Asset
+
+[2026-05-11 20:12] Version 1.7.7 - Added a 2560x1440 Ren CG placeholder under the top-level database CG folder and pointed the Shibuya 109 CG overlay test at it.
+
+## Version 1.7.6 - Character Header Icons
+
+[2026-05-11 20:06] Version 1.7.6 - Added a smart crop script that generates 512x512 transparent character header icons from full-body database PNG assets.
+
+## Version 1.7.5 - Event Voice Generation
+
+[2026-05-11 19:58] Version 1.7.5 - Added an OpenRouter event voice generation route that traverses event dialogue graphs, writes missing WAV assets, and attaches voice asset keys to dialogue nodes.
+
+## Version 1.7.4 - CG Overlay Reference Test
+
+[2026-05-11 19:55] Version 1.7.4 - Enabled one-character CG scene overlays and marked Ren's Shibuya line as the local CG overlay reference test using the existing Shibuya background stand-in.
+
+## Version 1.7.3 - OpenRouter TTS Service
+
+[2026-05-11 19:46] Version 1.7.3 - Added a server OpenRouter text-to-speech route that returns WAV audio and documented how generated dialogue voice files become voice asset keys.
+
+## Version 1.7.2 - Visual Novel Dialogue Scenes
+
+[2026-05-11 19:40] Version 1.7.2 - Added explicit dialogue scene staging for background art, CG mode, and multi-character auto-layout, with bootstrap validation and asset-key documentation.
+
+## Version 1.7.1 - Four Character Location Events
+
+[2026-05-11 19:17] Version 1.7.1 - Replaced legacy Alex/Ken runtime content with four active database characters, runtime-state bootstrap, transparent PNG character sprites, and one Japanese location conversation event per current Shibuya location.
+
 ## Version 1.7.0 - Database Event and Asset Flow
 
 [2026-05-11 18:59] Version 1.7.0 - Released the database-backed event and asset flow, including the mocked character creator flow, character gallery empty states, page-aware background music, full-bleed event location backgrounds, the AGENTS Playwright permission rule, and ignore rules for transient Playwright/tmp artifacts.
@@ -111,6 +156,10 @@
 ## Version 1.4.2 - Debug Panel API Integration
 
 [2026-05-08 16:45] Version 1.4.2 - Connected debug image generation panel to real Atlas Cloud API. Replaced mock implementation with production fetch + polling logic. Frontend now POSTs to /api/images/generations with prompt + settings (quality, size, format), then polls /api/images/generations/:id every 1s until generation completes. Extracts image URL from outputs[0]. Full error handling for network failures and invalid responses.
+
+## Version 1.4.2 - Location Background Quality Notes
+
+[2026-05-11 19:13] Version 1.4.2 - Documented Atlas GPT Image 2 medium location-background discovery. Updated the location background prompt notes with drawing-quality failure modes, recommended medium generation defaults, the test prediction/output URL, and prompt addendum for cleaner architectural rendering.
 
 ## Version 1.4.1 - Server Environment Loading
 

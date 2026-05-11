@@ -1,20 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
-import { GameState, Location } from '../../types/game'
+import { Character, CharacterState, GameState, Location } from '../../types/game'
 import MapShell from './components/map-shell'
 import { getArea, getAreaMap } from './data/map-area-data'
 
 interface MapPageProps {
   gameState: GameState
+  characters: Character[]
+  characterStates: CharacterState[]
+  areaMapId?: string
   onLocationSelect: (locationId: string) => void
   onBackToDialogue: () => void
+  onShowMapSelection: () => void
   onShowDebugPanel?: () => void
   onShowLegacyMap?: () => void
 }
 
 export default function MapPage({
   gameState,
+  characters,
+  characterStates,
+  areaMapId: selectedAreaMapId,
   onLocationSelect,
   onBackToDialogue,
+  onShowMapSelection,
   onShowDebugPanel,
   onShowLegacyMap,
 }: MapPageProps) {
@@ -26,7 +34,7 @@ export default function MapPage({
   )
   if (!currentLocation) throw new Error(`Location ${mapState.currentLocationId} not found`)
 
-  const areaMapId = currentLocation.areaMapId ?? 'shibuya-crossing'
+  const areaMapId = selectedAreaMapId ?? currentLocation.areaMapId ?? 'shibuya-crossing'
   const areaMap = useMemo(() => getAreaMap(areaMapId), [areaMapId])
   const area = useMemo(() => getArea(areaMap.areaId), [areaMap.areaId])
   const [focusedLocation, setFocusedLocation] = useState<Location | null>(null)
@@ -38,6 +46,11 @@ export default function MapPage({
 
     setSelectedLocation(location)
   }
+
+  useEffect(() => {
+    setFocusedLocation(null)
+    setSelectedLocation(null)
+  }, [areaMapId])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -53,6 +66,8 @@ export default function MapPage({
       area={area}
       areaMap={areaMap}
       locations={mapState.locations}
+      characters={characters}
+      characterStates={characterStates}
       currentLocation={currentLocation}
       focusedLocation={focusedLocation}
       selectedLocation={selectedLocation}
@@ -61,6 +76,7 @@ export default function MapPage({
       onMapDismiss={() => setSelectedLocation(null)}
       onBuildingFocus={setFocusedLocation}
       onBackToDialogue={onBackToDialogue}
+      onShowMapSelection={onShowMapSelection}
       onShowDebugPanel={onShowDebugPanel}
       onShowLegacyMap={onShowLegacyMap}
     />

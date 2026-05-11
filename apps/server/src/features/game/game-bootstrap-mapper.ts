@@ -1,11 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import {
-  Condition,
   ConditionSchema,
   Event,
   EventSchema,
-  Priority,
   PrioritySchema,
 } from '../../types/event';
 
@@ -62,10 +60,18 @@ interface BootstrapChoice {
   nextDialogueId: string;
 }
 
+interface BootstrapDialogueScene {
+  mode: 'dialogue' | 'cg';
+  backgroundAssetKey?: string;
+  cgAssetKey?: string;
+  characterIds: string[];
+}
+
 interface BootstrapDialogueNode {
   id: string;
   speaker?: string;
   text: string;
+  scene: BootstrapDialogueScene;
   voiceAssetKey?: string;
   nextDialogueId?: string;
   choices?: BootstrapChoice[];
@@ -75,19 +81,40 @@ interface DialogueNodeWithChoices {
   id: string;
   speaker: string | null;
   text: string;
+  scene: string;
   voice_asset_key: string | null;
   next_dialogue_id: string | null;
-  choices: {
-    id: string;
-    text: string;
-    next_dialogue_id: string;
-    sort_order: number;
-  }[];
+  choices: DialogueChoiceRow[];
+}
+
+interface DialogueNodeRow {
+  id: string;
+  speaker: string | null;
+  text: string;
+  scene: string;
+  voice_asset_key: string | null;
+  next_dialogue_id: string | null;
+}
+
+interface DialogueChoiceRow {
+  id: string;
+  dialogue_node_id: string;
+  text: string;
+  next_dialogue_id: string;
+  sort_order: number;
+}
+
+interface RuntimeStateRow {
+  id: string;
+  current_location_id: string;
+  current_dialogue_id: string;
+  game_time_detail: string;
 }
 
 interface BootstrapGameState {
   currentDialogueId: string;
   currentLocation: string;
+  gameTimeDetail: string;
   mapState: {
     locations: BootstrapLocation[];
     currentLocationId: string;
@@ -107,6 +134,20 @@ export interface GameBootstrapResponse {
 
 const personalitySchema = z.array(z.string().min(1));
 const mapKindSchema = z.enum(['legacy-point', 'building-shape']);
+const dialogueSceneSchema = z.discriminatedUnion('mode', [
+  z.object({
+    mode: z.literal('dialogue'),
+    backgroundAssetKey: z.string().min(1),
+    cgAssetKey: z.string().optional(),
+    characterIds: z.array(z.string().min(1)).max(4),
+  }).strict(),
+  z.object({
+    mode: z.literal('cg'),
+    backgroundAssetKey: z.string().optional(),
+    cgAssetKey: z.string().min(1),
+    characterIds: z.array(z.string().min(1)).max(1),
+  }).strict(),
+]);
 
 export async function buildGameBootstrap(
   prisma: PrismaClient,
@@ -118,7 +159,9 @@ export async function buildGameBootstrap(
     scheduleBlocks,
     memories,
     events,
-    dialogueNodes,
+    dialogueNodeRows,
+    dialogueChoiceRows,
+    runtimeState,
   ] = await Promise.all([
     prisma.character.findMany({ orderBy: { id: 'asc' } }),
     prisma.characterState.findMany({ orderBy: { id: 'asc' } }),
@@ -126,15 +169,24 @@ export async function buildGameBootstrap(
     prisma.scheduleBlock.findMany({ orderBy: { start_time: 'asc' } }),
     prisma.memory.findMany({ orderBy: { id: 'asc' } }),
     prisma.event.findMany({ orderBy: { id: 'asc' } }),
-    prisma.dialogueNode.findMany({
-      include: {
-        choices: {
-          orderBy: { sort_order: 'asc' },
-        },
-      },
-      orderBy: { id: 'asc' },
-    }),
+    prisma.$queryRaw<DialogueNodeRow[]>`
+      SELECT id, speaker, text, scene, voice_asset_key, next_dialogue_id
+      FROM DialogueNode
+      ORDER BY id ASC
+    `,
+    prisma.$queryRaw<DialogueChoiceRow[]>`
+      SELECT id, dialogue_node_id, text, next_dialogue_id, sort_order
+      FROM DialogueChoice
+      ORDER BY dialogue_node_id ASC, sort_order ASC
+    `,
+    prisma.$queryRaw<RuntimeStateRow[]>`
+      SELECT id, current_location_id, current_dialogue_id, game_time_detail
+      FROM GameRuntimeState
+      WHERE id = 'default'
+    `,
   ]);
+
+  const dialogueNodes = attachDialogueChoices(dialogueNodeRows, dialogueChoiceRows);
 
   const mappedCharacters = characters.map((character) => ({
     id: character.id,
@@ -148,17 +200,13 @@ export async function buildGameBootstrap(
     ),
   }));
 
-  const activatedCharacters = mappedCharacters.filter((character) => character.activated);
-  if (activatedCharacters.length !== 1) {
-    throw new Error(`Expected exactly one activated character, found ${activatedCharacters.length}`);
+  const defaultRuntimeState = runtimeState[0];
+  if (!defaultRuntimeState) {
+    throw new Error('GameRuntimeState default row not found');
   }
 
-  const activeCharacter = activatedCharacters[0];
-  const activeCharacterState = characterStates.find(
-    (state) => state.character_id === activeCharacter.id,
-  );
-  if (!activeCharacterState) {
-    throw new Error(`Character state not found for activated character: ${activeCharacter.id}`);
+  if (!dialogueNodes.some((node) => node.id === defaultRuntimeState.current_dialogue_id)) {
+    throw new Error(`Runtime dialogue node not found: ${defaultRuntimeState.current_dialogue_id}`);
   }
 
   const mappedLocations = locations.map((location) => ({
@@ -166,7 +214,7 @@ export async function buildGameBootstrap(
     name: location.name,
     x: location.x,
     y: location.y,
-    visited: location.id === activeCharacterState.location_id,
+    visited: location.id === defaultRuntimeState.current_location_id,
     description: location.appearance_description,
     ...(location.background_asset_key !== null
       ? { backgroundAssetKey: validateLocationBackgroundAssetKey(location.background_asset_key, location.id) }
@@ -178,10 +226,10 @@ export async function buildGameBootstrap(
   }));
 
   const currentLocation = mappedLocations.find(
-    (location) => location.id === activeCharacterState.location_id,
+    (location) => location.id === defaultRuntimeState.current_location_id,
   );
   if (!currentLocation) {
-    throw new Error(`Current location not found: ${activeCharacterState.location_id}`);
+    throw new Error(`Current location not found: ${defaultRuntimeState.current_location_id}`);
   }
 
   const mappedCharacterStates = characterStates.map((state) => ({
@@ -207,20 +255,18 @@ export async function buildGameBootstrap(
     game_date: memory.game_date,
   }));
 
-  const mappedDialogueNodes = mapDialogueNodes(dialogueNodes);
+  const mappedDialogueNodes = mapDialogueNodes(
+    dialogueNodes,
+    new Set(mappedCharacters.map((character) => character.id)),
+  );
   const mappedEvents = events.map((event) => mapEvent(event));
-  const initialDialogueId = findInitialDialogueId({
-    events: mappedEvents,
-    dialogueNodes: mappedDialogueNodes,
-    currentLocationId: currentLocation.id,
-    characterStates: mappedCharacterStates,
-    gameTimeDetail: activeCharacterState.game_time_detail,
-  });
+  assertEventDialogueReferences(mappedEvents, mappedDialogueNodes);
 
   return {
     gameState: {
-      currentDialogueId: initialDialogueId,
+      currentDialogueId: defaultRuntimeState.current_dialogue_id,
       currentLocation: currentLocation.name,
+      gameTimeDetail: defaultRuntimeState.game_time_detail,
       mapState: {
         locations: mappedLocations,
         currentLocationId: currentLocation.id,
@@ -236,7 +282,28 @@ export async function buildGameBootstrap(
   };
 }
 
-function mapDialogueNodes(nodes: DialogueNodeWithChoices[]): Record<string, BootstrapDialogueNode> {
+function attachDialogueChoices(
+  nodes: DialogueNodeRow[],
+  choices: DialogueChoiceRow[],
+): DialogueNodeWithChoices[] {
+  const choicesByNodeId = new Map<string, DialogueChoiceRow[]>();
+
+  for (const choice of choices) {
+    const nodeChoices = choicesByNodeId.get(choice.dialogue_node_id) || [];
+    nodeChoices.push(choice);
+    choicesByNodeId.set(choice.dialogue_node_id, nodeChoices);
+  }
+
+  return nodes.map((node) => ({
+    ...node,
+    choices: choicesByNodeId.get(node.id) || [],
+  }));
+}
+
+function mapDialogueNodes(
+  nodes: DialogueNodeWithChoices[],
+  characterIds: Set<string>,
+): Record<string, BootstrapDialogueNode> {
   const mappedNodes: Record<string, BootstrapDialogueNode> = {};
 
   for (const node of nodes) {
@@ -254,10 +321,17 @@ function mapDialogueNodes(nodes: DialogueNodeWithChoices[]): Record<string, Boot
       throw new Error(`Dialogue node ${node.id} cannot have exactly one choice`);
     }
 
+    if (node.speaker && !characterIds.has(node.speaker)) {
+      throw new Error(`Dialogue node ${node.id} speaker character not found: ${node.speaker}`);
+    }
+
+    const scene = mapDialogueScene(node, characterIds);
+
     mappedNodes[node.id] = {
       id: node.id,
       ...(node.speaker ? { speaker: node.speaker } : {}),
       text: node.text,
+      scene,
       ...(node.voice_asset_key ? { voiceAssetKey: validateVoiceAssetKey(node.voice_asset_key, node.id) } : {}),
       ...(node.next_dialogue_id ? { nextDialogueId: node.next_dialogue_id } : {}),
       ...(choices.length > 0 ? { choices } : {}),
@@ -265,6 +339,39 @@ function mapDialogueNodes(nodes: DialogueNodeWithChoices[]): Record<string, Boot
   }
 
   return mappedNodes;
+}
+
+function mapDialogueScene(
+  node: DialogueNodeWithChoices,
+  characterIds: Set<string>,
+): BootstrapDialogueScene {
+  const scene = parseJson(
+    dialogueSceneSchema,
+    node.scene,
+    `Dialogue node ${node.id} scene`,
+  );
+
+  for (const characterId of scene.characterIds) {
+    if (!characterIds.has(characterId)) {
+      throw new Error(`Dialogue node ${node.id} scene character not found: ${characterId}`);
+    }
+  }
+
+  if (scene.mode === 'dialogue') {
+    validateImageAssetKey(scene.backgroundAssetKey, `Dialogue node ${node.id} scene.backgroundAssetKey`);
+    if (node.speaker && !scene.characterIds.includes(node.speaker)) {
+      throw new Error(`Dialogue node ${node.id} speaker must be included in scene.characterIds`);
+    }
+  }
+
+  if (scene.mode === 'cg') {
+    validateImageAssetKey(scene.cgAssetKey, `Dialogue node ${node.id} scene.cgAssetKey`);
+    if (node.speaker && scene.characterIds.length > 0 && !scene.characterIds.includes(node.speaker)) {
+      throw new Error(`Dialogue node ${node.id} speaker must be included in scene.characterIds`);
+    }
+  }
+
+  return scene;
 }
 
 function validateVoiceAssetKey(voiceAssetKey: string, dialogueNodeId: string): string {
@@ -289,21 +396,25 @@ function validateVoiceAssetKey(voiceAssetKey: string, dialogueNodeId: string): s
 }
 
 function validateLocationBackgroundAssetKey(backgroundAssetKey: string, locationId: string): string {
-  const trimmedKey = backgroundAssetKey.trim();
+  return validateImageAssetKey(backgroundAssetKey, `Location ${locationId} background_asset_key`);
+}
+
+function validateImageAssetKey(assetKey: string, label: string): string {
+  const trimmedKey = assetKey.trim();
   if (trimmedKey.length === 0) {
-    throw new Error(`Location ${locationId} background_asset_key cannot be empty`);
+    throw new Error(`${label} cannot be empty`);
   }
 
   if (trimmedKey.startsWith('/')) {
-    throw new Error(`Location ${locationId} background_asset_key must be a storage key, not a public URL`);
+    throw new Error(`${label} must be a storage key, not a public URL`);
   }
 
   if (trimmedKey.includes('..')) {
-    throw new Error(`Location ${locationId} background_asset_key cannot contain parent directory segments`);
+    throw new Error(`${label} cannot contain parent directory segments`);
   }
 
   if (!trimmedKey.endsWith('.jpg') && !trimmedKey.endsWith('.jpeg') && !trimmedKey.endsWith('.png')) {
-    throw new Error(`Location ${locationId} background_asset_key must reference an image file`);
+    throw new Error(`${label} must reference an image file`);
   }
 
   return trimmedKey;
@@ -333,101 +444,21 @@ function mapEvent(event: {
   return EventSchema.parse(mappedEvent);
 }
 
-function findInitialDialogueId({
-  events,
-  dialogueNodes,
-  currentLocationId,
-  characterStates,
-  gameTimeDetail,
-}: {
-  events: Event[];
-  dialogueNodes: Record<string, BootstrapDialogueNode>;
-  currentLocationId: string;
-  characterStates: BootstrapCharacterState[];
-  gameTimeDetail: string;
-}): string {
-  const matchingEvents = events
-    .filter((event) => event.type === 'character_conversation')
-    .filter((event) => {
-      if (!event.dialogue_id) {
-        throw new Error(`Event ${event.id} is missing required dialogue_id`);
-      }
+function assertEventDialogueReferences(
+  events: Event[],
+  dialogueNodes: Record<string, BootstrapDialogueNode>,
+): void {
+  for (const event of events) {
+    if (event.type !== 'character_conversation') continue;
 
-      if (!dialogueNodes[event.dialogue_id]) {
-        throw new Error(`Event ${event.id} references missing dialogue node: ${event.dialogue_id}`);
-      }
+    if (!event.dialogue_id) {
+      throw new Error(`Event ${event.id} is missing required dialogue_id`);
+    }
 
-      return event.conditions.every((condition) =>
-        conditionPasses(condition, currentLocationId, characterStates, gameTimeDetail),
-      );
-    })
-    .sort(compareEventPriority);
-
-  const initialEvent = matchingEvents[0];
-  if (!initialEvent?.dialogue_id) {
-    throw new Error('No matching character_conversation event found for bootstrap state');
+    if (!dialogueNodes[event.dialogue_id]) {
+      throw new Error(`Event ${event.id} references missing dialogue node: ${event.dialogue_id}`);
+    }
   }
-
-  return initialEvent.dialogue_id;
-}
-
-function conditionPasses(
-  condition: Condition,
-  currentLocationId: string,
-  characterStates: BootstrapCharacterState[],
-  gameTimeDetail: string,
-): boolean {
-  if (condition.type === 'location') {
-    return condition.location_id === currentLocationId;
-  }
-
-  if (condition.type === 'characterLocation') {
-    return characterStates.some(
-      (state) =>
-        state.character_id === condition.character_id &&
-        state.location_id === condition.location_id,
-    );
-  }
-
-  const currentMinutes = parseGameTimeMinutes(gameTimeDetail);
-  const endTime = condition.start_time + condition.duration;
-  if (endTime > 1440) {
-    throw new Error(`timeBlock condition exceeds one day: ${condition.start_time}+${condition.duration}`);
-  }
-
-  return currentMinutes >= condition.start_time && currentMinutes < endTime;
-}
-
-function compareEventPriority(left: Event, right: Event): number {
-  const leftRank = priorityRank(left.priority);
-  const rightRank = priorityRank(right.priority);
-
-  if (leftRank !== rightRank) return leftRank - rightRank;
-  return left.priority.index - right.priority.index;
-}
-
-function priorityRank(priority: Priority): number {
-  return priority.value === 'mandatory' ? 0 : 1;
-}
-
-function parseGameTimeMinutes(gameTimeDetail: string): number {
-  const match = gameTimeDetail.match(/\b(\d{2}):(\d{2})\b/);
-  if (!match) throw new Error(`Invalid game_time_detail: ${gameTimeDetail}`);
-
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
-  if (
-    !Number.isInteger(hours) ||
-    !Number.isInteger(minutes) ||
-    hours < 0 ||
-    hours > 23 ||
-    minutes < 0 ||
-    minutes > 59
-  ) {
-    throw new Error(`Invalid game_time_detail: ${gameTimeDetail}`);
-  }
-
-  return hours * 60 + minutes;
 }
 
 function parseJson<T>(schema: z.ZodType<T>, value: string, label: string): T {

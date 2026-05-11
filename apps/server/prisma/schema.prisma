@@ -91,6 +91,7 @@ model Location {
   // Relations
   characterStates       CharacterState[]
   scheduleBlocks        ScheduleBlock[]
+  runtimeStates         GameRuntimeState[]
 }
 
 // DialogueNode: Single paragraph or decision point in a dialogue graph
@@ -98,6 +99,7 @@ model DialogueNode {
   id                    String   @id
   speaker               String?
   text                  String
+  scene                 String
   voice_asset_key       String?
   next_dialogue_id      String?
 
@@ -106,6 +108,7 @@ model DialogueNode {
   choices               DialogueChoice[] @relation("DialogueChoiceNode")
   incomingChoices       DialogueChoice[] @relation("DialogueChoiceNext")
   events                Event[]
+  runtimeStates         GameRuntimeState[]
 }
 
 // DialogueChoice: Player choice attached to a dialogue node
@@ -132,5 +135,16 @@ model Event {
   dialogue_id           String?  // Required when type is "character_conversation"
 
   dialogue              DialogueNode? @relation(fields: [dialogue_id], references: [id])
+}
+
+// GameRuntimeState: Single saved runtime pointer for bootstrap
+model GameRuntimeState {
+  id                    String   @id
+  current_location_id   String
+  current_dialogue_id   String
+  game_time_detail      String
+
+  currentLocation       Location     @relation(fields: [current_location_id], references: [id])
+  currentDialogue       DialogueNode @relation(fields: [current_dialogue_id], references: [id])
 }
 

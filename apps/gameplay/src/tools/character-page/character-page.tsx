@@ -266,7 +266,7 @@ function findCharacterMemories(memories: Memory[], characterId: string): Memory[
 }
 
 function getCharacterFullBodyUrl(characterId: string): string {
-  return `/assets/database/characters/${characterId}/full-body/full-body-white.png`
+  return `/assets/database/characters/${characterId}/full-body/full-body-transparent.png`
 }
 
 function getLocationName(locations: Location[], locationId: string): string {

@@ -1,5 +1,5 @@
 import LiquidGlass from 'liquid-glass-react'
-import { Location } from '../../../types/game'
+import { Character, CharacterState, Location } from '../../../types/game'
 import MapAreaSvg from './map-area-svg'
 import { MapArea, MapAreaMap, mapAttribution } from '../data/map-area-data'
 
@@ -9,6 +9,8 @@ interface MapShellProps {
   area: MapArea
   areaMap: MapAreaMap
   locations: Location[]
+  characters: Character[]
+  characterStates: CharacterState[]
   currentLocation: Location
   focusedLocation: Location | null
   selectedLocation: Location | null
@@ -17,6 +19,7 @@ interface MapShellProps {
   onMapDismiss: () => void
   onBuildingFocus: (location: Location | null) => void
   onBackToDialogue: () => void
+  onShowMapSelection: () => void
   onShowDebugPanel?: () => void
   onShowLegacyMap?: () => void
 }
@@ -25,6 +28,8 @@ export default function MapShell({
   area,
   areaMap,
   locations,
+  characters,
+  characterStates,
   currentLocation,
   focusedLocation,
   selectedLocation,
@@ -33,6 +38,7 @@ export default function MapShell({
   onMapDismiss,
   onBuildingFocus,
   onBackToDialogue,
+  onShowMapSelection,
   onShowDebugPanel,
   onShowLegacyMap,
 }: MapShellProps) {
@@ -56,6 +62,9 @@ export default function MapShell({
         </div>
 
         <div className="map-status__actions">
+          <button className="map-tool-button" type="button" onClick={onShowMapSelection}>
+            Area Selection
+          </button>
           {onShowLegacyMap && (
             <button className="map-tool-button" type="button" onClick={onShowLegacyMap}>
               Legacy
@@ -78,6 +87,8 @@ export default function MapShell({
           <MapAreaSvg
             areaMap={areaMap}
             locations={locations}
+            characters={characters}
+            characterStates={characterStates}
             currentLocationId={currentLocation.id}
             onLocationPick={onLocationPick}
             onMapDismiss={onMapDismiss}

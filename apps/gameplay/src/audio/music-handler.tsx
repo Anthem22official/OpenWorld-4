@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-export type MusicPage = 'dialogue' | 'map' | 'event' | 'legacy-map' | 'debug-image-gen' | 'character' | 'style-gallery'
+export type MusicPage = 'dialogue' | 'map-select' | 'map' | 'event' | 'legacy-map' | 'debug-image-gen' | 'character' | 'style-gallery'
 
 export const MUSIC_STATE_EVENT = 'openworld:music-state'
 
@@ -23,6 +23,7 @@ const musicTracks = {
 
 const musicByPage: Record<MusicPage, (typeof musicTracks)[keyof typeof musicTracks]> = {
   dialogue: musicTracks.conversation,
+  'map-select': musicTracks.map,
   map: musicTracks.map,
   event: musicTracks.map,
   'legacy-map': musicTracks.map,

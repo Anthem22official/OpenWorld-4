@@ -6,24 +6,29 @@ import { AtlasImageClient } from '../features/image-generation/providers/atlas-i
 import { createImageGenerationRouter } from '../features/image-generation/routes/image-generation-route';
 import { createLocalBackgroundRemovalRouter } from '../features/background-removal/routes/local-background-removal-route';
 import { createGameBootstrapRouter } from '../features/game/routes/game-bootstrap-route';
+import { OpenRouterTtsClient } from '../features/text-to-speech/providers/openrouter-tts-client';
+import { createTextToSpeechRouter } from '../features/text-to-speech/routes/text-to-speech-route';
 import { prisma } from '../db/init';
 
 interface ServerServices {
   atlasImageClient: AtlasImageClient;
   localBackgroundRemovalService: LocalBackgroundRemovalService;
   falBackgroundClient: FalBackgroundClient;
+  openRouterTtsClient: OpenRouterTtsClient;
 }
 
 export function createApp({
   atlasImageClient,
   localBackgroundRemovalService,
   falBackgroundClient,
+  openRouterTtsClient,
 }: ServerServices) {
   const app = express();
 
   app.use(express.json());
   app.use('/api/game', createGameBootstrapRouter({ prisma }));
   app.use('/api/images', createImageGenerationRouter({ atlasImageClient }));
+  app.use('/api/text-to-speech', createTextToSpeechRouter({ openRouterTtsClient, prisma }));
   app.use(
     '/api/images/background-removals/local',
     createLocalBackgroundRemovalRouter({ localBackgroundRemovalService }),

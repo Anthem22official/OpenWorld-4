@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 export interface ServerEnv {
   atlasCloudApiKey: string;
   falApiKey: string;
+  openRouterApiKey: string;
   port: number;
   databaseUrl: string;
 }
@@ -38,6 +39,7 @@ export function loadServerEnv(): ServerEnv {
   return {
     atlasCloudApiKey: requireEnv('ATLASCLOUD_API_KEY'),
     falApiKey: requireEnv('FAL_API_KEY'),
+    openRouterApiKey: requireEnv('OPENROUTER_API_KEY'),
     port: parsePort(requireEnv('PORT')),
     databaseUrl: requireEnv('DATABASE_URL'),
   };

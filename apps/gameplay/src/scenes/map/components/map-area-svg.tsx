@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { MouseEvent, PointerEvent } from 'react'
-import { Location } from '../../../types/game'
+import { Character, CharacterState, Location } from '../../../types/game'
 import MapBuildingLayer from './map-building-layer'
+import MapCharacterLayer from './map-character-layer'
 import { MapAreaMap } from '../data/map-area-data'
 
 const MAP_DRAG_ZOOM = 1.28
@@ -27,6 +28,8 @@ interface DragSession {
 interface MapAreaSvgProps {
   areaMap: MapAreaMap
   locations: Location[]
+  characters: Character[]
+  characterStates: CharacterState[]
   currentLocationId: string
   onLocationPick: (locationId: string) => void
   onMapDismiss: () => void
@@ -36,21 +39,27 @@ interface MapAreaSvgProps {
 export default function MapAreaSvg({
   areaMap,
   locations,
+  characters,
+  characterStates,
   currentLocationId,
   onLocationPick,
   onMapDismiss,
   onBuildingFocus,
 }: MapAreaSvgProps) {
   const baseViewBox = useMemo(() => parseMapViewBox(areaMap.viewBox), [areaMap.viewBox])
-  const [dragViewBox, setDragViewBox] = useState(() => getInitialDragViewBox(baseViewBox))
+  const initialViewBox = useMemo(
+    () => areaMap.initialViewBox ? parseMapViewBox(areaMap.initialViewBox) : getInitialDragViewBox(baseViewBox),
+    [areaMap.initialViewBox, baseViewBox],
+  )
+  const [dragViewBox, setDragViewBox] = useState(() => initialViewBox)
   const [isDragging, setIsDragging] = useState(false)
   const svgRef = useRef<SVGSVGElement | null>(null)
   const dragSessionRef = useRef<DragSession | null>(null)
   const suppressClicksUntilRef = useRef(0)
 
   useEffect(() => {
-    setDragViewBox(getInitialDragViewBox(baseViewBox))
-  }, [baseViewBox])
+    setDragViewBox(clampMapViewBox(initialViewBox, baseViewBox))
+  }, [baseViewBox, initialViewBox])
 
   const handlePointerDown = (event: PointerEvent<SVGSVGElement>) => {
     if (event.button !== 0) return
@@ -162,8 +171,7 @@ export default function MapAreaSvg({
     >
       <title>{areaMap.name}</title>
       <desc>
-        Local optimized SVG map generated from OpenStreetMap building, road,
-        and rail ways inside the active area bounds.
+        Local optimized SVG map generated from OpenStreetMap features inside the active area bounds.
       </desc>
       <defs>
         <pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -210,11 +218,18 @@ export default function MapAreaSvg({
         onBuildingFocus={onBuildingFocus}
       />
 
+      <MapCharacterLayer
+        areaMap={areaMap}
+        characters={characters}
+        characterStates={characterStates}
+        locations={locations}
+        currentLocationId={currentLocationId}
+      />
+
       <g className="map-svg-labels" fontFamily="-apple-system, Segoe UI, sans-serif" fontSize="18" fontWeight="600">
-        <text x="460" y="345">Shibuya Crossing</text>
-        <text x="160" y="520">Dogenzaka</text>
-        <text x="700" y="180">Jinnan</text>
-        <text x="360" y="585">Hachiko side</text>
+        {areaMap.labels.map((label) => (
+          <text key={label.id} x={label.x} y={label.y}>{label.text}</text>
+        ))}
       </g>
     </svg>
   )

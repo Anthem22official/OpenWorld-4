@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { DialogueNode, GameState } from '../../types/game'
+import { Character, DialogueNode, DialogueScene, GameState } from '../../types/game'
 import CharacterArea from './components/character-area'
 import DialogueBox from './components/dialogue-box'
 import ChoicePanel from './components/choice-panel'
@@ -9,9 +9,11 @@ import { createDialogueVoicePlayer, DialogueVoicePlayer } from './dialogue-voice
 interface DialoguePageProps {
   gameState: GameState
   dialogueNodes: Record<string, DialogueNode>
+  characters: Character[]
   currentDialogueId: string
   onDialogueChange: (dialogueId: string) => void
   onShowMap?: () => void
+  onShowMapSelection?: () => void
   onShowDebugPanel?: () => void
   onShowCharacterPage?: () => void
   onShowStyleGallery?: () => void
@@ -20,9 +22,11 @@ interface DialoguePageProps {
 export default function DialoguePage({
   gameState,
   dialogueNodes,
+  characters,
   currentDialogueId,
   onDialogueChange,
   onShowMap,
+  onShowMapSelection,
   onShowDebugPanel,
   onShowCharacterPage,
   onShowStyleGallery,
@@ -37,7 +41,13 @@ export default function DialoguePage({
   const currentDialogue = dialogueNodes[currentDialogueId]
   if (!currentDialogue) throw new Error(`Dialogue node not found: ${currentDialogueId}`)
 
+  const speakerName = currentDialogue.speaker
+    ? getCharacterName(characters, currentDialogue.speaker)
+    : undefined
   const hasChoices = !!currentDialogue.choices?.length
+  const characterNames = getCharacterNames(characters)
+  assertDialogueScene(currentDialogue)
+  const sceneImageUrl = resolveDialogueSceneImageUrl(currentDialogue.scene, currentDialogue.id)
 
   const handleContinue = () => {
     if (isDialogueTyping) return
@@ -101,14 +111,26 @@ export default function DialoguePage({
   return (
     <div
       className="dialogue-stage"
+      data-scene-mode={currentDialogue.scene.mode}
       data-can-continue={!hasChoices && !isDialogueTyping && !!currentDialogue.nextDialogueId}
       onClick={() => {
         if (!hasChoices && !isDialogueTyping && currentDialogue.nextDialogueId) handleContinue()
       }}
     >
+      <div className="dialogue-scene-art" aria-hidden="true">
+        <img src={sceneImageUrl} alt="" />
+      </div>
+
       <header className="dialogue-status black-coated-paper" onClick={(event) => event.stopPropagation()}>
         <div className="dialogue-status__scene">
-          <span className="dialogue-status__label">Chapter 01</span>
+          <div className="dialogue-status__scene-top">
+            {onShowMapSelection && (
+              <button className="dialogue-area-selection-button" type="button" onClick={onShowMapSelection}>
+                Area Selection
+              </button>
+            )}
+            <span className="dialogue-status__label">Chapter 01</span>
+          </div>
           <div className="dialogue-status__title-row">
             <strong>Sharp Evening</strong>
             <div className="dialogue-now-playing" aria-label={`Now playing ${musicTitle}, ${musicLength}`}>
@@ -123,13 +145,13 @@ export default function DialoguePage({
           </div>
         </div>
         <div className="dialogue-status__center">
-          <span>18:42</span>
+          <span>{formatGameTime(gameState.gameTimeDetail)}</span>
           <span>{gameState.currentLocation}</span>
         </div>
         <div className="dialogue-hud-actions">
           {onShowMap && (
             <button className="dialogue-hud-button" type="button" onClick={onShowMap}>
-              Map
+              Return to Map
             </button>
           )}
           {onShowDebugPanel && (
@@ -165,7 +187,13 @@ export default function DialoguePage({
           </div>
         </aside>
 
-        <CharacterArea speaker={currentDialogue.speaker} />
+        {currentDialogue.scene.mode === 'dialogue' && currentDialogue.scene.characterIds.length > 0 && (
+          <CharacterArea
+            characterIds={currentDialogue.scene.characterIds}
+            activeCharacterId={currentDialogue.speaker}
+            characterNames={characterNames}
+          />
+        )}
 
         {hasChoices && (
           <aside className="dialogue-choice-dock" onClick={(event) => event.stopPropagation()}>
@@ -180,7 +208,7 @@ export default function DialoguePage({
           if (!hasChoices && !isDialogueTyping && currentDialogue.nextDialogueId) handleContinue()
         }}
       >
-        <DialogueBox speaker={currentDialogue.speaker} text={currentDialogue.text} onTypingChange={handleTypingChange} />
+        <DialogueBox speaker={speakerName} text={currentDialogue.text} onTypingChange={handleTypingChange} />
 
         <div
           className="dialogue-continue"
@@ -201,4 +229,67 @@ function formatMusicTime(seconds: number) {
   const minutes = Math.floor(roundedSeconds / 60)
   const remainingSeconds = roundedSeconds % 60
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+}
+
+function getCharacterName(characters: Character[], characterId: string): string {
+  const character = characters.find((item) => item.id === characterId)
+  if (!character) throw new Error(`Dialogue speaker character not found: ${characterId}`)
+
+  return character.name
+}
+
+function getCharacterNames(characters: Character[]): Record<string, string> {
+  return Object.fromEntries(characters.map((character) => [character.id, character.name]))
+}
+
+function assertDialogueScene(dialogue: DialogueNode): void {
+  const { scene } = dialogue
+  if (scene.characterIds.length > 4) {
+    throw new Error(`Dialogue node ${dialogue.id} scene supports at most 4 characters`)
+  }
+
+  if (scene.mode === 'dialogue') {
+    if (!scene.backgroundAssetKey) throw new Error(`Dialogue node ${dialogue.id} requires scene.backgroundAssetKey`)
+    if (dialogue.speaker && !scene.characterIds.includes(dialogue.speaker)) {
+      throw new Error(`Dialogue node ${dialogue.id} speaker must be included in scene.characterIds`)
+    }
+    return
+  }
+
+  if (scene.mode === 'cg') {
+    if (!scene.cgAssetKey) throw new Error(`Dialogue node ${dialogue.id} requires scene.cgAssetKey`)
+    if (scene.characterIds.length > 1) throw new Error(`Dialogue node ${dialogue.id} CG mode supports at most 1 character`)
+    if (dialogue.speaker && scene.characterIds.length > 0 && !scene.characterIds.includes(dialogue.speaker)) {
+      throw new Error(`Dialogue node ${dialogue.id} speaker must be included in scene.characterIds`)
+    }
+    return
+  }
+
+  throw new Error(`Dialogue node ${dialogue.id} has unsupported scene mode`)
+}
+
+function resolveDialogueSceneImageUrl(scene: DialogueScene, dialogueId: string): string {
+  const assetKey = scene.mode === 'cg' ? scene.cgAssetKey : scene.backgroundAssetKey
+  if (!assetKey) throw new Error(`Dialogue node ${dialogueId} is missing scene image asset key`)
+
+  return `/assets/database/${validateImageAssetKey(assetKey, `Dialogue node ${dialogueId} scene image`)}`
+}
+
+function validateImageAssetKey(assetKey: string, label: string): string {
+  const trimmedKey = assetKey.trim()
+  if (trimmedKey.length === 0) throw new Error(`${label} cannot be empty`)
+  if (trimmedKey.startsWith('/')) throw new Error(`${label} must be a storage key, not a public URL`)
+  if (trimmedKey.includes('..')) throw new Error(`${label} cannot contain parent directory segments`)
+  if (!trimmedKey.endsWith('.jpg') && !trimmedKey.endsWith('.jpeg') && !trimmedKey.endsWith('.png')) {
+    throw new Error(`${label} must reference an image file`)
+  }
+
+  return trimmedKey
+}
+
+function formatGameTime(gameTimeDetail: string): string {
+  const match = gameTimeDetail.match(/\b(\d{2}:\d{2})\b/)
+  if (!match) throw new Error(`Invalid gameTimeDetail: ${gameTimeDetail}`)
+
+  return match[1]
 }
