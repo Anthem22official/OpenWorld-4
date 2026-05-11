@@ -42,6 +42,6 @@
 - **apps/server/python/requirements.txt** - Read when changing the Python runtime dependencies for local background removal.
 - **apps/server/src/features/background-removal/routes/fal-background-removal-route.ts** - Read when changing the fal background-removal endpoint.
 - **apps/server/src/features/background-removal/providers/fal-background-client.ts** - Read when changing the fal request payload, polling, error handling, or response normalization.
-- **apps/server/src/features/image-generation/routes/image-generation-route.ts** - Read when changing the Atlas image-generation endpoint.
+- **apps/server/src/features/image-generation/routes/image-generation-route.ts** - Read when changing the Atlas image-generation endpoint or preview proxy.
 - **apps/server/src/features/image-generation/providers/atlas-image-client.ts** - Read when changing the Atlas request payload, polling, error handling, or response normalization.
-- **apps/server/src/config/env.ts** - Read when changing required server environment variables, including `FAI_API_KEY`.
+- **apps/server/src/config/env.ts** - Read when changing required server environment variables, including `FAL_API_KEY`.

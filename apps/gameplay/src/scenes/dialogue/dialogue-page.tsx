@@ -11,6 +11,7 @@ interface DialoguePageProps {
   onDialogueChange: (dialogueId: string) => void
   onShowMap?: () => void
   onShowDebugPanel?: () => void
+  onShowCharacterPage?: () => void
   onShowStyleGallery?: () => void
 }
 
@@ -20,6 +21,7 @@ export default function DialoguePage({
   onDialogueChange,
   onShowMap,
   onShowDebugPanel,
+  onShowCharacterPage,
   onShowStyleGallery,
 }: DialoguePageProps) {
   const [isDialogueTyping, setIsDialogueTyping] = useState(false)
@@ -87,6 +89,11 @@ export default function DialoguePage({
           {onShowDebugPanel && (
             <button className="dialogue-hud-button" type="button" onClick={onShowDebugPanel}>
               Debug
+            </button>
+          )}
+          {onShowCharacterPage && (
+            <button className="dialogue-hud-button" type="button" onClick={onShowCharacterPage}>
+              Character
             </button>
           )}
           {onShowStyleGallery && (

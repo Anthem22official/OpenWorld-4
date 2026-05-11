@@ -16,7 +16,7 @@ async function main() {
       }),
       localBackgroundRemovalService: new LocalBackgroundRemovalService(),
       falBackgroundClient: new FalBackgroundClient({
-        apiKey: env.faiApiKey,
+        apiKey: env.falApiKey,
       }),
     };
     const app = createApp(serverServices);

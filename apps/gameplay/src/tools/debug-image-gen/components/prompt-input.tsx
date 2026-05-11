@@ -5,7 +5,10 @@ interface PromptInputProps {
   onPromptChange: (value: string) => void
   onSubmit: () => void
   onClear: () => void
+  onRemoveBackground: () => void
   isLoading: boolean
+  canRemoveBackground: boolean
+  isRemovingBackground: boolean
   quality: 'low' | 'medium' | 'high'
   onQualityChange: (value: 'low' | 'medium' | 'high') => void
   size: string
@@ -19,7 +22,10 @@ export default function PromptInput({
   onPromptChange,
   onSubmit,
   onClear,
+  onRemoveBackground,
   isLoading,
+  canRemoveBackground,
+  isRemovingBackground,
   quality,
   onQualityChange,
   size,
@@ -27,6 +33,8 @@ export default function PromptInput({
   format,
   onFormatChange,
 }: PromptInputProps) {
+  const isBusy = isLoading || isRemovingBackground
+
   const containerStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
@@ -100,16 +108,35 @@ export default function PromptInput({
 
   const submitButtonStyle: CSSProperties = {
     ...buttonStyle,
-    backgroundColor: isLoading ? '#64748B' : '#3B82F6',
+    backgroundColor: isBusy ? '#64748B' : '#3B82F6',
     color: '#FFFFFF',
-    opacity: isLoading ? 0.8 : 1,
-    cursor: isLoading ? 'not-allowed' : 'pointer',
+    opacity: isBusy ? 0.8 : 1,
+    cursor: isBusy ? 'not-allowed' : 'pointer',
+  }
+
+  const removeBackgroundButtonStyle: CSSProperties = {
+    ...buttonStyle,
+    backgroundColor:
+      isBusy || !canRemoveBackground ? '#475569' : '#22C55E',
+    color: '#FFFFFF',
+    opacity: isBusy || !canRemoveBackground ? 0.65 : 1,
+    cursor: isBusy || !canRemoveBackground ? 'not-allowed' : 'pointer',
+  }
+
+  const removeBackgroundButtonHoverStyle: CSSProperties = {
+    ...removeBackgroundButtonStyle,
+    backgroundColor:
+      isBusy || !canRemoveBackground ? '#475569' : '#16A34A',
+    boxShadow:
+      isBusy || !canRemoveBackground
+        ? 'none'
+        : '0 4px 6px rgba(0,0,0,0.3)',
   }
 
   const submitButtonHoverStyle: CSSProperties = {
     ...submitButtonStyle,
-    backgroundColor: isLoading ? '#64748B' : '#2563EB',
-    boxShadow: isLoading ? 'none' : '0 4px 6px rgba(0,0,0,0.3)',
+    backgroundColor: isBusy ? '#64748B' : '#2563EB',
+    boxShadow: isBusy ? 'none' : '0 4px 6px rgba(0,0,0,0.3)',
   }
 
   const clearButtonStyle: CSSProperties = {
@@ -139,7 +166,7 @@ export default function PromptInput({
         }}
         style={textareaStyle}
         placeholder="Describe the image you want to generate..."
-        disabled={isLoading}
+        disabled={isBusy}
         aria-label="Image prompt"
       />
 
@@ -156,7 +183,7 @@ export default function PromptInput({
                 onQualityChange(e.target.value as 'low' | 'medium' | 'high')
               }
               style={selectStyle}
-              disabled={isLoading}
+              disabled={isBusy}
               aria-label="Image quality"
             >
               <option value="low">Low</option>
@@ -173,7 +200,7 @@ export default function PromptInput({
               value={format}
               onChange={(e) => onFormatChange(e.target.value as 'jpeg' | 'png')}
               style={selectStyle}
-              disabled={isLoading}
+              disabled={isBusy}
               aria-label="Image format"
             >
               <option value="jpeg">JPEG</option>
@@ -190,7 +217,7 @@ export default function PromptInput({
             value={size}
             onChange={(e) => onSizeChange(e.target.value)}
             style={selectStyle}
-            disabled={isLoading}
+            disabled={isBusy}
             aria-label="Image size"
           >
             <option value="1024x768">1024 x 768 (Landscape)</option>
@@ -208,10 +235,10 @@ export default function PromptInput({
 
       <button
         onClick={onSubmit}
-        disabled={isLoading || prompt.trim() === ''}
+        disabled={isBusy || prompt.trim() === ''}
         style={submitButtonStyle}
         onMouseEnter={(e) => {
-          if (!isLoading && prompt.trim() !== '') {
+          if (!isBusy && prompt.trim() !== '') {
             Object.assign(e.currentTarget.style, submitButtonHoverStyle)
           }
         }}
@@ -225,11 +252,29 @@ export default function PromptInput({
       </button>
 
       <button
+        onClick={onRemoveBackground}
+        disabled={!canRemoveBackground || isBusy}
+        style={removeBackgroundButtonStyle}
+        onMouseEnter={(e) => {
+          if (canRemoveBackground && !isBusy) {
+            Object.assign(e.currentTarget.style, removeBackgroundButtonHoverStyle)
+          }
+        }}
+        onMouseLeave={(e) => {
+          Object.assign(e.currentTarget.style, removeBackgroundButtonStyle)
+        }}
+        aria-label="Remove background with Fal"
+        aria-busy={isRemovingBackground}
+      >
+        {isRemovingBackground ? 'Removing background...' : 'Remove background'}
+      </button>
+
+      <button
         onClick={onClear}
-        disabled={prompt.trim() === '' || isLoading}
+        disabled={prompt.trim() === '' || isBusy}
         style={clearButtonStyle}
         onMouseEnter={(e) => {
-          if (prompt.trim() !== '' && !isLoading) {
+          if (prompt.trim() !== '' && !isBusy) {
             Object.assign(e.currentTarget.style, clearButtonHoverStyle)
           }
         }}

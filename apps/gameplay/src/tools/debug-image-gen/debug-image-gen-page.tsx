@@ -15,19 +15,28 @@ export default function DebugImageGenPage({
   const [quality, setQuality] = useState<'low' | 'medium' | 'high'>('medium')
   const [size, setSize] = useState('1024x1024')
   const [format, setFormat] = useState<'jpeg' | 'png'>('jpeg')
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null)
+  const [generatedImagePreviewUrl, setGeneratedImagePreviewUrl] = useState<string | null>(null)
+  const [backgroundRemovedImageUrl, setBackgroundRemovedImageUrl] = useState<string | null>(null)
+  const [backgroundRemovedImagePreviewUrl, setBackgroundRemovedImagePreviewUrl] = useState<string | null>(null)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>(
     'idle',
   )
+  const [activeStep, setActiveStep] = useState<'generation' | 'background-removal'>('generation')
   const [errorMessage, setErrorMessage] = useState('')
-  const [generationTime, setGenerationTime] = useState<string | null>(null)
+  const [elapsedTime, setElapsedTime] = useState<string | null>(null)
 
   const handleSubmit = async () => {
     if (prompt.trim() === '') return
 
     setStatus('loading')
+    setActiveStep('generation')
     setErrorMessage('')
-    setImageUrl(null)
+    setGeneratedImageUrl(null)
+    setGeneratedImagePreviewUrl(null)
+    setBackgroundRemovedImageUrl(null)
+    setBackgroundRemovedImagePreviewUrl(null)
+    setElapsedTime(null)
 
     const startTime = Date.now()
 
@@ -43,37 +52,55 @@ export default function DebugImageGenPage({
         }),
       })
 
+      const submitResult = await readJsonResponse(
+        submitResponse,
+        'Image generation submit',
+      )
+
       if (submitResponse.status !== 202) {
-        const errorData = await submitResponse.json()
-        throw new Error(errorData.message || 'Failed to start image generation')
+        throw new Error(
+          getErrorMessage(submitResult, 'Failed to start image generation'),
+        )
       }
 
-      const prediction = await submitResponse.json()
-      const predictionId = prediction.id
+      const prediction = submitResult
+      const predictionId = getPredictionId(prediction)
 
-      let result = prediction
-      while (result.status === 'processing' || result.status === 'pending' || result.status === 'queued') {
+      let result: unknown = prediction
+      let predictionStatus = getPredictionStatus(result)
+      while (
+        predictionStatus === 'processing' ||
+        predictionStatus === 'pending' ||
+        predictionStatus === 'queued'
+      ) {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         const pollResponse = await fetch(`/api/images/generations/${predictionId}`)
 
+        result = await readJsonResponse(
+          pollResponse,
+          'Image generation poll',
+        )
+
         if (!pollResponse.ok) {
-          throw new Error('Failed to poll image generation status')
+          throw new Error(
+            getErrorMessage(result, 'Failed to poll image generation status'),
+          )
         }
-
-        result = await pollResponse.json()
+        predictionStatus = getPredictionStatus(result)
       }
 
-      if (result.status !== 'completed' && result.status !== 'succeeded') {
-        throw new Error(`Image generation failed (status: ${result.status})`)
+      if (predictionStatus !== 'completed' && predictionStatus !== 'succeeded') {
+        throw new Error(`Image generation failed (status: ${predictionStatus})`)
       }
 
-      if (!result.outputs || result.outputs.length === 0) {
-        throw new Error('No image generated')
-      }
+      const imageUrl = getGeneratedImageUrl(result)
+      const previewUrl = getPreviewImageUrl(imageUrl)
+      await validatePreviewImage(previewUrl, 'Generated image preview')
 
-      setImageUrl(result.outputs[0])
+      setGeneratedImageUrl(imageUrl)
+      setGeneratedImagePreviewUrl(previewUrl)
       const duration = ((Date.now() - startTime) / 1000).toFixed(1)
-      setGenerationTime(`${duration}s`)
+      setElapsedTime(`${duration}s`)
       setStatus('success')
     } catch (error) {
       setErrorMessage(
@@ -83,12 +110,60 @@ export default function DebugImageGenPage({
     }
   }
 
+  const handleRemoveBackground = async () => {
+    if (!generatedImageUrl) {
+      throw new Error('Cannot remove background before image generation succeeds')
+    }
+
+    setStatus('loading')
+    setActiveStep('background-removal')
+    setErrorMessage('')
+    setElapsedTime(null)
+
+    const startTime = Date.now()
+
+    try {
+      const response = await fetch('/api/images/background-removals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image_url: generatedImageUrl,
+        }),
+      })
+
+      const result = await readJsonResponse(response, 'Fal background removal')
+
+      if (!response.ok) {
+        throw new Error(getErrorMessage(result, 'Failed to remove background'))
+      }
+
+      const imageUrl = getFalBackgroundRemovalImageUrl(result)
+      const previewUrl = getPreviewImageUrl(imageUrl)
+      await validatePreviewImage(previewUrl, 'Background-removed image preview')
+
+      setBackgroundRemovedImageUrl(imageUrl)
+      setBackgroundRemovedImagePreviewUrl(previewUrl)
+      const duration = ((Date.now() - startTime) / 1000).toFixed(1)
+      setElapsedTime(`${duration}s`)
+      setStatus('success')
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Failed to remove background',
+      )
+      setStatus('error')
+    }
+  }
+
   const handleClear = () => {
     setPrompt('')
-    setImageUrl(null)
+    setGeneratedImageUrl(null)
+    setGeneratedImagePreviewUrl(null)
+    setBackgroundRemovedImageUrl(null)
+    setBackgroundRemovedImagePreviewUrl(null)
     setStatus('idle')
+    setActiveStep('generation')
     setErrorMessage('')
-    setGenerationTime(null)
+    setElapsedTime(null)
     setQuality('medium')
     setSize('1024x1024')
     setFormat('jpeg')
@@ -203,7 +278,12 @@ export default function DebugImageGenPage({
             onPromptChange={setPrompt}
             onSubmit={handleSubmit}
             onClear={handleClear}
-            isLoading={status === 'loading'}
+            onRemoveBackground={handleRemoveBackground}
+            isLoading={status === 'loading' && activeStep === 'generation'}
+            canRemoveBackground={Boolean(generatedImageUrl) && !backgroundRemovedImageUrl}
+            isRemovingBackground={
+              status === 'loading' && activeStep === 'background-removal'
+            }
             quality={quality}
             onQualityChange={setQuality}
             size={size}
@@ -215,9 +295,23 @@ export default function DebugImageGenPage({
 
         <section style={previewPanelStyle}>
           <ImagePreview
-            imageUrl={imageUrl}
+            imageUrl={backgroundRemovedImagePreviewUrl ?? generatedImagePreviewUrl}
             status={status}
-            generationTime={generationTime}
+            generationTime={elapsedTime}
+            loadingLabel={
+              activeStep === 'background-removal'
+                ? 'Removing background with Fal...'
+                : 'Generating image...'
+            }
+            resultLabel={
+              activeStep === 'background-removal'
+                ? 'Background removal time'
+                : 'Generation time'
+            }
+            onImageError={() => {
+              setStatus('error')
+              setErrorMessage('Image preview failed to render in the browser')
+            }}
           />
           <ErrorDisplay
             message={errorMessage}
@@ -227,4 +321,148 @@ export default function DebugImageGenPage({
       </div>
     </div>
   )
+}
+
+function getPredictionId(value: unknown): string {
+  if (typeof value !== 'object' || value === null) {
+    throw new Error('Image generation response is not an object')
+  }
+
+  const id = (value as Record<string, unknown>).id
+  if (typeof id !== 'string' || id.trim().length === 0) {
+    throw new Error('Image generation response is missing id')
+  }
+
+  return id
+}
+
+function getPredictionStatus(value: unknown): string {
+  if (typeof value !== 'object' || value === null) {
+    throw new Error('Image generation response is not an object')
+  }
+
+  const status = (value as Record<string, unknown>).status
+  if (typeof status !== 'string' || status.trim().length === 0) {
+    throw new Error('Image generation response is missing status')
+  }
+
+  return status
+}
+
+function getGeneratedImageUrl(value: unknown): string {
+  if (typeof value !== 'object' || value === null) {
+    throw new Error('Image generation result is not an object')
+  }
+
+  const outputs = (value as Record<string, unknown>).outputs
+  if (!Array.isArray(outputs) || outputs.length === 0) {
+    throw new Error('Image generation result is missing outputs')
+  }
+
+  const imageUrl = outputs[0]
+  if (typeof imageUrl !== 'string' || imageUrl.trim().length === 0) {
+    throw new Error('Image generation result output is not a URL')
+  }
+
+  return imageUrl
+}
+
+function getFalBackgroundRemovalImageUrl(value: unknown): string {
+  if (typeof value !== 'object' || value === null) {
+    throw new Error('Fal background-removal result is not an object')
+  }
+
+  const image = (value as Record<string, unknown>).image
+  if (typeof image !== 'object' || image === null) {
+    throw new Error('Fal background-removal result is missing image')
+  }
+
+  const imageUrl = (image as Record<string, unknown>).url
+  if (typeof imageUrl !== 'string' || imageUrl.trim().length === 0) {
+    throw new Error('Fal background-removal result is missing image.url')
+  }
+
+  return imageUrl
+}
+
+function getPreviewImageUrl(imageUrl: string): string {
+  return isAtlasImageUrl(imageUrl)
+    ? `/api/images/preview?url=${encodeURIComponent(imageUrl)}`
+    : imageUrl
+}
+
+function isAtlasImageUrl(imageUrl: string): boolean {
+  try {
+    const parsedUrl = new URL(imageUrl)
+    return (
+      parsedUrl.protocol === 'https:' &&
+      parsedUrl.hostname === 'atlas-img.oss-us-west-1.aliyuncs.com' &&
+      parsedUrl.pathname.startsWith('/images/')
+    )
+  } catch {
+    throw new Error('Image output is not a valid URL')
+  }
+}
+
+async function validatePreviewImage(
+  previewUrl: string,
+  operationName: string,
+): Promise<void> {
+  if (!previewUrl.startsWith('/api/images/preview?')) {
+    return
+  }
+
+  const response = await fetch(previewUrl, {
+    method: 'GET',
+    cache: 'no-store',
+  })
+
+  if (!response.ok) {
+    const details = await readJsonResponse(response, operationName)
+    throw new Error(getErrorMessage(details, `${operationName} failed`))
+  }
+
+  const contentType = response.headers.get('content-type')
+  if (!contentType || !contentType.toLowerCase().startsWith('image/')) {
+    throw new Error(`${operationName} returned non-image content`)
+  }
+
+  const blob = await response.blob()
+  if (blob.size === 0) {
+    throw new Error(`${operationName} returned an empty image body`)
+  }
+}
+
+function getErrorMessage(value: unknown, fallbackMessage: string): string {
+  if (typeof value !== 'object' || value === null) {
+    return fallbackMessage
+  }
+
+  const message = (value as Record<string, unknown>).message
+  if (typeof message !== 'string' || message.trim().length === 0) {
+    return fallbackMessage
+  }
+
+  return message
+}
+
+async function readJsonResponse(
+  response: Response,
+  operationName: string,
+): Promise<unknown> {
+  const text = await response.text()
+
+  if (text.trim().length === 0) {
+    throw new Error(
+      `${operationName} returned an empty response body (HTTP ${response.status})`,
+    )
+  }
+
+  try {
+    return JSON.parse(text) as unknown
+  } catch {
+    throw new Error(
+      `${operationName} returned non-JSON response body (HTTP ${response.status})`,
+    )
+  }
 }

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 export interface ServerEnv {
   atlasCloudApiKey: string;
-  faiApiKey: string;
+  falApiKey: string;
   port: number;
   databaseUrl: string;
 }
@@ -37,7 +37,7 @@ function parsePort(value: string): number {
 export function loadServerEnv(): ServerEnv {
   return {
     atlasCloudApiKey: requireEnv('ATLASCLOUD_API_KEY'),
-    faiApiKey: requireEnv('FAI_API_KEY'),
+    falApiKey: requireEnv('FAL_API_KEY'),
     port: parsePort(requireEnv('PORT')),
     databaseUrl: requireEnv('DATABASE_URL'),
   };

@@ -36,11 +36,15 @@ export default function MapBuildingLayer({
         const location = getLocationForBuilding(locations, areaMap.id, building.id)
         const isCurrent = location.id === currentLocationId
         const isActive = activeBuildingId === building.id
-        const fill = isCurrent
-          ? 'rgba(184, 134, 11, 0.72)'
+        const isVisited = location.visited
+        const labelWidth = Math.min(Math.max(location.name.length * 7.2 + 18, 78), 190)
+        const stateClassName = isCurrent
+          ? 'map-building map-building--current'
           : isActive
-            ? 'rgba(159, 122, 234, 0.72)'
-            : 'rgba(30, 41, 59, 0.86)'
+            ? 'map-building map-building--active'
+            : isVisited
+              ? 'map-building map-building--visited'
+              : 'map-building'
 
         return (
           <g
@@ -70,23 +74,34 @@ export default function MapBuildingLayer({
           >
             <polygon
               points={building.points}
-              fill={fill}
-              stroke={isCurrent ? '#F7C948' : isActive ? '#C4B5FD' : '#64748B'}
-              strokeWidth={isActive || isCurrent ? 5 : 3}
-              style={{
-                transition: 'fill 160ms ease, stroke 160ms ease, stroke-width 160ms ease',
-                filter: isActive || isCurrent ? 'drop-shadow(0 0 12px rgba(159, 122, 234, 0.42))' : 'none',
-              }}
+              className={stateClassName}
             />
-            <circle
-              cx={building.labelX}
-              cy={building.labelY}
-              r={isCurrent ? 9 : 6}
-              fill={isCurrent ? '#F7C948' : '#C4B5FD'}
-              stroke="#0F172A"
-              strokeWidth="3"
-              style={{ pointerEvents: 'none' }}
-            />
+            {(isActive || isCurrent) && (
+              <polygon
+                points={building.points}
+                className={isCurrent ? 'map-building-glow map-building-glow--current' : 'map-building-glow'}
+              />
+            )}
+            <g className="map-building-label" style={{ pointerEvents: 'none' }}>
+              <rect
+                x={building.labelX - labelWidth / 2}
+                y={building.labelY - 13}
+                width={labelWidth}
+                height="26"
+                rx="7"
+                className={isCurrent ? 'map-building-label__plate map-building-label__plate--current' : 'map-building-label__plate'}
+              />
+              <text
+                x={building.labelX}
+                y={building.labelY + 4}
+                textAnchor="middle"
+                textLength={labelWidth - 16}
+                lengthAdjust="spacingAndGlyphs"
+                className={isCurrent ? 'map-building-label__text map-building-label__text--current' : 'map-building-label__text'}
+              >
+                {location.name}
+              </text>
+            </g>
           </g>
         )
       })}

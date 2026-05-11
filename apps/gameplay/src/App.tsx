@@ -3,10 +3,11 @@ import DialoguePage from './scenes/dialogue/dialogue-page'
 import MapPage from './scenes/map/map-page'
 import LegacyMapPage from './scenes/map/legacy-map-page'
 import DebugImageGenPage from './tools/debug-image-gen/debug-image-gen-page'
+import CharacterPage from './tools/character-page/character-page'
 import StyleGalleryPage from './tools/style-gallery/style-gallery-page'
 import { mockGameState } from './mocks/game-state'
 
-type PageType = 'dialogue' | 'map' | 'legacy-map' | 'debug-image-gen' | 'style-gallery'
+type PageType = 'dialogue' | 'map' | 'legacy-map' | 'debug-image-gen' | 'character' | 'style-gallery'
 
 export default function App() {
   const [gameState, setGameState] = useState(mockGameState)
@@ -22,6 +23,10 @@ export default function App() {
 
   const handleShowDebugPanel = () => {
     setCurrentPage('debug-image-gen')
+  }
+
+  const handleShowCharacterPage = () => {
+    setCurrentPage('character')
   }
 
   const handleShowStyleGallery = () => {
@@ -74,6 +79,7 @@ export default function App() {
           onDialogueChange={handleDialogueChange}
           onShowMap={handleShowMap}
           onShowDebugPanel={handleShowDebugPanel}
+          onShowCharacterPage={handleShowCharacterPage}
           onShowStyleGallery={handleShowStyleGallery}
         />
       ) : currentPage === 'map' ? (
@@ -93,6 +99,8 @@ export default function App() {
         />
       ) : currentPage === 'style-gallery' ? (
         <StyleGalleryPage onBackToDialogue={handleBackToDialogue} />
+      ) : currentPage === 'character' ? (
+        <CharacterPage onBackToDialogue={handleBackToDialogue} />
       ) : (
         <DebugImageGenPage onBackToDialogue={handleBackToDialogue} />
       )}

@@ -1,4 +1,5 @@
-import { GameState, DialogueNode, Location } from '../types/game'
+import { GameState, DialogueNode } from '../types/game'
+import { mockLocations } from './locations'
 
 const dialogueNodes: Record<string, DialogueNode> = {
   start: {
@@ -47,57 +48,6 @@ const dialogueNodes: Record<string, DialogueNode> = {
     text: 'Alex disappeared toward Hachiko, and the crossing filled the space between us again.',
   },
 }
-
-const mockLocations: Location[] = [
-  {
-    id: 'shibuya-109',
-    name: 'Shibuya 109',
-    x: 25,
-    y: 26,
-    visited: true,
-    description: 'A vertical fashion landmark overlooking the crossing.',
-    areaId: 'shibuya',
-    areaMapId: 'shibuya-crossing',
-    buildingId: 'shibuya-109',
-    mapKind: 'building-shape',
-  },
-  {
-    id: 'qfront',
-    name: 'QFRONT / Tsutaya',
-    x: 67,
-    y: 28,
-    visited: false,
-    description: 'A bright media facade facing the scramble crossing.',
-    areaId: 'shibuya',
-    areaMapId: 'shibuya-crossing',
-    buildingId: 'qfront',
-    mapKind: 'building-shape',
-  },
-  {
-    id: 'magnet',
-    name: 'MAGNET by SHIBUYA109',
-    x: 75,
-    y: 73,
-    visited: false,
-    description: 'A nightlife-facing shopping tower above the flow of people.',
-    areaId: 'shibuya',
-    areaMapId: 'shibuya-crossing',
-    buildingId: 'magnet',
-    mapKind: 'building-shape',
-  },
-  {
-    id: 'hachiko-station',
-    name: 'Shibuya Station / Hachiko',
-    x: 24,
-    y: 76,
-    visited: false,
-    description: 'A meeting point where trains, ads, and crowds compress into one pulse.',
-    areaId: 'shibuya',
-    areaMapId: 'shibuya-crossing',
-    buildingId: 'hachiko-station',
-    mapKind: 'building-shape',
-  },
-]
 
 export const mockGameState: GameState = {
   currentDialogueId: 'start',

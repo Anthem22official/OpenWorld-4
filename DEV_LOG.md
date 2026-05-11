@@ -1,5 +1,25 @@
 # Development Log
 
+## Version 1.6.7 - Map Scan UI Polish
+
+[2026-05-11 13:10] Version 1.6.7 - Restyled the Shibuya local map around docs/DESIGN_SYSTEM.md materials with black coated paper framing, restrained foil building states, labels, and a draggable focused map view.
+
+## Version 1.6.6 - Character Profile Page
+
+[2026-05-11 12:59] Version 1.6.6 - Added a read-only gameplay Character page beside Debug, showing Alex mock identity, current state, schedule, and memory data with a selector ready for more characters. Rebuilt the page styling to follow docs/DESIGN_SYSTEM.md materials: black coated paper base, liquid-glass interactive controls, and restrained foil accents.
+
+## Version 1.6.5 - Mock Character Data
+
+[2026-05-11 12:55] Version 1.6.5 - Added schema-matching gameplay character types and one full Alex Kiriya mock character bundle with current state, schedule blocks, and memory data.
+
+## Version 1.6.4 - Debug Image Pipeline
+
+[2026-05-11 12:33] Version 1.6.4 - Added a strict Atlas image preview proxy that returns generated images inline and updated the debug panel to keep original pipeline URLs separate from proxied preview URLs.
+
+[2026-05-11 12:19] Version 1.6.4 - Replaced raw debug-panel `response.json()` calls with strict response-body parsing so empty or non-JSON API responses report the operation name and HTTP status.
+
+[2026-05-11 12:10] Version 1.6.4 - Added a two-step debug image pipeline: text-to-image generation first, then manual Fal background removal using the generated image URL. Corrected the background-removal server env key to `FAL_API_KEY` and verified server/gameplay builds.
+
 ## Version 1.6.3.a - Gameplay State & Debug UI Cleanup
 
 [2026-05-11 12:02] Version 1.6.3.a - Lifted dialogue progression state into the gameplay app shell and kept map location selection fail-fast. Cleaned debug image generator labels for ASCII-safe UI text and verified server/gameplay builds.
@@ -8,7 +28,7 @@
 
 [2026-05-09 14:11] Version 1.6.2.a - Rebuilt the dialogue scene around a typewriter dialogue box, delayed option selection, and a transparent half-body Alex sprite frame. Also expanded the gallery demos to cover hover-hold, choosing, disappearance, reset, and replay behavior so the interaction lifecycle is visible before it is reused elsewhere.
 
-[2026-05-09 14:11] Version 1.6.2.a - Generated Alex placeholder sprite variants, consolidated all Alex assets under `apps/gameplay/public/assets/alex/`, and added a fal background-removal client and Express route in `apps/server` with fail-fast `FAI_API_KEY` loading.
+[2026-05-09 14:11] Version 1.6.2.a - Generated Alex placeholder sprite variants, consolidated all Alex assets under `apps/gameplay/public/assets/alex/`, and added a fal background-removal client and Express route in `apps/server` with fail-fast `FAL_API_KEY` loading.
 
 [2026-05-09 14:11] Version 1.6.2.a - Python `rembg` background-removal path is present in the server but has not been tested yet.
 

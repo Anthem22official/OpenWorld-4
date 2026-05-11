@@ -5,12 +5,18 @@ interface ImagePreviewProps {
   imageUrl: string | null
   status: 'idle' | 'loading' | 'success' | 'error'
   generationTime: string | null
+  loadingLabel?: string
+  resultLabel?: string
+  onImageError?: () => void
 }
 
 export default function ImagePreview({
   imageUrl,
   status,
   generationTime,
+  loadingLabel = 'Generating image...',
+  resultLabel = 'Generation time',
+  onImageError,
 }: ImagePreviewProps) {
   const containerStyle: CSSProperties = {
     display: 'flex',
@@ -89,7 +95,7 @@ export default function ImagePreview({
         {status === 'loading' ? (
           <div style={loadingSpinnerStyle}>
             <div style={spinnerStyle} aria-label="Loading"></div>
-            <p style={loadingTextStyle}>Generating image...</p>
+            <p style={loadingTextStyle}>{loadingLabel}</p>
           </div>
         ) : imageUrl ? (
           <>
@@ -98,10 +104,11 @@ export default function ImagePreview({
               alt="Generated image"
               style={imageStyle}
               role="img"
+              onError={onImageError}
             />
             {generationTime && (
               <div style={generationTimeBadgeStyle}>
-                Generation time: {generationTime}
+                {resultLabel}: {generationTime}
               </div>
             )}
           </>

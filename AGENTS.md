@@ -12,6 +12,7 @@ Build UI with mocks before backend. Mocks define the contract.
 
 ### 3. UI/UX Skill for Frontend
 When doing frontend work: use `/ui-ux-pro-max` skill to generate design system first, then build UI.
+MUST refer to "\docs\DESIGN_SYSTEM.md".
 
 ### 4. File Organization
 Split UI and UX into sub `.ts` files. Never use monolithic `main.ts` — keep files small and focused.
