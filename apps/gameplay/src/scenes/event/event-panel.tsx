@@ -40,6 +40,18 @@ export default function EventPanel({
 
   return (
     <div className="dialogue-stage event-dialogue-stage" data-can-continue="false">
+      {locationBackgroundAssetKey && (
+        <div className="event-location-mock" aria-hidden="true">
+          <div className="event-location-mock__frame">
+            <img
+              src={resolveLocationBackgroundUrl(locationBackgroundAssetKey)}
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
+        </div>
+      )}
+
       <header className="dialogue-status black-coated-paper" onClick={(event) => event.stopPropagation()}>
         <div className="dialogue-status__scene">
           <span className="dialogue-status__label">Location Event</span>
@@ -81,20 +93,6 @@ export default function EventPanel({
             <span />
           </div>
         </aside>
-
-        <div className="event-location-mock" aria-label={`${locationName} image preview`}>
-          <div className="event-location-mock__frame black-coated-paper">
-            {locationBackgroundAssetKey && (
-              <img
-                src={resolveLocationBackgroundUrl(locationBackgroundAssetKey)}
-                alt=""
-                aria-hidden="true"
-              />
-            )}
-            <span className="event-location-mock__label">Location Background</span>
-            <strong>{locationName}</strong>
-          </div>
-        </div>
 
         <aside className="dialogue-choice-dock" onClick={(event) => event.stopPropagation()}>
           <ChoicePanel choices={choices} onChoose={handleChoice} />

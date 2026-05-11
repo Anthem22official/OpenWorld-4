@@ -1,8 +1,8 @@
 # Development Log
 
-## Version 1.6.21 - Character Creator and Audio Shell
+## Version 1.7.0 - Database Event and Asset Flow
 
-[2026-05-11 18:51] Version 1.6.21 - Added the mocked character creator flow, database-backed character gallery empty states, page-aware background music with track assets, the AGENTS Playwright permission rule, and ignore rules for transient Playwright/tmp artifacts.
+[2026-05-11 18:59] Version 1.7.0 - Released the database-backed event and asset flow, including the mocked character creator flow, character gallery empty states, page-aware background music, full-bleed event location backgrounds, the AGENTS Playwright permission rule, and ignore rules for transient Playwright/tmp artifacts.
 
 ## Version 1.6.20 - Location Background Assets
 
