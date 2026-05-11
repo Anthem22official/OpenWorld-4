@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.6.3.a - Gameplay State & Debug UI Cleanup
+
+[2026-05-11 12:02] Version 1.6.3.a - Lifted dialogue progression state into the gameplay app shell and kept map location selection fail-fast. Cleaned debug image generator labels for ASCII-safe UI text and verified server/gameplay builds.
+
 ## Version 1.6.2.a - Dialogue, Gallery, Assets, and Background Removal Integration
 
 [2026-05-09 14:11] Version 1.6.2.a - Rebuilt the dialogue scene around a typewriter dialogue box, delayed option selection, and a transparent half-body Alex sprite frame. Also expanded the gallery demos to cover hover-hold, choosing, disappearance, reset, and replay behavior so the interaction lifecycle is visible before it is reused elsewhere.

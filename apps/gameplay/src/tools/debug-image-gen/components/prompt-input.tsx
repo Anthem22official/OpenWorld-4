@@ -193,15 +193,15 @@ export default function PromptInput({
             disabled={isLoading}
             aria-label="Image size"
           >
-            <option value="1024x768">1024×768 (Landscape)</option>
-            <option value="768x1024">768×1024 (Portrait)</option>
-            <option value="1024x1024">1024×1024 (Square)</option>
-            <option value="1024x1536">1024×1536 (Tall)</option>
-            <option value="1536x1024">1536×1024 (Wide)</option>
-            <option value="2560x1440">2560×1440 (2K Wide)</option>
-            <option value="1440x2560">1440×2560 (2K Tall)</option>
-            <option value="3840x2160">3840×2160 (4K Wide)</option>
-            <option value="2160x3840">2160×3840 (4K Tall)</option>
+            <option value="1024x768">1024 x 768 (Landscape)</option>
+            <option value="768x1024">768 x 1024 (Portrait)</option>
+            <option value="1024x1024">1024 x 1024 (Square)</option>
+            <option value="1024x1536">1024 x 1536 (Tall)</option>
+            <option value="1536x1024">1536 x 1024 (Wide)</option>
+            <option value="2560x1440">2560 x 1440 (2K Wide)</option>
+            <option value="1440x2560">1440 x 2560 (2K Tall)</option>
+            <option value="3840x2160">3840 x 2160 (4K Wide)</option>
+            <option value="2160x3840">2160 x 3840 (4K Tall)</option>
           </select>
         </div>
       </div>

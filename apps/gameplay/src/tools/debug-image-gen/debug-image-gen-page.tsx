@@ -191,7 +191,7 @@ export default function DebugImageGenPage({
           aria-label="Return to dialogue"
           title="Escape key"
         >
-          ← Back
+          Back
         </button>
         <h1 style={titleStyle}>Image Generator Debug</h1>
       </header>

@@ -49,7 +49,7 @@ export default function ErrorDisplay({ message, visible }: ErrorDisplayProps) {
       `}</style>
 
       <div style={containerStyle} role="alert">
-        <span style={iconStyle}>✕</span>
+        <span style={iconStyle}>!</span>
         <p style={messageStyle}>{message}</p>
       </div>
     </>

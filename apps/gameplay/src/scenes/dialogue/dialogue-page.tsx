@@ -7,6 +7,8 @@ import ChoicePanel from './components/choice-panel'
 
 interface DialoguePageProps {
   gameState: GameState
+  currentDialogueId: string
+  onDialogueChange: (dialogueId: string) => void
   onShowMap?: () => void
   onShowDebugPanel?: () => void
   onShowStyleGallery?: () => void
@@ -14,11 +16,12 @@ interface DialoguePageProps {
 
 export default function DialoguePage({
   gameState,
+  currentDialogueId,
+  onDialogueChange,
   onShowMap,
   onShowDebugPanel,
   onShowStyleGallery,
 }: DialoguePageProps) {
-  const [currentDialogueId, setCurrentDialogueId] = useState(gameState.currentDialogueId)
   const [isDialogueTyping, setIsDialogueTyping] = useState(false)
   const handleTypingChange = useCallback((isTyping: boolean) => {
     setIsDialogueTyping(isTyping)
@@ -32,7 +35,7 @@ export default function DialoguePage({
   const handleContinue = () => {
     if (isDialogueTyping) return
     if (!currentDialogue.nextDialogueId) throw new Error('nextDialogueId is required to continue')
-    setCurrentDialogueId(currentDialogue.nextDialogueId)
+    onDialogueChange(currentDialogue.nextDialogueId)
   }
 
   const handleChoice = (choiceId: string) => {
@@ -41,7 +44,7 @@ export default function DialoguePage({
     const choice = currentDialogue.choices.find((item) => item.id === choiceId)
     if (!choice) throw new Error(`Choice not found: ${choiceId}`)
 
-    setCurrentDialogueId(choice.nextDialogueId)
+    onDialogueChange(choice.nextDialogueId)
   }
 
   useEffect(() => {

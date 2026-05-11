@@ -32,11 +32,24 @@ export default function App() {
     setCurrentPage('legacy-map')
   }
 
-  const handleLocationSelect = (locationId: string) => {
-    if (!gameState.mapState) throw new Error('mapState is required')
-
+  const handleDialogueChange = (dialogueId: string) => {
     setGameState((prev) => ({
       ...prev,
+      currentDialogueId: dialogueId,
+    }))
+  }
+
+  const handleLocationSelect = (locationId: string) => {
+    setGameState((prev) => ({
+      ...prev,
+      currentLocation: (() => {
+        if (!prev.mapState) throw new Error('mapState is required')
+
+        const selectedLocation = prev.mapState.locations.find((location) => location.id === locationId)
+        if (!selectedLocation) throw new Error(`Location not found: ${locationId}`)
+
+        return selectedLocation.name
+      })(),
       mapState: {
         ...prev.mapState!,
         currentLocationId: locationId,
@@ -57,6 +70,8 @@ export default function App() {
       {currentPage === 'dialogue' ? (
         <DialoguePage
           gameState={gameState}
+          currentDialogueId={gameState.currentDialogueId}
+          onDialogueChange={handleDialogueChange}
           onShowMap={handleShowMap}
           onShowDebugPanel={handleShowDebugPanel}
           onShowStyleGallery={handleShowStyleGallery}
