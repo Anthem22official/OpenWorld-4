@@ -6,6 +6,7 @@ import DebugImageGenPage from './tools/debug-image-gen/debug-image-gen-page'
 import CharacterPage from './tools/character-page/character-page'
 import StyleGalleryPage from './tools/style-gallery/style-gallery-page'
 import { mockGameState } from './mocks/game-state'
+import ClickParticles from './components/click-particles'
 
 type PageType = 'dialogue' | 'map' | 'legacy-map' | 'debug-image-gen' | 'character' | 'style-gallery'
 
@@ -72,6 +73,7 @@ export default function App() {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <ClickParticles />
       {currentPage === 'dialogue' ? (
         <DialoguePage
           gameState={gameState}

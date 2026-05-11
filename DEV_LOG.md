@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.6.9 - Click Particle Effect
+
+[2026-05-11 13:41] Version 1.6.9 - Added a global click particle overlay with restrained laser-foil bursts across gameplay screens, preserving existing click behavior and reduced-motion handling.
+
 ## Version 1.6.7 - Map Scan UI Polish
 
 [2026-05-11 13:10] Version 1.6.7 - Restyled the Shibuya local map around docs/DESIGN_SYSTEM.md materials with black coated paper framing, restrained foil building states, labels, and a draggable focused map view.
