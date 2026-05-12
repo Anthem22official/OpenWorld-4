@@ -4,8 +4,6 @@ import type { MapAreaMap, MapBuilding } from '../data/map-area-data'
 const CHARACTER_ICON_SIZE = 42
 const CHARACTER_ICON_GAP = 34
 const CHARACTER_ICON_Y_OFFSET = 48
-const CHARACTER_ICON_URL_PREFIX = '/assets/database/characters/'
-
 interface MapCharacterLayerProps {
   areaMap: MapAreaMap
   characters: Character[]
@@ -127,5 +125,18 @@ function getCharacterIconUrl(characterId: string): string {
     throw new Error(`Invalid character icon id: ${characterId}`)
   }
 
-  return `${CHARACTER_ICON_URL_PREFIX}${trimmedId}/icons/header.png`
+  return resolveAssetUrl(`characters/${trimmedId}/icons/header.png`)
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }

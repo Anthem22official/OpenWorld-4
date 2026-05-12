@@ -41,7 +41,7 @@ export default function DebugImageGenPage({
     const startTime = Date.now()
 
     try {
-      const submitResponse = await fetch('/api/images/generations', {
+      const submitResponse = await fetch(resolveApiUrl('/api/images/generations'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,7 +74,7 @@ export default function DebugImageGenPage({
         predictionStatus === 'queued'
       ) {
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        const pollResponse = await fetch(`/api/images/generations/${predictionId}`)
+        const pollResponse = await fetch(resolveApiUrl(`/api/images/generations/${predictionId}`))
 
         result = await readJsonResponse(
           pollResponse,
@@ -123,7 +123,7 @@ export default function DebugImageGenPage({
     const startTime = Date.now()
 
     try {
-      const response = await fetch('/api/images/background-removals', {
+      const response = await fetch(resolveApiUrl('/api/images/background-removals'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -387,7 +387,7 @@ function getFalBackgroundRemovalImageUrl(value: unknown): string {
 
 function getPreviewImageUrl(imageUrl: string): string {
   return isAtlasImageUrl(imageUrl)
-    ? `/api/images/preview?url=${encodeURIComponent(imageUrl)}`
+    ? resolveApiUrl(`/api/images/preview?url=${encodeURIComponent(imageUrl)}`)
     : imageUrl
 }
 
@@ -408,7 +408,7 @@ async function validatePreviewImage(
   previewUrl: string,
   operationName: string,
 ): Promise<void> {
-  if (!previewUrl.startsWith('/api/images/preview?')) {
+  if (!isApiPreviewUrl(previewUrl)) {
     return
   }
 
@@ -431,6 +431,26 @@ async function validatePreviewImage(
   if (blob.size === 0) {
     throw new Error(`${operationName} returned an empty image body`)
   }
+}
+
+function resolveApiUrl(path: string): string {
+  const apiBaseUrl = getViteEnvValue('VITE_API_BASE_URL')
+  if (!apiBaseUrl) return path
+
+  return `${apiBaseUrl.replace(/\/+$/, '')}${path}`
+}
+
+function isApiPreviewUrl(previewUrl: string): boolean {
+  const apiBaseUrl = getViteEnvValue('VITE_API_BASE_URL')
+  if (!apiBaseUrl) return previewUrl.startsWith('/api/images/preview?')
+
+  return previewUrl.startsWith(`${apiBaseUrl.replace(/\/+$/, '')}/api/images/preview?`)
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
 
 function getErrorMessage(value: unknown, fallbackMessage: string): string {

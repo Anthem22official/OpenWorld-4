@@ -3,8 +3,6 @@ import { Character, CharacterState, Location } from '../../../types/game'
 import MapAreaSvg from './map-area-svg'
 import { MapArea, MapAreaMap, mapAttribution } from '../data/map-area-data'
 
-const DATABASE_ASSET_PUBLIC_PREFIX = '/assets/database/'
-
 interface MapShellProps {
   area: MapArea
   areaMap: MapAreaMap
@@ -159,5 +157,18 @@ function resolveLocationBackgroundUrl(backgroundAssetKey: string): string {
     throw new Error('Location background asset key must reference an image file')
   }
 
-  return `${DATABASE_ASSET_PUBLIC_PREFIX}${trimmedKey}`
+  return resolveAssetUrl(trimmedKey)
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }

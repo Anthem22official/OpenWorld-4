@@ -266,7 +266,20 @@ function findCharacterMemories(memories: Memory[], characterId: string): Memory[
 }
 
 function getCharacterFullBodyUrl(characterId: string): string {
-  return `/assets/database/characters/${characterId}/full-body/full-body-transparent.png`
+  return resolveAssetUrl(`characters/${characterId}/full-body/full-body-transparent.png`)
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
 
 function getLocationName(locations: Location[], locationId: string): string {

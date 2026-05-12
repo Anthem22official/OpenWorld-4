@@ -219,5 +219,18 @@ function getCharacterSpriteUrl(characterId: string): string {
     throw new Error(`Invalid character sprite id: ${characterId}`)
   }
 
-  return `/assets/database/characters/${trimmedId}/full-body/full-body-transparent.png`
+  return resolveAssetUrl(`characters/${trimmedId}/full-body/full-body-transparent.png`)
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }

@@ -35,7 +35,7 @@ export interface GameBootstrapData {
 }
 
 export async function fetchGameBootstrap(): Promise<GameBootstrapData> {
-  const response = await fetch('/api/game/bootstrap')
+  const response = await fetch(resolveApiUrl('/api/game/bootstrap'))
 
   if (!response.ok) {
     const responseBody = await response.text()
@@ -47,6 +47,19 @@ export async function fetchGameBootstrap(): Promise<GameBootstrapData> {
   const data: unknown = await response.json()
   assertGameBootstrapData(data)
   return data
+}
+
+function resolveApiUrl(path: string): string {
+  const apiBaseUrl = getViteEnvValue('VITE_API_BASE_URL')
+  if (!apiBaseUrl) return path
+
+  return `${apiBaseUrl.replace(/\/+$/, '')}${path}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
 
 function assertGameBootstrapData(data: unknown): asserts data is GameBootstrapData {

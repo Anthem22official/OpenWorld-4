@@ -211,7 +211,7 @@ export default function CharacterCreatorPage({ onBackToGallery }: CharacterCreat
             <div className="character-creator-preview" data-ready={imageReady}>
               {imageReady ? (
                 <img
-                  src="/assets/database/characters/ren-takahashi/full-body/full-body-transparent.png"
+                  src={resolveAssetUrl('characters/ren-takahashi/full-body/full-body-transparent.png')}
                   alt="Mock generated cutout"
                 />
               ) : (
@@ -262,6 +262,19 @@ export default function CharacterCreatorPage({ onBackToGallery }: CharacterCreat
       </div>
     </section>
   )
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
 
 function EmptyCreatorState({ label }: { label: string }) {

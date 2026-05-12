@@ -272,7 +272,20 @@ function resolveDialogueSceneImageUrl(scene: DialogueScene, dialogueId: string):
   const assetKey = scene.mode === 'cg' ? scene.cgAssetKey : scene.backgroundAssetKey
   if (!assetKey) throw new Error(`Dialogue node ${dialogueId} is missing scene image asset key`)
 
-  return `/assets/database/${validateImageAssetKey(assetKey, `Dialogue node ${dialogueId} scene image`)}`
+  return resolveAssetUrl(validateImageAssetKey(assetKey, `Dialogue node ${dialogueId} scene image`))
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
 
 function validateImageAssetKey(assetKey: string, label: string): string {

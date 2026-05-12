@@ -12,7 +12,6 @@ interface EventPanelProps {
   onBackToMap: () => void
 }
 
-const DATABASE_ASSET_PUBLIC_PREFIX = '/assets/database/'
 const BACK_TO_MAP_CHOICE_ID = 'back-to-map'
 const OPTIONAL_EVENT_TEXT = 'この場所で起きている出来事を選ぶ。'
 const NO_EVENT_TEXT = 'ここでは、何も起きていない。'
@@ -119,7 +118,20 @@ function resolveLocationBackgroundUrl(backgroundAssetKey: string): string {
     throw new Error('Location background asset key must reference an image file')
   }
 
-  return `${DATABASE_ASSET_PUBLIC_PREFIX}${trimmedKey}`
+  return resolveAssetUrl(trimmedKey)
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
 
 function buildEventChoices(optionalEvents: LocationEventMatch[], hasEvents: boolean): Choice[] {

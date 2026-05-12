@@ -1,5 +1,3 @@
-const DATABASE_ASSET_PUBLIC_PREFIX = '/assets/database/'
-
 export interface DialogueVoicePlayer {
   play: (voiceAssetKey?: string) => void
   stop: () => void
@@ -89,5 +87,18 @@ export function resolveDialogueVoiceUrl(voiceAssetKey: string): string {
   if (trimmedKey.includes('..')) throw new Error('Dialogue voice asset key cannot contain parent directory segments')
   if (!trimmedKey.endsWith('.wav')) throw new Error('Dialogue voice asset key must reference a .wav file')
 
-  return `${DATABASE_ASSET_PUBLIC_PREFIX}${trimmedKey}`
+  return resolveAssetUrl(trimmedKey)
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
 }
