@@ -1,5 +1,25 @@
 # Development Log
 
+## Version 1.7.16 - Studio Workflow Split
+
+[2026-05-11 22:31] Version 1.7.16 - Refactored Studio so character/location creation use AI design pipelines, Event Factory uses a batch planner with mock database selectors, and CG/TTS use direct debug consoles instead of the shared pipeline.
+
+## Version 1.7.15 - Ebisu Location Expansion
+
+[2026-05-11 22:21] Version 1.7.15 - Added six clickable Ebisu area-map locations (building-shape), linked each to matching `Location` rows in `dev.db`, and wired OSM building IDs for map selection.
+
+## Version 1.7.14 - One-Click Studio Startup
+
+[2026-05-11 22:17] Version 1.7.14 - Updated the one-click OpenWorld launcher to clean backend, gameplay, and Studio dev ports, start all three services, and open backend bootstrap, gameplay, and Studio pages.
+
+## Version 1.7.13 - Studio UI Shell
+
+[2026-05-11 22:11] Version 1.7.13 - Built the UI-first OpenWorld Studio shell in apps/studio with fixed-screen PC layout, mock-only creation/debug modules, and a shared Describe -> Generate Draft -> Review -> Validate pipeline. Verified the Studio production build with no backend writes or browser automation.
+
+## Version 1.7.12 - Shibuya Map Geometry Trim
+
+[2026-05-11 21:12] Version 1.7.12 - Removed Shibuya Crossing road and rail SVG geometry so the local map keeps only building shapes and labels for lighter rendering.
+
 ## Version 1.7.11 - Two-Level Map Selection
 
 [2026-05-11 20:56] Version 1.7.11 - Added a two-level area and area-map selector, wired a building-only Ebisu OSM map alongside Shibuya, and documented the repeatable map source workflow.

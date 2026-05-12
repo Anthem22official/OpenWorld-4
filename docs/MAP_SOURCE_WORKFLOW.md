@@ -93,3 +93,41 @@ To make buildings clickable later:
 2. Add an interactive source list that maps OSM way IDs to `locationId`, `buildingId`, and label text.
 3. Build `MapBuilding[]` entries from the generated source polygons, matching the Shibuya Crossing pattern.
 4. Add events/dialogue separately only when the new locations become playable.
+
+### 6.1. Reuse Existing OSM Buildings for New Locations
+
+When you only need new playable locations for an existing map, skip refetch/regeneration:
+
+1. Identify the existing OSM building object in the generated file (for example, `map-osm-source.ts`) by `osmId`.
+2. Add a `Location` row using that building's `osmId` target coordinates and name as the intended map card text.
+3. Append one entry to `shibuyaCrossingInteractiveBuildings` (or the relevant area interactive list) using:
+   - `locationId` = new location ID (kebab-case)
+   - `buildingId` = same as `locationId` (when map-side ID mapping is local)
+   - `osmId` = the existing building `osmId` from source data
+   - `label` = map label text
+4. Keep `area_id = 'shibuya'` and `area_map_id = 'shibuya-crossing'` (or matching area/map) and `map_kind = 'building-shape'`.
+5. Verify the new `buildingId` exists in the map source `buildings` lookup; if not, the app will fail fast at startup.
+
+Example (Shibuya):
+
+```ts
+{
+  locationId: 'shibuya-prime',
+  buildingId: 'shibuya-prime',
+  osmId: 116710255, // existing OSM way in shibuyaCrossingBuildings
+  label: 'Shibuya PRIME',
+},
+```
+
+```sql
+INSERT OR REPLACE INTO Location (
+  id, name, appearance_description, x, y,
+  level, accessible_start, accessible_end,
+  background_asset_key, area_id, area_map_id, building_id, map_kind
+) VALUES (
+  'shibuya-prime', 'Shibuya PRIME',
+  'Reusable location row text',
+  3.0, 38.8, 1, 0, 1440, NULL,
+  'shibuya', 'shibuya-crossing', 'shibuya-prime', 'building-shape'
+);
+```

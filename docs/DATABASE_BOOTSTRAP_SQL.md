@@ -73,3 +73,30 @@ Expected:
 ```text
 0
 ```
+
+## Additional Shibuya Navigation-Only Seed Rows
+
+When you need to refresh local location seeds, add the following rows to enable extra playable Shibuya buildings without events:
+
+```sql
+INSERT OR REPLACE INTO Location (
+  id,
+  name,
+  appearance_description,
+  x,
+  y,
+  level,
+  accessible_start,
+  accessible_end,
+  background_asset_key,
+  area_id,
+  area_map_id,
+  building_id,
+  map_kind
+) VALUES
+('shibuya-scramble-square', 'Shibuya Scramble Square', 'Neon-tiered Shibuya landmark with mirrored facades over layered pedestrian movement; a night-time observation-ready plaza edge with controlled urban depth.', 95.7, 96.9, 1, 0, 1440, NULL, 'shibuya', 'shibuya-crossing', 'shibuya-scramble-square', 'building-shape'),
+('shibuya-mark-city-east', 'Shibuya Mark City East', 'Polished shopping tower edge and transit-linked elevated retail spine above the crossing flow, with clean glass geometry and layered corridor lighting.', 35.4, 89.6, 1, 0, 1440, NULL, 'shibuya', 'shibuya-crossing', 'shibuya-mark-city-east', 'building-shape'),
+('shibuya-prime', 'Shibuya PRIME', 'Compact Shibuya retail mast with stacked facade elements and premium street-level access, tuned for night crowds and controlled interior glow.', 3.0, 38.8, 1, 0, 1440, NULL, 'shibuya', 'shibuya-crossing', 'shibuya-prime', 'building-shape'),
+('fpg-links-shibuya', 'FPG Links Shibuya', 'Corporate glass-and-metal node embedded in the Shibuya commercial spine, with discreet transitions between pedestrian circulation and lounge-level movement.', 90.9, 32.7, 1, 0, 1440, NULL, 'shibuya', 'shibuya-crossing', 'fpg-links-shibuya', 'building-shape'),
+('shibuya-parkside-kyodo', 'Shibuya Parkside Kyodo', 'Small Shibuya side node with sleek office-retail skin, rooftop adjacency and sharp urban geometry under cross traffic glare.', 86.5, 31.3, 1, 0, 1440, NULL, 'shibuya', 'shibuya-crossing', 'shibuya-parkside-kyodo', 'building-shape');
+```

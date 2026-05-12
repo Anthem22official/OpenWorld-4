@@ -13,6 +13,7 @@ import { fetchGameBootstrap, type GameBootstrapData } from './api/game-bootstrap
 import { resolveLocationEvents, type LocationEventMatch } from './events/location-event-handler'
 import type { GameState } from './types/game'
 import { getAreaMap } from './scenes/map/data/map-area-data'
+import { advanceGameTimeDetail, calculateLocationTravelMinutes } from './time/game-time'
 
 type PageType = MusicPage
 
@@ -105,18 +106,25 @@ export default function App() {
     const selectedLocation = gameState.mapState.locations.find((location) => location.id === locationId)
     if (!selectedLocation) throw new Error(`Location not found: ${locationId}`)
 
+    const travelMinutes = calculateLocationTravelMinutes(
+      gameState.mapState.currentLocationId,
+      locationId,
+    )
+    const arrivalGameTimeDetail = advanceGameTimeDetail(gameState.gameTimeDetail, travelMinutes)
+
     const eventResult = resolveLocationEvents({
       events: bootstrapData.events,
       dialogueNodes: bootstrapData.dialogueNodes,
       characterStates: bootstrapData.characterStates,
       locationId,
-      gameTimeDetail: gameState.gameTimeDetail,
+      gameTimeDetail: arrivalGameTimeDetail,
     })
 
     setGameState({
       ...gameState,
       currentDialogueId: eventResult.mandatoryEvent?.dialogueId ?? gameState.currentDialogueId,
       currentLocation: selectedLocation.name,
+      gameTimeDetail: arrivalGameTimeDetail,
       mapState: {
         ...gameState.mapState,
         currentLocationId: locationId,

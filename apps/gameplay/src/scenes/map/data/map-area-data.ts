@@ -4,10 +4,9 @@ import {
   OsmRenderPolygon,
   shibuyaCrossingBuildings,
   shibuyaCrossingInteractiveBuildings,
+  type InteractiveBuildingSource,
   shibuyaCrossingOsmBounds,
   shibuyaCrossingOsmCenter,
-  shibuyaCrossingRails,
-  shibuyaCrossingRoads,
 } from './map-osm-source'
 import {
   ebisuStationGardenPlaceBuildings,
@@ -80,6 +79,66 @@ const shibuyaCrossingClickableBuildings: MapBuilding[] =
     }
   })
 
+const ebisuStationGardenPlaceInteractiveBuildings: InteractiveBuildingSource[] = [
+  {
+    locationId: 'ebisu-garden-place',
+    buildingId: 'ebisu-garden-place',
+    osmId: 93182025,
+    label: 'Ebisu Garden Place',
+  },
+  {
+    locationId: 'ebisu-neonate',
+    buildingId: 'ebisu-neonate',
+    osmId: 142545732,
+    label: 'Ebisu Neonate',
+  },
+  {
+    locationId: 'q-plaza-ebisu',
+    buildingId: 'q-plaza-ebisu',
+    osmId: 142664187,
+    label: 'Q Plaza Ebisu',
+  },
+  {
+    locationId: 'ebisu-square',
+    buildingId: 'ebisu-square',
+    osmId: 217919846,
+    label: 'Ebisu Square',
+  },
+  {
+    locationId: 'ebisu-first-square',
+    buildingId: 'ebisu-first-square',
+    osmId: 217919982,
+    label: 'Ebisu First Square',
+  },
+  {
+    locationId: 'tokyu-real-estate-ebisu',
+    buildingId: 'tokyu-real-estate-ebisu',
+    osmId: 218092628,
+    label: 'Tokyu Real Estate Ebisu Building',
+  },
+]
+
+const ebisuStationGardenPlaceInteractiveOsmIds = new Set(
+  ebisuStationGardenPlaceInteractiveBuildings.map((building) => building.osmId),
+)
+
+const ebisuStationGardenPlaceClickableBuildings: MapBuilding[] =
+  ebisuStationGardenPlaceInteractiveBuildings.map((interactiveBuilding) => {
+    const sourceBuilding = ebisuStationGardenPlaceBuildings.find(
+      (building) => building.osmId === interactiveBuilding.osmId,
+    )
+    if (!sourceBuilding) {
+      throw new Error(`OSM building ${interactiveBuilding.osmId} not found`)
+    }
+
+    return {
+      ...sourceBuilding,
+      id: interactiveBuilding.buildingId,
+      locationId: interactiveBuilding.locationId,
+      name: interactiveBuilding.label,
+    }
+  })
+
 export const mapAreas: MapArea[] = [
   {
     id: 'shibuya',
@@ -108,8 +167,8 @@ export const mapAreaMaps: MapAreaMap[] = [
     backgroundBuildings: shibuyaCrossingBuildings.filter(
       (building) => !shibuyaCrossingInteractiveOsmIds.has(building.osmId),
     ),
-    roads: shibuyaCrossingRoads,
-    rails: shibuyaCrossingRails,
+    roads: [],
+    rails: [],
     labels: [
       { id: 'shibuya-crossing', text: 'Shibuya Crossing', x: 460, y: 345 },
       { id: 'dogenzaka', text: 'Dogenzaka', x: 160, y: 520 },
@@ -126,8 +185,10 @@ export const mapAreaMaps: MapAreaMap[] = [
     initialViewBox: '187 662 781 531',
     center: ebisuStationGardenPlaceOsmCenter,
     bounds: ebisuStationGardenPlaceOsmBounds,
-    buildings: [],
-    backgroundBuildings: ebisuStationGardenPlaceBuildings,
+    buildings: ebisuStationGardenPlaceClickableBuildings,
+    backgroundBuildings: ebisuStationGardenPlaceBuildings.filter(
+      (building) => !ebisuStationGardenPlaceInteractiveOsmIds.has(building.osmId),
+    ),
     roads: [],
     rails: [],
     labels: [

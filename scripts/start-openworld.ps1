@@ -1,7 +1,9 @@
 $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $PSScriptRoot
+$backendUrl = "http://127.0.0.1:3000/api/game/bootstrap"
 $gameplayUrl = "http://127.0.0.1:5173/"
+$studioUrl = "http://127.0.0.1:5174/"
 
 function Stop-PortProcess {
   param(
@@ -54,8 +56,9 @@ function Start-AppWindow {
 Write-Host "Cleaning existing OpenWorld dev ports..."
 Stop-PortProcess -Port 3000
 Stop-PortProcess -Port 5173
+Stop-PortProcess -Port 5174
 
-Write-Host "Starting OpenWorld backend and gameplay..."
+Write-Host "Starting OpenWorld backend, gameplay, and studio..."
 Start-AppWindow `
   -Title "OpenWorld Backend :3000" `
   -WorkingDirectory $root `
@@ -68,9 +71,17 @@ Start-AppWindow `
   -WorkingDirectory (Join-Path $root "apps\gameplay") `
   -Command "npx.cmd vite --host 127.0.0.1"
 
+Start-AppWindow `
+  -Title "OpenWorld Studio :5174" `
+  -WorkingDirectory (Join-Path $root "apps\studio") `
+  -Command "npx.cmd vite --host 127.0.0.1"
+
 Start-Sleep -Seconds 4
+Start-Process $backendUrl
 Start-Process $gameplayUrl
+Start-Process $studioUrl
 
 Write-Host "OpenWorld startup requested."
-Write-Host "Backend:  http://127.0.0.1:3000"
+Write-Host "Backend:  $backendUrl"
 Write-Host "Gameplay: $gameplayUrl"
+Write-Host "Studio:   $studioUrl"
