@@ -104,11 +104,11 @@ export class EventVoiceGenerationService {
     const [dialogueNodes, dialogueChoices, characters] = await Promise.all([
       this.config.prisma.$queryRaw<DialogueNodeRow[]>`
         SELECT id, speaker, text, voice_asset_key, next_dialogue_id
-        FROM DialogueNode
+        FROM "DialogueNode"
       `,
       this.config.prisma.$queryRaw<DialogueChoiceRow[]>`
         SELECT dialogue_node_id, next_dialogue_id, sort_order
-        FROM DialogueChoice
+        FROM "DialogueChoice"
         ORDER BY dialogue_node_id ASC, sort_order ASC
       `,
       this.config.prisma.character.findMany({

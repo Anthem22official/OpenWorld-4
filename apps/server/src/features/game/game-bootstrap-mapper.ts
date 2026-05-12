@@ -171,17 +171,17 @@ export async function buildGameBootstrap(
     prisma.event.findMany({ orderBy: { id: 'asc' } }),
     prisma.$queryRaw<DialogueNodeRow[]>`
       SELECT id, speaker, text, scene, voice_asset_key, next_dialogue_id
-      FROM DialogueNode
+      FROM "DialogueNode"
       ORDER BY id ASC
     `,
     prisma.$queryRaw<DialogueChoiceRow[]>`
       SELECT id, dialogue_node_id, text, next_dialogue_id, sort_order
-      FROM DialogueChoice
+      FROM "DialogueChoice"
       ORDER BY dialogue_node_id ASC, sort_order ASC
     `,
     prisma.$queryRaw<RuntimeStateRow[]>`
       SELECT id, current_location_id, current_dialogue_id, game_time_detail
-      FROM GameRuntimeState
+      FROM "GameRuntimeState"
       WHERE id = 'default'
     `,
   ]);
