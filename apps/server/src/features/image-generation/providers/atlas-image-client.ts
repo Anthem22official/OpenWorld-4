@@ -37,7 +37,14 @@ export interface AtlasPredictionResponse {
 }
 
 interface AtlasImageClientConfig {
-  apiKey: string;
+  apiKey: string | undefined;
+}
+
+export class AtlasConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AtlasConfigError';
+  }
 }
 
 export class AtlasApiError extends Error {
@@ -85,10 +92,21 @@ export class AtlasImageClient {
   }
 
   private headers(): HeadersInit {
+    const apiKey = this.requireApiKey();
+
     return {
-      Authorization: `Bearer ${this.config.apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     };
+  }
+
+  private requireApiKey(): string {
+    const apiKey = this.config.apiKey?.trim();
+    if (!apiKey) {
+      throw new AtlasConfigError('Atlas Cloud image generation is not configured for this gameplay mode');
+    }
+
+    return apiKey;
   }
 
   private async readPredictionResponse(response: Response): Promise<AtlasPredictionResponse> {

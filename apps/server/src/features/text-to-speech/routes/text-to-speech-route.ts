@@ -1,7 +1,11 @@
 import { type Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import { OpenRouterTtsClient, OpenRouterTtsError } from '../providers/openrouter-tts-client';
+import {
+  OpenRouterTtsClient,
+  OpenRouterTtsConfigError,
+  OpenRouterTtsError,
+} from '../providers/openrouter-tts-client';
 import {
   EventVoiceGenerationError,
   EventVoiceGenerationService,
@@ -16,11 +20,13 @@ const createSpeechSchema = z
   .strict();
 
 interface TextToSpeechRouterOptions {
+  allowEventVoiceAssetWrites: boolean;
   openRouterTtsClient: OpenRouterTtsClient;
   prisma: PrismaClient;
 }
 
 export function createTextToSpeechRouter({
+  allowEventVoiceAssetWrites,
   openRouterTtsClient,
   prisma,
 }: TextToSpeechRouterOptions): Router {
@@ -70,6 +76,14 @@ export function createTextToSpeechRouter({
       return;
     }
 
+    if (!allowEventVoiceAssetWrites) {
+      response.status(503).json({
+        error: 'EVENT_VOICE_ASSET_WRITES_DISABLED',
+        message: 'Hosted event voice asset generation requires an R2 write adapter before it can run',
+      });
+      return;
+    }
+
     const parsedBody = createEventVoicesSchema.safeParse(request.body);
 
     if (!parsedBody.success) {
@@ -104,6 +118,14 @@ const createEventVoicesSchema = z
   .strict();
 
 function sendRouteError(response: Response, error: unknown): void {
+  if (error instanceof OpenRouterTtsConfigError) {
+    response.status(503).json({
+      error: 'OPENROUTER_TTS_NOT_CONFIGURED',
+      message: error.message,
+    });
+    return;
+  }
+
   if (error instanceof OpenRouterTtsError) {
     response.status(error.status).json({
       error: 'OPENROUTER_TTS_REQUEST_FAILED',

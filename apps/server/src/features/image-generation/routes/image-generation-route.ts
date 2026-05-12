@@ -1,6 +1,7 @@
 import { type Response, Router } from 'express';
 import { z } from 'zod';
 import {
+  AtlasConfigError,
   AtlasApiError,
   AtlasImageClient,
   IMAGE_OUTPUT_FORMATS,
@@ -218,6 +219,14 @@ function redactPreviewUrl(url: URL): string {
 }
 
 function sendRouteError(response: Response, error: unknown): void {
+  if (error instanceof AtlasConfigError) {
+    response.status(503).json({
+      error: 'ATLAS_CLOUD_NOT_CONFIGURED',
+      message: error.message,
+    });
+    return;
+  }
+
   if (error instanceof AtlasApiError) {
     response.status(error.status).json({
       error: 'ATLAS_CLOUD_REQUEST_FAILED',

@@ -62,7 +62,7 @@ Write-Host "Starting OpenWorld backend, gameplay, and studio..."
 Start-AppWindow `
   -Title "OpenWorld Backend :3000" `
   -WorkingDirectory $root `
-  -Command "npm.cmd run dev --workspace apps/server"
+  -Command "`$env:GAMEPLAY_MODE='public-local-full'; `$env:PORT='3000'; `$env:DATABASE_URL='file:./dev.db'; npm.cmd run dev --workspace apps/server"
 
 Start-Sleep -Seconds 2
 

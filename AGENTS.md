@@ -67,3 +67,30 @@ Implementation rules for all modes:
 - Do not scatter mode checks across gameplay systems.
 - Environment/config selection should happen at startup or service construction.
 - No silent fallback between modes. If a mode is selected and required config is missing, throw immediately.
+
+### 10. Dual Prisma Schema Rule
+The project intentionally uses two Prisma schemas because Public Local Full uses SQLite while Private Maintainer Hosted uses Render Postgres.
+
+- `apps/server/prisma/schema.prisma` is the local SQLite schema.
+- `apps/server/prisma/schema.hosted.prisma` is the hosted Postgres schema.
+- The model blocks, field names, relations, indexes, and comments must stay identical between both files.
+- The only intended datasource difference is `provider = "sqlite"` vs `provider = "postgresql"`.
+- Whenever changing either Prisma schema, update both schemas in the same change.
+- After changing either schema, verify the two schemas are equivalent except for the datasource provider before considering the work done.
+
+### 11. Local-First To Hosted Sync Workflow
+Future development must follow this workflow unless the user explicitly says otherwise:
+
+1. Develop and test gameplay changes in Public Local Full first.
+2. The user checks the local build and local SQLite data.
+3. Export/sync local gameplay database content into the committed hosted seed snapshot.
+4. Commit code, schema, seed snapshot, and local asset changes to GitHub.
+5. GitHub syncs committed runtime assets from `apps/gameplay/public/assets/database/**` to the maintainer R2 bucket for Private Maintainer Hosted.
+6. Render redeploys the backend, syncs the hosted Prisma schema, and imports the committed seed snapshot into Render Postgres.
+7. Vercel redeploys the frontend code and reads assets through `VITE_ASSET_BASE_URL`.
+8. The user checks Private Maintainer Hosted.
+9. Continue new development from Public Local Full first.
+
+Do not skip the local-first check before syncing hosted data unless the user explicitly requests it.
+Do not treat Render Postgres or R2 as the authoring source for gameplay content. Local SQLite plus committed seed snapshots are the source of truth for hosted sync.
+Do not delete remote R2 assets during automated sync unless the user explicitly approves mirror-delete behavior.

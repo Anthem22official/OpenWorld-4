@@ -9,8 +9,10 @@ import { createGameBootstrapRouter } from '../features/game/routes/game-bootstra
 import { OpenRouterTtsClient } from '../features/text-to-speech/providers/openrouter-tts-client';
 import { createTextToSpeechRouter } from '../features/text-to-speech/routes/text-to-speech-route';
 import { prisma } from '../db/init';
+import type { GameplayMode } from '../config/env';
 
 interface ServerServices {
+  gameplayMode: GameplayMode;
   atlasImageClient: AtlasImageClient;
   localBackgroundRemovalService: LocalBackgroundRemovalService;
   falBackgroundClient: FalBackgroundClient;
@@ -18,6 +20,7 @@ interface ServerServices {
 }
 
 export function createApp({
+  gameplayMode,
   atlasImageClient,
   localBackgroundRemovalService,
   falBackgroundClient,
@@ -40,7 +43,11 @@ export function createApp({
   app.use(express.json());
   app.use('/api/game', createGameBootstrapRouter({ prisma }));
   app.use('/api/images', createImageGenerationRouter({ atlasImageClient }));
-  app.use('/api/text-to-speech', createTextToSpeechRouter({ openRouterTtsClient, prisma }));
+  app.use('/api/text-to-speech', createTextToSpeechRouter({
+    allowEventVoiceAssetWrites: gameplayMode === 'public-local-full',
+    openRouterTtsClient,
+    prisma,
+  }));
   app.use(
     '/api/images/background-removals/local',
     createLocalBackgroundRemovalRouter({ localBackgroundRemovalService }),

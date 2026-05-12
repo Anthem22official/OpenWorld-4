@@ -1,6 +1,6 @@
 import { type Response, Router } from 'express';
 import { z } from 'zod';
-import { FalApiError, FalBackgroundClient } from '../providers/fal-background-client';
+import { FalApiError, FalBackgroundClient, FalConfigError } from '../providers/fal-background-client';
 
 const removeBackgroundSchema = z
   .object({
@@ -41,6 +41,14 @@ export function createBackgroundRemovalRouter({
 }
 
 function sendRouteError(response: Response, error: unknown): void {
+  if (error instanceof FalConfigError) {
+    response.status(503).json({
+      error: 'FAL_NOT_CONFIGURED',
+      message: error.message,
+    });
+    return;
+  }
+
   if (error instanceof FalApiError) {
     response.status(error.status).json({
       error: 'FAL_REQUEST_FAILED',

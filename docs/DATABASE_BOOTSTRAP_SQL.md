@@ -1,11 +1,19 @@
 # Database Bootstrap Content
 
-Use this guide after applying Prisma migrations when the local SQLite database needs the current MVP content.
+Use this guide after applying Prisma migrations when the Public Local Full SQLite database needs the current MVP content.
 
 The canonical local database is:
 
 ```text
 apps/server/prisma/dev.db
+```
+
+Use this local environment for Public Local Full:
+
+```text
+GAMEPLAY_MODE=public-local-full
+PORT=3000
+DATABASE_URL=file:./dev.db
 ```
 
 ## Required Tables

@@ -1,0 +1,645 @@
+{
+  "exportedAt": "2026-05-12T06:07:57.374Z",
+  "characters": [
+    {
+      "id": "daiki-mori",
+      "name": "Daiki Mori",
+      "activated": true,
+      "appearance_description": "Adult Japanese man with an athletic frame, sharp undercut, ear piercings, layered black street-luxury jacket, chains, and a guarded nightlife aura.",
+      "personality": "[\"direct\", \"physical\", \"loyal\", \"competitive\", \"magnetic\"]"
+    },
+    {
+      "id": "haruto-nakamura",
+      "name": "Haruto Nakamura",
+      "activated": true,
+      "appearance_description": "Adult Japanese man with long black hair tied back, refined traditional-modern black clothing, silver floral ornament, and calm senior confidence.",
+      "personality": "[\"elegant\", \"patient\", \"strategic\", \"traditional\", \"commanding\"]"
+    },
+    {
+      "id": "kaito-sugiyama",
+      "name": "Kaito Sugiyama",
+      "activated": true,
+      "appearance_description": "Adult Japanese man with glasses, clean brown hair, black formalwear with silver trim, gloves, and the polished restraint of a high-end consultant.",
+      "personality": "[\"analytical\", \"polished\", \"dry-humored\", \"ambitious\", \"controlled\"]"
+    },
+    {
+      "id": "ren-takahashi",
+      "name": "Ren Takahashi",
+      "activated": true,
+      "appearance_description": "Adult Japanese man with a composed face, black tousled hair, a long tailored black coat, silver hardware, gloves, and quiet luxury presence.",
+      "personality": "[\"composed\", \"precise\", \"status-aware\", \"protective\", \"reserved\"]"
+    }
+  ],
+  "locations": [
+    {
+      "id": "ebisu-first-square",
+      "name": "Ebisu First Square",
+      "appearance_description": "A first-floor plaza that links hotel fronts, cafés, and station-adjacent entries.",
+      "x": 76.6,
+      "y": 27.36,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "ebisu",
+      "area_map_id": "ebisu-station-garden-place",
+      "building_id": "ebisu-first-square",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "ebisu-garden-place",
+      "name": "Ebisu Garden Place",
+      "appearance_description": "A bright terrace and retail-civic zone where station travelers gather at dusk.",
+      "x": 66.05,
+      "y": 86.67,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "ebisu",
+      "area_map_id": "ebisu-station-garden-place",
+      "building_id": "ebisu-garden-place",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "ebisu-neonate",
+      "name": "Ebisu Neonate",
+      "appearance_description": "Mixed-use block with intimate storefronts and low-light nightlife lanes.",
+      "x": 38.69,
+      "y": 47.94,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "ebisu",
+      "area_map_id": "ebisu-station-garden-place",
+      "building_id": "ebisu-neonate",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "ebisu-square",
+      "name": "Ebisu Square",
+      "appearance_description": "A central retail edge with multiple lanes, bright lighting, and direct access points.",
+      "x": 80.27,
+      "y": 39.45,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "ebisu",
+      "area_map_id": "ebisu-station-garden-place",
+      "building_id": "ebisu-square",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "fpg-links-shibuya",
+      "name": "FPG Links Shibuya",
+      "appearance_description": "Corporate glass-and-metal node embedded in the Shibuya commercial spine, with discreet transitions between pedestrian circulation and lounge-level movement.",
+      "x": 90.9,
+      "y": 32.7,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "fpg-links-shibuya",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "hachiko-station",
+      "name": "Shibuya Station / Hachiko",
+      "appearance_description": "A meeting point where trains, ads, and crowds compress into one pulse.",
+      "x": 24,
+      "y": 76,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": "locations/hachiko-station/background/main.jpg",
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "hachiko-station",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "magnet",
+      "name": "MAGNET by SHIBUYA109",
+      "appearance_description": "A nightlife-facing shopping tower above the flow of people.",
+      "x": 75,
+      "y": 73,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": "locations/magnet/background/main.jpg",
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "magnet",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "q-plaza-ebisu",
+      "name": "Q Plaza Ebisu",
+      "appearance_description": "Quiet plaza above the station edge, good for late-night entrances and short conversations.",
+      "x": 29.4,
+      "y": 26.84,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "ebisu",
+      "area_map_id": "ebisu-station-garden-place",
+      "building_id": "q-plaza-ebisu",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "qfront",
+      "name": "QFRONT / Tsutaya",
+      "appearance_description": "A bright media facade facing the scramble crossing.",
+      "x": 67,
+      "y": 28,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": "locations/qfront/background/main.jpg",
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "qfront",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "shibuya-109",
+      "name": "Shibuya 109",
+      "appearance_description": "A vertical fashion landmark overlooking the crossing.",
+      "x": 25,
+      "y": 26,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": "locations/shibuya-109/background/main.jpg",
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "shibuya-109",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "shibuya-mark-city-east",
+      "name": "Shibuya Mark City East",
+      "appearance_description": "Polished shopping tower edge and transit-linked elevated retail spine above the crossing flow, with clean glass geometry and layered corridor lighting.",
+      "x": 35.4,
+      "y": 89.6,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "shibuya-mark-city-east",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "shibuya-parkside-kyodo",
+      "name": "Shibuya Parkside Kyodo",
+      "appearance_description": "Small Shibuya side node with sleek office-retail skin, rooftop adjacency and sharp urban geometry under cross traffic glare.",
+      "x": 86.5,
+      "y": 31.3,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "shibuya-parkside-kyodo",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "shibuya-prime",
+      "name": "Shibuya PRIME",
+      "appearance_description": "Compact Shibuya retail mast with stacked facade elements and premium street-level access, tuned for night crowds and controlled interior glow.",
+      "x": 3,
+      "y": 38.8,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "shibuya-prime",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "shibuya-scramble-square",
+      "name": "Shibuya Scramble Square",
+      "appearance_description": "Neon-tiered Shibuya landmark with mirrored facades over layered pedestrian movement; a night-time observation-ready plaza edge with controlled urban depth.",
+      "x": 95.7,
+      "y": 96.9,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "shibuya",
+      "area_map_id": "shibuya-crossing",
+      "building_id": "shibuya-scramble-square",
+      "map_kind": "building-shape"
+    },
+    {
+      "id": "tokyu-real-estate-ebisu",
+      "name": "Tokyu Real Estate Ebisu Building",
+      "appearance_description": "Business frontage and mixed-use corridors for quiet, late-hour meetings.",
+      "x": 69.78,
+      "y": 27.13,
+      "level": 1,
+      "accessible_start": 0,
+      "accessible_end": 1440,
+      "background_asset_key": null,
+      "area_id": "ebisu",
+      "area_map_id": "ebisu-station-garden-place",
+      "building_id": "tokyu-real-estate-ebisu",
+      "map_kind": "building-shape"
+    }
+  ],
+  "characterStates": [
+    {
+      "id": "daiki-mori-state",
+      "character_id": "daiki-mori",
+      "location_id": "magnet",
+      "activity": "watching the rooftop guest list before a members-only table opens",
+      "game_time_detail": "2040-08-05 19:30"
+    },
+    {
+      "id": "haruto-nakamura-state",
+      "character_id": "haruto-nakamura",
+      "location_id": "hachiko-station",
+      "activity": "standing by the station flow with a reserved car arriving nearby",
+      "game_time_detail": "2040-08-05 19:30"
+    },
+    {
+      "id": "kaito-sugiyama-state",
+      "character_id": "kaito-sugiyama",
+      "location_id": "qfront",
+      "activity": "reading the crossing screens while waiting for a brand metrics call",
+      "game_time_detail": "2040-08-05 19:30"
+    },
+    {
+      "id": "ren-takahashi-state",
+      "character_id": "ren-takahashi",
+      "location_id": "shibuya-109",
+      "activity": "waiting near the fashion tower entrance after a private fitting",
+      "game_time_detail": "2040-08-05 19:30"
+    }
+  ],
+  "scheduleBlocks": [
+    {
+      "id": "daiki-mori-schedule-evening",
+      "character_id": "daiki-mori",
+      "location_id": "magnet",
+      "activity": "rooftop nightlife hosting",
+      "start_time": 1140,
+      "duration": 180
+    },
+    {
+      "id": "haruto-nakamura-schedule-evening",
+      "character_id": "haruto-nakamura",
+      "location_id": "hachiko-station",
+      "activity": "station pickup between appointments",
+      "start_time": 1110,
+      "duration": 120
+    },
+    {
+      "id": "kaito-sugiyama-schedule-evening",
+      "character_id": "kaito-sugiyama",
+      "location_id": "qfront",
+      "activity": "media facade performance review",
+      "start_time": 1080,
+      "duration": 150
+    },
+    {
+      "id": "ren-takahashi-schedule-evening",
+      "character_id": "ren-takahashi",
+      "location_id": "shibuya-109",
+      "activity": "private fashion fitting and quiet scouting",
+      "start_time": 1110,
+      "duration": 150
+    }
+  ],
+  "relations": [],
+  "memories": [
+    {
+      "id": "daiki-mori-memory-rooftop",
+      "character_id": "daiki-mori",
+      "summary": "Daiki remembers the protagonist looking up at MAGNET as if entry itself were a test. He likes people who understand that doors open for posture before names.",
+      "game_date": "2040-08-05"
+    },
+    {
+      "id": "haruto-nakamura-memory-station",
+      "character_id": "haruto-nakamura",
+      "summary": "Haruto saw the protagonist pause at Hachiko Station, caught between leaving and stepping deeper into the city. The hesitation looked temporary, not weak.",
+      "game_date": "2040-08-05"
+    },
+    {
+      "id": "kaito-sugiyama-memory-screens",
+      "character_id": "kaito-sugiyama",
+      "summary": "Kaito watched the protagonist read the QFRONT screens too carefully. Most people only see brightness; he noticed someone looking for the rules behind it.",
+      "game_date": "2040-08-05"
+    },
+    {
+      "id": "ren-takahashi-memory-crossing",
+      "character_id": "ren-takahashi",
+      "summary": "Ren noticed the protagonist trying to look calm in front of Shibuya 109. The effort interested him more than confidence would have, because it showed hunger without polish.",
+      "game_date": "2040-08-05"
+    }
+  ],
+  "dialogueNodes": [
+    {
+      "id": "daiki-magnet-cool",
+      "speaker": "daiki-mori",
+      "text": "慎重なのは悪くない。ただ、東京の夜は待ってくれない。欲しいなら、迷ってる顔ごと連れていく覚悟がいる。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/magnet/background/main.jpg\",\"characterIds\":[\"daiki-mori\"]}",
+      "voice_asset_key": "dialogue/daiki-magnet-start/voices/daiki-magnet-cool.wav",
+      "next_dialogue_id": "daiki-magnet-cool-end"
+    },
+    {
+      "id": "daiki-magnet-cool-end",
+      "speaker": null,
+      "text": "彼は短く手を上げて去った。夜風の中に、まだ誘いの形だけが残っている。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/magnet/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "daiki-magnet-line",
+      "speaker": "daiki-mori",
+      "text": "上に来たい顔をしてる。問題は、招待されたいのか、自分で入る気なのかだ。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/magnet/background/main.jpg\",\"characterIds\":[\"daiki-mori\"]}",
+      "voice_asset_key": "dialogue/daiki-magnet-start/voices/daiki-magnet-line.wav",
+      "next_dialogue_id": null
+    },
+    {
+      "id": "daiki-magnet-start",
+      "speaker": null,
+      "text": "MAGNETの上階から、低い音楽と夜風が降りてくる。黒いジャケットの男が、入れる人間を選ぶみたいに階段の先を見ていた。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/magnet/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "daiki-magnet-line"
+    },
+    {
+      "id": "daiki-magnet-warm",
+      "speaker": "daiki-mori",
+      "text": "いいね。その目なら入口で止まらない。上は静かじゃないけど、街を見下ろすにはちょうどいい。来る？",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/magnet/background/main.jpg\",\"characterIds\":[\"daiki-mori\"]}",
+      "voice_asset_key": "dialogue/daiki-magnet-start/voices/daiki-magnet-warm.wav",
+      "next_dialogue_id": "daiki-magnet-warm-end"
+    },
+    {
+      "id": "daiki-magnet-warm-end",
+      "speaker": null,
+      "text": "ダイキが振り返るだけで、屋上へ続く空気が少し熱を持った。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/magnet/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "haruto-hachiko-cool",
+      "speaker": "haruto-nakamura",
+      "text": "帰り道を残すのは大切だ。だが、残しすぎると何も始まらない。今夜の君は、どちらに見られたい？",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/hachiko-station/background/main.jpg\",\"characterIds\":[\"haruto-nakamura\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "haruto-hachiko-cool-end"
+    },
+    {
+      "id": "haruto-hachiko-cool-end",
+      "speaker": null,
+      "text": "彼の問いだけが、改札の光より長く胸に残った。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/hachiko-station/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "haruto-hachiko-line",
+      "speaker": "haruto-nakamura",
+      "text": "ここで待つ人は多い。けれど、選ばれるまで待つ人と、自分で向かう人は違う。君はどちらかな。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/hachiko-station/background/main.jpg\",\"characterIds\":[\"haruto-nakamura\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "haruto-hachiko-start",
+      "speaker": null,
+      "text": "ハチ公前の人波は、待ち合わせと別れを同じ速度で運んでいた。長い髪を結んだ男が、その流れの中心で静かに立っている。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/hachiko-station/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "haruto-hachiko-line"
+    },
+    {
+      "id": "haruto-hachiko-warm",
+      "speaker": "haruto-nakamura",
+      "text": "落ち着いていて賢い。急ぐ街ほど、足を止める人間の値打ちが見える。少しだけ、こちらへ。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/hachiko-station/background/main.jpg\",\"characterIds\":[\"haruto-nakamura\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "haruto-hachiko-warm-end"
+    },
+    {
+      "id": "haruto-hachiko-warm-end",
+      "speaker": null,
+      "text": "ハルトの声は低く、駅の騒音の中でも不思議と聞き逃せなかった。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/hachiko-station/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "kaito-qfront-cool",
+      "speaker": "kaito-sugiyama",
+      "text": "正直でいい。眩しさに酔う前に構造を見る癖をつけなさい。そうすれば、選ばれる側から選ぶ側へ移れる。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/qfront/background/main.jpg\",\"characterIds\":[\"kaito-sugiyama\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "kaito-qfront-cool-end"
+    },
+    {
+      "id": "kaito-qfront-cool-end",
+      "speaker": null,
+      "text": "画面が切り替わるたび、カイトの言葉だけが妙にはっきり残った。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/qfront/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "kaito-qfront-line",
+      "speaker": "kaito-sugiyama",
+      "text": "この画面を見て、綺麗だと思った？ それとも、誰が金を払っているか気になった？",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/qfront/background/main.jpg\",\"characterIds\":[\"kaito-sugiyama\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "kaito-qfront-start",
+      "speaker": null,
+      "text": "QFRONTの巨大な画面が、交差点の顔色を何度も塗り替える。眼鏡の男がその数字の裏側まで読んでいるように立っていた。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/qfront/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "kaito-qfront-line"
+    },
+    {
+      "id": "kaito-qfront-warm",
+      "speaker": "kaito-sugiyama",
+      "text": "悪くない観察力だ。派手なものほど、誰に見られたいかを隠せない。君も今夜、その側に立ってみる？",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/qfront/background/main.jpg\",\"characterIds\":[\"kaito-sugiyama\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "kaito-qfront-warm-end"
+    },
+    {
+      "id": "kaito-qfront-warm-end",
+      "speaker": null,
+      "text": "カイトの視線を追うと、広告の光がただの背景ではなく、街の序列表に見えた。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/qfront/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "ren-shibuya-109-cool",
+      "speaker": "ren-takahashi",
+      "text": "強がりなら嫌いじゃない。でも渋谷は、飾りだけの自信をすぐ見抜く。次に会う時まで、少し本物にしておいで。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/shibuya-109/background/main.jpg\",\"characterIds\":[\"ren-takahashi\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "ren-shibuya-109-cool-end"
+    },
+    {
+      "id": "ren-shibuya-109-cool-end",
+      "speaker": null,
+      "text": "レンは薄く笑って人波に戻った。残ったのは、試されたという熱だけだった。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/shibuya-109/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "ren-shibuya-109-line",
+      "speaker": "ren-takahashi",
+      "text": "その顔、まだこの街に慣れていないね。でも逃げる顔でもない。どちらを見せたい？",
+      "scene": "{\"mode\":\"cg\",\"cgAssetKey\":\"cg/ren-overlay-test.png\",\"characterIds\":[\"ren-takahashi\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    },
+    {
+      "id": "ren-shibuya-109-start",
+      "speaker": null,
+      "text": "109の入口は、夜の光を磨いたみたいに白く浮いていた。黒いコートの男が、人の流れから一歩だけ外れてこちらを見ている。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/shibuya-109/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "ren-shibuya-109-line"
+    },
+    {
+      "id": "ren-shibuya-109-warm",
+      "speaker": "ren-takahashi",
+      "text": "いい返事だ。ここで背伸びできる人間は、案外少ない。少し歩こう。君の緊張が、街に負ける前に。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/shibuya-109/background/main.jpg\",\"characterIds\":[\"ren-takahashi\"]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": "ren-shibuya-109-warm-end"
+    },
+    {
+      "id": "ren-shibuya-109-warm-end",
+      "speaker": null,
+      "text": "レンの歩幅に合わせると、ショーウィンドウの光まで味方についたように見えた。",
+      "scene": "{\"mode\":\"dialogue\",\"backgroundAssetKey\":\"locations/shibuya-109/background/main.jpg\",\"characterIds\":[]}",
+      "voice_asset_key": null,
+      "next_dialogue_id": null
+    }
+  ],
+  "dialogueChoices": [
+    {
+      "id": "daiki-magnet-choice-warm",
+      "dialogue_node_id": "daiki-magnet-line",
+      "text": "招待されるより、隣に立って入りたい。",
+      "next_dialogue_id": "daiki-magnet-warm",
+      "sort_order": 1
+    },
+    {
+      "id": "daiki-magnet-choice-cool",
+      "dialogue_node_id": "daiki-magnet-line",
+      "text": "まだ上に行く理由を選んでいるところだ。",
+      "next_dialogue_id": "daiki-magnet-cool",
+      "sort_order": 2
+    },
+    {
+      "id": "haruto-hachiko-choice-warm",
+      "dialogue_node_id": "haruto-hachiko-line",
+      "text": "待つより、自分で向かうほうを選びたい。",
+      "next_dialogue_id": "haruto-hachiko-warm",
+      "sort_order": 1
+    },
+    {
+      "id": "haruto-hachiko-choice-cool",
+      "dialogue_node_id": "haruto-hachiko-line",
+      "text": "今はまだ、帰り道を残しておきたい。",
+      "next_dialogue_id": "haruto-hachiko-cool",
+      "sort_order": 2
+    },
+    {
+      "id": "kaito-qfront-choice-warm",
+      "dialogue_node_id": "kaito-qfront-line",
+      "text": "誰に見せるための光なのか、気になる。",
+      "next_dialogue_id": "kaito-qfront-warm",
+      "sort_order": 1
+    },
+    {
+      "id": "kaito-qfront-choice-cool",
+      "dialogue_node_id": "kaito-qfront-line",
+      "text": "今はまだ綺麗だと思うだけで精一杯だ。",
+      "next_dialogue_id": "kaito-qfront-cool",
+      "sort_order": 2
+    },
+    {
+      "id": "ren-shibuya-109-choice-warm",
+      "dialogue_node_id": "ren-shibuya-109-line",
+      "text": "慣れていない。でも、この街に似合うようになりたい。",
+      "next_dialogue_id": "ren-shibuya-109-warm",
+      "sort_order": 1
+    },
+    {
+      "id": "ren-shibuya-109-choice-cool",
+      "dialogue_node_id": "ren-shibuya-109-line",
+      "text": "逃げるつもりはない。ただ、簡単に読まれたくない。",
+      "next_dialogue_id": "ren-shibuya-109-cool",
+      "sort_order": 2
+    }
+  ],
+  "events": [
+    {
+      "id": "meet-daiki-at-magnet",
+      "description": "ダイキがMAGNETの上階へ向かう夜の入口で誘う。",
+      "type": "character_conversation",
+      "priority": "{\"value\": \"mandatory\", \"index\": 30}",
+      "conditions": "[{\"type\": \"location\", \"location_id\": \"magnet\"}, {\"type\": \"characterLocation\", \"character_id\": \"daiki-mori\", \"location_id\": \"magnet\"}]",
+      "dialogue_id": "daiki-magnet-start"
+    },
+    {
+      "id": "meet-haruto-at-hachiko-station",
+      "description": "ハルトがハチ公前で主人公の行き先を問う。",
+      "type": "character_conversation",
+      "priority": "{\"value\": \"mandatory\", \"index\": 40}",
+      "conditions": "[{\"type\": \"location\", \"location_id\": \"hachiko-station\"}, {\"type\": \"characterLocation\", \"character_id\": \"haruto-nakamura\", \"location_id\": \"hachiko-station\"}]",
+      "dialogue_id": "haruto-hachiko-start"
+    },
+    {
+      "id": "meet-kaito-at-qfront",
+      "description": "カイトがQFRONTの画面の前で街の見方を試す。",
+      "type": "character_conversation",
+      "priority": "{\"value\": \"mandatory\", \"index\": 20}",
+      "conditions": "[{\"type\": \"location\", \"location_id\": \"qfront\"}, {\"type\": \"characterLocation\", \"character_id\": \"kaito-sugiyama\", \"location_id\": \"qfront\"}]",
+      "dialogue_id": "kaito-qfront-start"
+    },
+    {
+      "id": "meet-ren-at-shibuya-109",
+      "description": "レンが渋谷109の入口で主人公の背伸びを見抜く。",
+      "type": "character_conversation",
+      "priority": "{\"value\": \"mandatory\", \"index\": 10}",
+      "conditions": "[{\"type\": \"location\", \"location_id\": \"shibuya-109\"}, {\"type\": \"characterLocation\", \"character_id\": \"ren-takahashi\", \"location_id\": \"shibuya-109\"}]",
+      "dialogue_id": "ren-shibuya-109-start"
+    }
+  ],
+  "gameRuntimeStates": [
+    {
+      "id": "default",
+      "current_location_id": "shibuya-109",
+      "current_dialogue_id": "ren-shibuya-109-start",
+      "game_time_detail": "2040-08-05 19:30"
+    }
+  ]
+}

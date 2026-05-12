@@ -8,7 +8,14 @@ export interface FalBackgroundRemovalInput {
 }
 
 interface FalBackgroundClientConfig {
-  apiKey: string;
+  apiKey: string | undefined;
+}
+
+export class FalConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FalConfigError';
+  }
 }
 
 export class FalApiError extends Error {
@@ -42,11 +49,12 @@ export class FalBackgroundClient {
   }
 
   private async submitRequest(input: FalBackgroundRemovalInput): Promise<FalQueueSubmission> {
+    const apiKey = this.requireApiKey();
     const response = await fetch(FAL_BACKGROUND_REMOVAL_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Key ${this.config.apiKey}`,
+        Authorization: `Key ${apiKey}`,
       },
       body: JSON.stringify({
         image_url: input.image_url,
@@ -92,9 +100,10 @@ export class FalBackgroundClient {
   }
 
   private async fetchStatus(statusUrl: string): Promise<FalQueueStatus> {
+    const apiKey = this.requireApiKey();
     const response = await fetch(statusUrl, {
       headers: {
-        Authorization: `Key ${this.config.apiKey}`,
+        Authorization: `Key ${apiKey}`,
       },
     });
 
@@ -112,9 +121,10 @@ export class FalBackgroundClient {
   }
 
   private async fetchResult(responseUrl: string): Promise<unknown> {
+    const apiKey = this.requireApiKey();
     const response = await fetch(responseUrl, {
       headers: {
-        Authorization: `Key ${this.config.apiKey}`,
+        Authorization: `Key ${apiKey}`,
       },
     });
 
@@ -125,6 +135,15 @@ export class FalBackgroundClient {
     }
 
     return body;
+  }
+
+  private requireApiKey(): string {
+    const apiKey = this.config.apiKey?.trim();
+    if (!apiKey) {
+      throw new FalConfigError('fal background removal is not configured for this gameplay mode');
+    }
+
+    return apiKey;
   }
 }
 

@@ -16,7 +16,14 @@ export interface OpenRouterSpeechResult {
 }
 
 interface OpenRouterTtsClientConfig {
-  apiKey: string;
+  apiKey: string | undefined;
+}
+
+export class OpenRouterTtsConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'OpenRouterTtsConfigError';
+  }
 }
 
 export class OpenRouterTtsError extends Error {
@@ -34,10 +41,11 @@ export class OpenRouterTtsClient {
   constructor(private readonly config: OpenRouterTtsClientConfig) {}
 
   async generateSpeechWav(input: OpenRouterSpeechInput): Promise<OpenRouterSpeechResult> {
+    const apiKey = this.requireApiKey();
     const response = await fetch(OPENROUTER_SPEECH_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${this.config.apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -65,6 +73,15 @@ export class OpenRouterTtsClient {
       audio: wrapPcmAsWav(responseBytes),
       generationId: readOptionalHeader(response, 'x-generation-id'),
     };
+  }
+
+  private requireApiKey(): string {
+    const apiKey = this.config.apiKey?.trim();
+    if (!apiKey) {
+      throw new OpenRouterTtsConfigError('OpenRouter text-to-speech is not configured for this gameplay mode');
+    }
+
+    return apiKey;
   }
 }
 

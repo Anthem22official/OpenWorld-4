@@ -1,5 +1,12 @@
 # Development Log
 
+## Version 2.0.0.a - Local And Hosted Playable Sync
+
+[2026-05-12 13:45] Version 2.0.0.a - Restored Public Local Full as the default mode with SQLite startup config, optional cloud provider credentials, explicit cloud route config failures, and a mode gap audit.
+[2026-05-12 13:45] Version 2.0.0.a - Documented the dual Prisma schema rule for local SQLite and hosted Render Postgres, and added hosted Prisma script entries.
+[2026-05-12 13:45] Version 2.0.0.a - Added the local-first hosted sync workflow, hosted seed snapshot export/import tooling, hosted schema sync checking, and add/update-only R2 asset sync workflow.
+[2026-05-12 13:45] Version 2.0.0.a - Indexed hosted seed and schema-sync tooling in DOCS and added a server schema check script for the dual Prisma schema rule.
+
 ## Version 1.7.18 - Render Postgres Runtime
 
 [2026-05-12 10:20] Version 1.7.18 - Switched Prisma deployment configuration from SQLite to Postgres, added a production server start script and migration deploy script, and updated deployment docs for Render Postgres plus Cloudflare R2.

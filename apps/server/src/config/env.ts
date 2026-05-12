@@ -3,12 +3,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export interface ServerEnv {
-  atlasCloudApiKey: string;
-  falApiKey: string;
-  openRouterApiKey: string;
+  gameplayMode: GameplayMode;
+  atlasCloudApiKey: string | undefined;
+  falApiKey: string | undefined;
+  openRouterApiKey: string | undefined;
   port: number;
   databaseUrl: string;
 }
+
+export type GameplayMode =
+  | 'public-local-full'
+  | 'public-local-cloud-assets'
+  | 'private-maintainer-hosted';
 
 const serverRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const envPath = path.join(serverRoot, '.env');
@@ -25,6 +31,11 @@ function requireEnv(name: string): string {
   return value;
 }
 
+function readOptionalEnv(name: string): string | undefined {
+  const value = process.env[name]?.trim();
+  return value && value.length > 0 ? value : undefined;
+}
+
 function parsePort(value: string): number {
   const port = Number(value);
 
@@ -35,12 +46,50 @@ function parsePort(value: string): number {
   return port;
 }
 
+function parseGameplayMode(value: string | undefined): GameplayMode {
+  if (!value) return 'public-local-full';
+
+  if (
+    value === 'public-local-full' ||
+    value === 'public-local-cloud-assets' ||
+    value === 'private-maintainer-hosted'
+  ) {
+    return value;
+  }
+
+  throw new Error(
+    'GAMEPLAY_MODE must be public-local-full, public-local-cloud-assets, or private-maintainer-hosted',
+  );
+}
+
 export function loadServerEnv(): ServerEnv {
+  const gameplayMode = parseGameplayMode(readOptionalEnv('GAMEPLAY_MODE'));
+
+  if (gameplayMode === 'public-local-cloud-assets') {
+    throw new Error(
+      `GAMEPLAY_MODE ${gameplayMode} is recognized but not implemented in this P0 local-first pass`,
+    );
+  }
+
+  const databaseUrl = requireEnv('DATABASE_URL');
+  validateDatabaseUrl(gameplayMode, databaseUrl);
+
   return {
-    atlasCloudApiKey: requireEnv('ATLASCLOUD_API_KEY'),
-    falApiKey: requireEnv('FAL_API_KEY'),
-    openRouterApiKey: requireEnv('OPENROUTER_API_KEY'),
+    gameplayMode,
+    atlasCloudApiKey: readOptionalEnv('ATLASCLOUD_API_KEY'),
+    falApiKey: readOptionalEnv('FAL_API_KEY'),
+    openRouterApiKey: readOptionalEnv('OPENROUTER_API_KEY'),
     port: parsePort(requireEnv('PORT')),
-    databaseUrl: requireEnv('DATABASE_URL'),
+    databaseUrl,
   };
+}
+
+function validateDatabaseUrl(gameplayMode: GameplayMode, databaseUrl: string): void {
+  if (gameplayMode === 'public-local-full' && !databaseUrl.startsWith('file:')) {
+    throw new Error('Public Local Full requires a SQLite DATABASE_URL starting with file:');
+  }
+
+  if (gameplayMode === 'private-maintainer-hosted' && !databaseUrl.startsWith('postgres')) {
+    throw new Error('Private Maintainer Hosted requires a Postgres DATABASE_URL');
+  }
 }

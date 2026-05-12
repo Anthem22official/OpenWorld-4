@@ -4,6 +4,7 @@
 
 - **CLAUDE.md** - Read first when starting work. Contains 6 core development rules: fail directly, frontend-first development, UI/UX skill usage, file organization, file creation permissions, and development logging requirements.
 - **docs/CLEANUP_AND_REORG_PLAN.md** - Read when cleaning repository structure, separating backend providers, or reorganizing gameplay components.
+- **docs/MODE_GAP_AUDIT.md** - Read before changing gameplay mode handling, storage, startup config, deployment behavior, or cloud/local asset boundaries. Captures the P0-P2 gap audit against `AGENTS.md` Rule 9.
 
 ## World Design
 
@@ -37,13 +38,18 @@
 ## Database Files
 
 - **apps/server/prisma/schema.prisma** - Read when modifying database models or understanding Prisma schema
+- **apps/server/prisma/schema.hosted.prisma** - Read when modifying hosted Render Postgres schema; must stay model-equivalent to `apps/server/prisma/schema.prisma` except for datasource provider.
+- **apps/server/prisma/seed-data/hosted-seed.json** - Read when checking the committed local-to-hosted gameplay data snapshot imported into Render Postgres.
+- **apps/server/prisma/export-local-seed.ts** - Read when changing how local SQLite gameplay data is exported into the committed hosted seed snapshot.
+- **apps/server/prisma/import-hosted-seed.ts** - Read when changing how Render Postgres imports the committed hosted seed snapshot.
+- **scripts/check-prisma-schema-sync.mjs** - Read when changing the dual Prisma schema equivalence check.
 - **docs/DATABASE_BOOTSTRAP_SQL.md** - Read when validating or manually restoring MVP Shibuya, 4-character event, dialogue content, and the Ren CG overlay reference node in local or production database environments.
 - **apps/server/prisma/seed-production.ts** - Read when seeding an empty Render Postgres database with the current MVP bootstrap rows.
 - **docs/ASSET_HIERARCHY.md** - Read when adding database-linked runtime assets such as character full-body images, voice WAV files, location backgrounds, dialogue CGs, or future storage object keys.
 - **docs/LOCATION_BACKGROUND_ASSET_STYLE_PROMPT.md** - Read when generating or promoting canonical location background images. Contains shared visual style, Atlas GPT Image 2 defaults, drawing-quality findings, test output, and prompts for the current Shibuya map locations.
 - **scripts/crop-character-head-icons.py** - Read when regenerating 512x512 character header icons from transparent full-body character PNGs.
 - **apps/server/src/db/init.ts** - Read when initializing database connection or adding database setup logic
-- **apps/server/prisma/dev.db** - Legacy/local SQLite database backup; production schema now targets Render Postgres.
+- **apps/server/prisma/dev.db** - Canonical Public Local Full SQLite database.
 
 ## Server Services
 

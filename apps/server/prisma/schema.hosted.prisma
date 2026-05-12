@@ -1,4 +1,5 @@
-// This is your Prisma schema file,
+// Hosted Render Postgres Prisma schema.
+// Keep model blocks equivalent to schema.prisma. Only the datasource provider should differ.
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -6,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -147,4 +148,3 @@ model GameRuntimeState {
   currentLocation       Location     @relation(fields: [current_location_id], references: [id])
   currentDialogue       DialogueNode @relation(fields: [current_dialogue_id], references: [id])
 }
-

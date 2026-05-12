@@ -7,10 +7,16 @@
     "start": "tsx src/index.ts",
     "build": "tsc",
     "prisma:generate": "prisma generate",
+    "prisma:generate:hosted": "prisma generate --schema prisma/schema.hosted.prisma",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:deploy": "prisma migrate deploy --schema prisma/schema.hosted.prisma",
     "prisma:push": "prisma db push",
-    "prisma:seed:production": "tsx prisma/seed-production.ts"
+    "prisma:push:hosted": "prisma db push --schema prisma/schema.hosted.prisma",
+    "prisma:seed:production": "tsx prisma/seed-production.ts",
+    "prisma:seed:hosted": "tsx prisma/import-hosted-seed.ts",
+    "seed:export:local": "prisma generate && tsx prisma/export-local-seed.ts",
+    "schema:check": "node ../../scripts/check-prisma-schema-sync.mjs",
+    "start:hosted": "tsx src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",

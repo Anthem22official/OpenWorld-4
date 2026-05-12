@@ -12,6 +12,7 @@ async function main() {
     await initializeDatabase();
 
     const serverServices = {
+      gameplayMode: env.gameplayMode,
       atlasImageClient: new AtlasImageClient({
         apiKey: env.atlasCloudApiKey,
       }),
