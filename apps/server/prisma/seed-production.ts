@@ -122,9 +122,12 @@ const events = [
 ] as const;
 
 async function main() {
-  const existingRows = await countExistingRows();
+  const existingCounts = await getExistingCounts();
+  const existingRows = getTotalRows(existingCounts);
   if (existingRows > 0) {
-    throw new Error(`Production seed refused: database already has ${existingRows} core rows`);
+    assertAlreadySeeded(existingCounts);
+    console.log('Production seed skipped: database already contains the expected MVP rows.');
+    return;
   }
 
   await prisma.$transaction(async (tx) => {
@@ -225,17 +228,81 @@ async function main() {
   console.log('Production seed complete.');
 }
 
-async function countExistingRows(): Promise<number> {
-  const counts = await Promise.all([
+interface ExistingCounts {
+  characters: number;
+  locations: number;
+  characterStates: number;
+  scheduleBlocks: number;
+  memories: number;
+  dialogueNodes: number;
+  dialogueChoices: number;
+  events: number;
+  runtimeStates: number;
+}
+
+async function getExistingCounts(): Promise<ExistingCounts> {
+  const [
+    charactersCount,
+    locationsCount,
+    characterStatesCount,
+    scheduleBlocksCount,
+    memoriesCount,
+    dialogueNodesCount,
+    dialogueChoicesCount,
+    eventsCount,
+    runtimeStatesCount,
+  ] = await Promise.all([
     prisma.character.count(),
     prisma.location.count(),
+    prisma.characterState.count(),
+    prisma.scheduleBlock.count(),
+    prisma.memory.count(),
     prisma.dialogueNode.count(),
     prisma.dialogueChoice.count(),
     prisma.event.count(),
     prisma.gameRuntimeState.count(),
   ]);
 
-  return counts.reduce((total, count) => total + count, 0);
+  return {
+    characters: charactersCount,
+    locations: locationsCount,
+    characterStates: characterStatesCount,
+    scheduleBlocks: scheduleBlocksCount,
+    memories: memoriesCount,
+    dialogueNodes: dialogueNodesCount,
+    dialogueChoices: dialogueChoicesCount,
+    events: eventsCount,
+    runtimeStates: runtimeStatesCount,
+  };
+}
+
+function getTotalRows(counts: ExistingCounts): number {
+  return Object.values(counts).reduce((total, count) => total + count, 0);
+}
+
+function assertAlreadySeeded(counts: ExistingCounts): void {
+  const expectedCounts: ExistingCounts = {
+    characters: 4,
+    locations: 15,
+    characterStates: 4,
+    scheduleBlocks: 4,
+    memories: 4,
+    dialogueNodes: 24,
+    dialogueChoices: 8,
+    events: 4,
+    runtimeStates: 1,
+  };
+
+  const mismatches = Object.entries(expectedCounts).filter(([key, expected]) => {
+    const actual = counts[key as keyof ExistingCounts];
+    return actual !== expected;
+  });
+
+  if (mismatches.length === 0) return;
+
+  throw new Error(
+    `Production seed refused: database has partial or unexpected seed rows ${JSON.stringify(counts)}`,
+  );
 }
 
 main()
