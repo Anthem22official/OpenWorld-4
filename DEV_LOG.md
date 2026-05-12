@@ -3,6 +3,7 @@
 ## Version 1.7.18 - Render Postgres Runtime
 
 [2026-05-12 10:20] Version 1.7.18 - Switched Prisma deployment configuration from SQLite to Postgres, added a production server start script and migration deploy script, and updated deployment docs for Render Postgres plus Cloudflare R2.
+[2026-05-12 12:24] Version 1.7.18 - Updated the production server start command to use `tsx`, matching the existing ESM development runtime so extensionless TypeScript imports resolve on Render.
 
 ## Version 1.7.17 - Documentation Index Fix
 
