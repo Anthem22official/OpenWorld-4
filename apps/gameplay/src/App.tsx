@@ -53,10 +53,11 @@ export default function App() {
     }
   }, [])
 
-  const switchPageWhenReady = (page: PageType, assets: string[]) => {
+  const switchPageWhenReady = (page: PageType, assets: string[], beforeSwitch?: () => void) => {
     setAssetLoadingPage(page)
     preloadPageAssets(page, assets)
       .then(() => {
+        beforeSwitch?.()
         setCurrentPage(page)
         setAssetLoadingPage(null)
       })
@@ -152,24 +153,25 @@ export default function App() {
     })
 
     if (eventResult.mandatoryEvent) {
-      setEventPanelState(null)
       switchPageWhenReady('dialogue', getDialogueAssetUrls(bootstrapData, {
         ...gameState,
         currentDialogueId: eventResult.mandatoryEvent.dialogueId,
-      }))
+      }), () => setEventPanelState(null))
       return
     }
 
-    setEventPanelState({
+    const nextEventPanelState: EventPanelState = {
       locationId,
       locationName: selectedLocation.name,
       ...(selectedLocation.description ? { locationDescription: selectedLocation.description } : {}),
       ...(selectedLocation.backgroundAssetKey ? { locationBackgroundAssetKey: selectedLocation.backgroundAssetKey } : {}),
       optionalEvents: eventResult.optionalEvents,
-    })
+    }
+
     switchPageWhenReady(
       'event',
       selectedLocation.backgroundAssetKey ? [resolveAssetUrl(selectedLocation.backgroundAssetKey)] : [],
+      () => setEventPanelState(nextEventPanelState),
     )
   }
 
@@ -181,11 +183,10 @@ export default function App() {
     if (!event) throw new Error(`Optional event not found: ${eventId}`)
 
     handleDialogueChange(event.dialogueId)
-    setEventPanelState(null)
     switchPageWhenReady('dialogue', getDialogueAssetUrls(bootstrapData, {
       ...gameState,
       currentDialogueId: event.dialogueId,
-    }))
+    }), () => setEventPanelState(null))
   }
 
   const handleEventBackToMap = () => {
@@ -254,7 +255,13 @@ export default function App() {
           onBackToDialogue={handleBackToDialogue}
         />
       ) : currentPage === 'event' ? (
-        renderEventPanel(eventPanelState, handleStartOptionalEvent, handleEventBackToMap)
+        eventPanelState ? (
+          renderEventPanel(eventPanelState, handleStartOptionalEvent, handleEventBackToMap)
+        ) : (
+          <main className="asset-loading-screen black-coated-paper" aria-live="polite">
+            <p>Loading event...</p>
+          </main>
+        )
       ) : currentPage === 'legacy-map' ? (
         <LegacyMapPage
           gameState={gameState}
