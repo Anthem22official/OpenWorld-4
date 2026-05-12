@@ -12,6 +12,7 @@
 ## Gameplay Interface
 
 - **docs/DESIGN_SYSTEM.md** - Read when styling gameplay UI or the style gallery. Defines the black coated paper, Liquid Glass, and laser holographic foil redesign, including layout coordinates, color tokens, component patterns, and accessibility rules.
+- **apps/gameplay/src/time/game-time.ts** - Read when changing gameplay clock advancement or location travel time calculations.
 - **apps/gameplay/src/events/location-event-handler.ts** - Read when changing location-entry event resolution, condition matching, event priority selection, or dialogue starts from events.
 - **apps/gameplay/src/scenes/event/event-panel.tsx** - Read when changing optional event selection or no-event map return behavior.
 - **apps/gameplay/src/scenes/map/components/map-character-layer.tsx** - Read when changing active character icon placement on the SVG map.
@@ -45,6 +46,7 @@
 
 ## Server Services
 
+- **apps/studio/** - Read when changing the mock-first OpenWorld Studio UI for creator pipelines, event planning, CG debugging, or TTS debugging.
 - **apps/server/src/features/background-removal/routes/local-background-removal-route.ts** - Read when changing the local image upload endpoint that returns a transparent PNG.
 - **apps/server/src/features/background-removal/providers/local-python-background-removal-service.ts** - Read when changing how the server launches and validates the local Python background-removal script.
 - **apps/server/src/features/background-removal/utils/multipart.ts** - Read when changing upload parsing, file validation, or request size limits for local background removal.

@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.7.17 - Documentation Index Fix
+
+[2026-05-12 09:39] Version 1.7.17 - Added DOCS index entries for the gameplay time helper and mock-first Studio app so the committed Studio/travel-time work is discoverable from the project documentation map.
+
 ## Version 1.7.16 - Studio Workflow Split
 
 [2026-05-11 22:31] Version 1.7.16 - Refactored Studio so character/location creation use AI design pipelines, Event Factory uses a batch planner with mock database selectors, and CG/TTS use direct debug consoles instead of the shared pipeline.
