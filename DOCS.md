@@ -38,6 +38,7 @@
 
 - **apps/server/prisma/schema.prisma** - Read when modifying database models or understanding Prisma schema
 - **docs/DATABASE_BOOTSTRAP_SQL.md** - Read when validating or manually restoring MVP Shibuya, 4-character event, dialogue content, and the Ren CG overlay reference node in local or production database environments.
+- **apps/server/prisma/seed-production.ts** - Read when seeding an empty Render Postgres database with the current MVP bootstrap rows.
 - **docs/ASSET_HIERARCHY.md** - Read when adding database-linked runtime assets such as character full-body images, voice WAV files, location backgrounds, dialogue CGs, or future storage object keys.
 - **docs/LOCATION_BACKGROUND_ASSET_STYLE_PROMPT.md** - Read when generating or promoting canonical location background images. Contains shared visual style, Atlas GPT Image 2 defaults, drawing-quality findings, test output, and prompts for the current Shibuya map locations.
 - **scripts/crop-character-head-icons.py** - Read when regenerating 512x512 character header icons from transparent full-body character PNGs.
