@@ -73,6 +73,11 @@ function CharacterSpriteSlot({
     try {
       setAlphaBounds(measureCharacterAlphaBounds(event.currentTarget, characterId))
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'SecurityError') {
+        setAlphaBounds(getDefaultCharacterAlphaBounds())
+        return
+      }
+
       setMeasurementError(error instanceof Error ? error : new Error(String(error)))
     }
   }
@@ -220,6 +225,15 @@ function getCharacterSpriteUrl(characterId: string): string {
   }
 
   return resolveAssetUrl(`characters/${trimmedId}/full-body/full-body-transparent.png`)
+}
+
+function getDefaultCharacterAlphaBounds(): CharacterAlphaBounds {
+  return {
+    top: 0,
+    bottom: 1,
+    height: 1,
+    cowboyCut: COWBOY_SHOT_BODY_RATIO,
+  }
 }
 
 function resolveAssetUrl(assetKey: string): string {

@@ -34,6 +34,13 @@ const musicByPage: Record<MusicPage, (typeof musicTracks)[keyof typeof musicTrac
 
 export const CONVERSATION_MUSIC_TITLE = musicTracks.conversation.title
 
+export function getMusicPathForPage(currentPage: MusicPage): string {
+  const musicTrack = musicByPage[currentPage]
+  if (!musicTrack) throw new Error(`Music track not found for page: ${currentPage}`)
+
+  return musicTrack.path
+}
+
 function publishMusicState(audio: HTMLAudioElement, title: string) {
   const duration = Number.isFinite(audio.duration) ? audio.duration : null
   const detail: MusicStateDetail = {

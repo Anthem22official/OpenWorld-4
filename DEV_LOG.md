@@ -8,6 +8,7 @@
 [2026-05-12 12:42] Version 1.7.18 - Added a guarded Render Postgres seed script for loading the current MVP characters, locations, dialogue graph, events, and default runtime state into an empty production database.
 [2026-05-12 12:50] Version 1.7.18 - Made the production seed command deploy-safe for Render Free by skipping when the expected MVP rows already exist and failing only on partial seed state.
 [2026-05-12 13:02] Version 1.7.18 - Wired gameplay production API calls to `VITE_API_BASE_URL`, runtime assets to `VITE_ASSET_BASE_URL`, and added simple CORS headers on the Render server for Vercel browser requests.
+[2026-05-12 13:18] Version 1.7.18 - Added a transition asset preloader and made dialogue character framing tolerate R2 cross-origin canvas restrictions without crashing.
 
 ## Version 1.7.17 - Documentation Index Fix
 

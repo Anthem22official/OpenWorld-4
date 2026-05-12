@@ -7,7 +7,7 @@ import LegacyMapPage from './scenes/map/legacy-map-page'
 import DebugImageGenPage from './tools/debug-image-gen/debug-image-gen-page'
 import CharacterPage from './tools/character-page/character-page'
 import StyleGalleryPage from './tools/style-gallery/style-gallery-page'
-import MusicHandler, { MusicPage } from './audio/music-handler'
+import MusicHandler, { getMusicPathForPage, MusicPage } from './audio/music-handler'
 import ClickParticles from './components/click-particles'
 import { fetchGameBootstrap, type GameBootstrapData } from './api/game-bootstrap-client'
 import { resolveLocationEvents, type LocationEventMatch } from './events/location-event-handler'
@@ -30,6 +30,7 @@ export default function App() {
   const [gameState, setGameState] = useState<GameState | null>(null)
   const [bootstrapError, setBootstrapError] = useState<Error | null>(null)
   const [currentPage, setCurrentPage] = useState<PageType>('dialogue')
+  const [assetLoadingPage, setAssetLoadingPage] = useState<PageType | null>(null)
   const [eventPanelState, setEventPanelState] = useState<EventPanelState | null>(null)
   const [activeAreaMapId, setActiveAreaMapId] = useState('shibuya-crossing')
 
@@ -52,23 +53,36 @@ export default function App() {
     }
   }, [])
 
+  const switchPageWhenReady = (page: PageType, assets: string[]) => {
+    setAssetLoadingPage(page)
+    preloadPageAssets(page, assets)
+      .then(() => {
+        setCurrentPage(page)
+        setAssetLoadingPage(null)
+      })
+      .catch((error: unknown) => {
+        setAssetLoadingPage(null)
+        throw error
+      })
+  }
+
   const handleReturnToMap = () => {
     getAreaMap(activeAreaMapId)
-    setCurrentPage('map')
+    switchPageWhenReady('map', getMapAssetUrls(gameState))
   }
 
   const handleShowMapSelection = () => {
-    setCurrentPage('map-select')
+    switchPageWhenReady('map-select', [])
   }
 
   const handleSelectAreaMap = (areaMapId: string) => {
     getAreaMap(areaMapId)
     setActiveAreaMapId(areaMapId)
-    setCurrentPage('map')
+    switchPageWhenReady('map', getMapAssetUrls(gameState))
   }
 
   const handleBackToDialogue = () => {
-    setCurrentPage('dialogue')
+    switchPageWhenReady('dialogue', getDialogueAssetUrls(bootstrapData, gameState))
   }
 
   const handleShowDebugPanel = () => {
@@ -139,7 +153,10 @@ export default function App() {
 
     if (eventResult.mandatoryEvent) {
       setEventPanelState(null)
-      setCurrentPage('dialogue')
+      switchPageWhenReady('dialogue', getDialogueAssetUrls(bootstrapData, {
+        ...gameState,
+        currentDialogueId: eventResult.mandatoryEvent.dialogueId,
+      }))
       return
     }
 
@@ -150,18 +167,25 @@ export default function App() {
       ...(selectedLocation.backgroundAssetKey ? { locationBackgroundAssetKey: selectedLocation.backgroundAssetKey } : {}),
       optionalEvents: eventResult.optionalEvents,
     })
-    setCurrentPage('event')
+    switchPageWhenReady(
+      'event',
+      selectedLocation.backgroundAssetKey ? [resolveAssetUrl(selectedLocation.backgroundAssetKey)] : [],
+    )
   }
 
   const handleStartOptionalEvent = (eventId: string) => {
     if (!eventPanelState) throw new Error('eventPanelState is required to start an event')
+    if (!gameState) throw new Error('gameState is required to start an optional event')
 
     const event = eventPanelState.optionalEvents.find((candidate) => candidate.id === eventId)
     if (!event) throw new Error(`Optional event not found: ${eventId}`)
 
     handleDialogueChange(event.dialogueId)
     setEventPanelState(null)
-    setCurrentPage('dialogue')
+    switchPageWhenReady('dialogue', getDialogueAssetUrls(bootstrapData, {
+      ...gameState,
+      currentDialogueId: event.dialogueId,
+    }))
   }
 
   const handleEventBackToMap = () => {
@@ -191,6 +215,12 @@ export default function App() {
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <MusicHandler currentPage={currentPage} />
       <ClickParticles />
+      {assetLoadingPage && (
+        <main className="asset-loading-screen black-coated-paper" aria-live="polite">
+          <p>Loading game assets...</p>
+          <span>{formatPageName(assetLoadingPage)}</span>
+        </main>
+      )}
       {currentPage === 'dialogue' ? (
         <DialoguePage
           gameState={gameState}
@@ -282,3 +312,76 @@ const bootstrapStatusStyle = {
   padding: '32px',
   color: '#F4F1F6',
 } satisfies CSSProperties
+
+function getDialogueAssetUrls(bootstrapData: GameBootstrapData | null, gameState: GameState | null): string[] {
+  if (!bootstrapData || !gameState) return []
+
+  const dialogue = bootstrapData.dialogueNodes[gameState.currentDialogueId]
+  if (!dialogue) throw new Error(`Dialogue node not found: ${gameState.currentDialogueId}`)
+
+  const urls: string[] = []
+  const assetKey = dialogue.scene.mode === 'cg' ? dialogue.scene.cgAssetKey : dialogue.scene.backgroundAssetKey
+  if (assetKey) urls.push(resolveAssetUrl(assetKey))
+
+  for (const characterId of dialogue.scene.characterIds) {
+    urls.push(resolveAssetUrl(`characters/${characterId}/full-body/full-body-transparent.png`))
+  }
+
+  if (dialogue.voiceAssetKey) urls.push(resolveAssetUrl(dialogue.voiceAssetKey))
+  return urls
+}
+
+function getMapAssetUrls(gameState: GameState | null): string[] {
+  if (!gameState?.mapState) return []
+
+  return gameState.mapState.locations
+    .map((location) => location.backgroundAssetKey)
+    .filter((assetKey): assetKey is string => Boolean(assetKey))
+    .map((assetKey) => resolveAssetUrl(assetKey))
+}
+
+async function preloadPageAssets(page: PageType, urls: string[]): Promise<void> {
+  const uniqueUrls = Array.from(new Set([getMusicPathForPage(page), ...urls]))
+  await Promise.all(uniqueUrls.map((url) => preloadAsset(url)))
+}
+
+function preloadAsset(url: string): Promise<void> {
+  if (url.endsWith('.jpg') || url.endsWith('.jpeg') || url.endsWith('.png')) {
+    return new Promise((resolve, reject) => {
+      const image = new Image()
+      image.onload = () => resolve()
+      image.onerror = () => reject(new Error(`Failed to preload image asset: ${url}`))
+      image.src = url
+    })
+  }
+
+  if (url.endsWith('.mp3') || url.endsWith('.wav')) {
+    return new Promise((resolve, reject) => {
+      const audio = new Audio()
+      audio.preload = 'auto'
+      audio.oncanplaythrough = () => resolve()
+      audio.onerror = () => reject(new Error(`Failed to preload audio asset: ${url}`))
+      audio.src = url
+      audio.load()
+    })
+  }
+
+  return Promise.resolve()
+}
+
+function resolveAssetUrl(assetKey: string): string {
+  const assetBaseUrl = getViteEnvValue('VITE_ASSET_BASE_URL')
+  const baseUrl = assetBaseUrl || '/assets/database'
+
+  return `${baseUrl.replace(/\/+$/, '')}/${assetKey}`
+}
+
+function getViteEnvValue(name: string): string | undefined {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  const value = env?.[name]?.trim()
+  return value && value.length > 0 ? value : undefined
+}
+
+function formatPageName(page: PageType): string {
+  return page.replace(/-/g, ' ')
+}

@@ -118,6 +118,31 @@ button:focus-visible {
   background-size: 3px 3px;
 }
 
+.asset-loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  color: var(--gallery-text);
+  text-align: center;
+}
+
+.asset-loading-screen p {
+  color: var(--silver-foil);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.asset-loading-screen span {
+  color: var(--silver-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 .map-selection-page {
   width: 100vw;
   height: 100vh;
