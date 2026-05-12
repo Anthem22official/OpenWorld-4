@@ -12,8 +12,8 @@ CREATE TABLE "Location" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "appearance_description" TEXT NOT NULL,
-    "x" REAL NOT NULL,
-    "y" REAL NOT NULL,
+    "x" DOUBLE PRECISION NOT NULL,
+    "y" DOUBLE PRECISION NOT NULL,
     "level" INTEGER NOT NULL,
     "accessible_start" INTEGER NOT NULL,
     "accessible_end" INTEGER NOT NULL

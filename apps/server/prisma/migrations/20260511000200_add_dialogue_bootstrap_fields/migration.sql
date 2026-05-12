@@ -26,23 +26,8 @@ CREATE TABLE "DialogueChoice" (
     CONSTRAINT "DialogueChoice_next_dialogue_id_fkey" FOREIGN KEY ("next_dialogue_id") REFERENCES "DialogueNode" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- RedefineTables
-PRAGMA defer_foreign_keys=ON;
-PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_Event" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "description" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
-    "priority" TEXT NOT NULL,
-    "conditions" TEXT NOT NULL,
-    "dialogue_id" TEXT,
-    CONSTRAINT "Event_dialogue_id_fkey" FOREIGN KEY ("dialogue_id") REFERENCES "DialogueNode" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-);
-INSERT INTO "new_Event" ("conditions", "description", "dialogue_id", "id", "priority", "type") SELECT "conditions", "description", "dialogue_id", "id", "priority", "type" FROM "Event";
-DROP TABLE "Event";
-ALTER TABLE "new_Event" RENAME TO "Event";
-PRAGMA foreign_keys=ON;
-PRAGMA defer_foreign_keys=OFF;
+-- AddForeignKey
+ALTER TABLE "Event" ADD CONSTRAINT "Event_dialogue_id_fkey" FOREIGN KEY ("dialogue_id") REFERENCES "DialogueNode" ("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- CreateIndex
 CREATE INDEX "DialogueChoice_dialogue_node_id_sort_order_idx" ON "DialogueChoice"("dialogue_node_id", "sort_order");

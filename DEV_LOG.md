@@ -1,5 +1,9 @@
 # Development Log
 
+## Version 1.7.18 - Render Postgres Runtime
+
+[2026-05-12 10:20] Version 1.7.18 - Switched Prisma deployment configuration from SQLite to Postgres, added a production server start script and migration deploy script, and updated deployment docs for Render Postgres plus Cloudflare R2.
+
 ## Version 1.7.17 - Documentation Index Fix
 
 [2026-05-12 09:39] Version 1.7.17 - Added DOCS index entries for the gameplay time helper and mock-first Studio app so the committed Studio/travel-time work is discoverable from the project documentation map.
